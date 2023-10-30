@@ -5,20 +5,21 @@
       <div class="left-container">
         <va-image class="logo" src="src/assets/LOGO.png"/>
         <h1 class="title">研究生宿舍选择系统</h1>
-        <va-form class="login-form">
-          <div>
-            <va-icon name="account_circle"></va-icon>
-            <va-input style="margin: 10px" placeholder="请输入校园号"></va-input>
-          </div>
-          <div>
-            <va-icon name="lock"></va-icon>
-            <va-input style="margin: 10px" placeholder="请输入密码"></va-input>
-          </div>
-          <div><va-button style="width: 250px;margin: 10px">Log in</va-button></div>
-          <div><va-button style="width: 250px;margin: 10px">Register</va-button></div>
-        </va-form>
+        <va-tabs
+            v-model="activeTab"
+            grow
+            center
+        >
+          <va-tab name="Login">
+            Login
+          </va-tab>
+          <va-tab name="Register">
+            Register
+          </va-tab>
+        </va-tabs>
+        <login v-if="activeTab === 'Login' "/>
+        <registration v-if="activeTab === 'Register' "/>
       </div>
-
       <div class="right-container">
         <va-image src="src/assets/dormitory.png"></va-image>
       </div>
@@ -26,7 +27,21 @@
   </div>
 </template>
 
-<script setup>
+<script>
+  import login from './Login.vue'
+  import registration from "./Register.vue";
+  export default {
+    name: "mainPage",
+    data(){
+      return{
+        activeTab: "Login"
+      }
+    },
+    components:{
+      login,
+      registration
+    }
+  }
 </script>
 
 <style scoped>
@@ -62,13 +77,10 @@
   margin: 0 auto;
 }
 .title{
-  margin-top: 30px;
+  margin-top: 10px;
   text-align: center;
   font-size: 30px;
   font-family: 华光准圆_CNKI,serif;
 }
-.login-form{
-  margin: 50px;
-  text-align: center;
-}
+
 </style>

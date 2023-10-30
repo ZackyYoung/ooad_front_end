@@ -2,7 +2,7 @@
   <main-page/>
 </template>
 <script>
-import mainPage from './components/mainPage.vue'
+import mainPage from './components/MainPage.vue'
 export default {
   name: 'App',
   components: {
