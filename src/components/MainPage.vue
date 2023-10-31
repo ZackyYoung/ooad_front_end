@@ -54,7 +54,7 @@
 .mid-container {
   display: flex;
   border-radius: 20px;
-  height: 70%;
+  height: 75%;
   width: 80%;
   position: absolute;
   top: 50%;
@@ -72,8 +72,8 @@
   text-align: right;
 }
 .logo {
-  width: 360px;
-  height: 108px;
+  width: 300px;
+  height: 90px;
   margin: 0 auto;
 }
 .title{
