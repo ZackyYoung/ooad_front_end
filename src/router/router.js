@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import MainPage from '../components/MainPage.vue';
-import StudentMain from "../components/StudentMain.vue";
-import TeacherMain from "../components/TeacherMain.vue";
+import MainPage from '../view/MainPage.vue';
+import StudentMain from "../view/StudentMain.vue";
+import TeacherMain from "../view/TeacherMain.vue";
 
 const routes = [
     {

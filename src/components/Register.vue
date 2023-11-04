@@ -1,10 +1,10 @@
 <template>
-  <va-form class="login-form" ref="registerForm" :rules="rules">
+  <va-form class="login-form" ref="registerForm">
     <div>
       <va-icon name="account_circle"></va-icon>
       <va-input
           style="margin: 5px; text-align: left;"
-          v-model="campus_id"
+          v-model="form.campus_id"
           :rules="[(v) => campusIdValidator(v)]"
           label="CAMPUS ID"
           placeholder="请输入校园号"
@@ -14,7 +14,7 @@
       <va-icon name="badge"></va-icon>
       <va-select
           style="margin: 5px;text-align: left"
-          v-model="role"
+          v-model="form.role"
           :rules="[(v) => v || 'Role is required']"
           class="mb-6"
           label="Role"
@@ -29,7 +29,7 @@
         <va-icon name="key"></va-icon>
         <va-input
             style="margin: 5px; text-align: left"
-            v-model="password"
+            v-model="form.password"
             :rules="[(v) => passwordValidator(v)]"
             :type="isPasswordVisible.value ? 'text' : 'password'"
             label="PASSWORD"
@@ -49,7 +49,7 @@
         <va-icon name="shield"></va-icon>
         <va-input
             style="margin: 5px; text-align: left"
-            v-model="password_confirmation"
+            v-model="form.comfirmPassword"
             :rules="[(v) => confirmPasswordValidator(v)]"
             :type="isPasswordVisible.value ? 'text' : 'password'"
             label="CONFIRM PASSWORD"
@@ -73,8 +73,11 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
-  name: "registration",
+  name: "register",
+  props: ['form'],
   data() {
     const options = [
       {
@@ -105,15 +108,11 @@ export default {
       }
     }
     const confirmPasswordValidator = (value) => {
-      if (value !== this.password) {
+      if (value !== this.form.password) {
         return 'Different with the previous password'
       }
     }
     return {
-      campus_id: "",
-      password: "",
-      password_confirmation: "",
-      role: "",
       role_options: options,
       campusIdValidator,
       passwordValidator,
@@ -122,9 +121,30 @@ export default {
   },
   methods: {
     registerCheck() {
-      if (this.$refs.registerForm.validate())
-        alert('register successfully');
+      this.$store.dispatch("account/registerAccount");
+      if(this.accountValid) {
+        if (this.form.role === 'Teacher')
+          this.$router.push('/teacher')
+        else if (this.form.role === 'Student')
+          this.$router.push('/student')
+      }
     }
+  },
+  computed: {
+    ...mapState("purchase", {
+      accountValid: state => state.accountValid,
+      errorMsg: state => state.errorMsg
+    })
+  },
+  watch: {
+    accountValid() {
+      if (this.accountValid) {
+        if(this.form.role === 'Teacher')
+          this.$router.push('/teacher')
+        else if(this.form.role === 'Student')
+          this.$router.push('/student')
+      }
+    },
   }
 }
 </script>

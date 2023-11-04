@@ -17,8 +17,8 @@
             Register
           </va-tab>
         </va-tabs>
-        <login v-if="activeTab === 'Login' "/>
-        <registration v-if="activeTab === 'Register' "/>
+        <login :form="computedForm" v-if="activeTab === 'Login' "/>
+        <register :form="computedForm" v-if="activeTab === 'Register' "/>
       </div>
       <div class="right-container">
         <va-image src="src/assets/dormitory.png"></va-image>
@@ -28,8 +28,9 @@
 </template>
 
 <script>
-  import login from './Login.vue'
-  import registration from "./Register.vue";
+  import login from '../components/Login.vue'
+  import register from "../components/Register.vue";
+  import {mapState} from "vuex";
   export default {
     name: "mainPage",
     data(){
@@ -39,7 +40,12 @@
     },
     components:{
       login,
-      registration
+      register
+    },
+    computed: {
+      ...mapState("account", {
+        computedForm: state => state.form
+      })
     }
   }
 </script>

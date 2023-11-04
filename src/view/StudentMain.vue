@@ -72,7 +72,7 @@ import {ref, onMounted, watchEffect} from "vue";
 import {useBreakpoint} from "vuestic-ui";
 export default {
   name: "StudentMain",
-  data() {
+  setup() {
     const user = ref({
       name: "苏苏",
       sid: 12110000

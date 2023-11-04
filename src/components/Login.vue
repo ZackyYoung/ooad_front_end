@@ -4,7 +4,7 @@
       <va-icon name="account_circle"></va-icon>
       <va-input
           style="margin: 5px; text-align: left;"
-          v-model="campus_id"
+          v-model="form.campus_id"
           label="CAMPUS ID"
           placeholder="请输入校园号"
           :rules="[(value) => (value && value.length > 0) || 'Campus id is required']"
@@ -19,7 +19,7 @@
         <va-icon name="key"></va-icon>
         <va-input
             style="margin: 5px; text-align: left"
-            v-model="password"
+            v-model="form.password"
             :type="isPasswordVisible.value ? 'text' : 'password'"
             label="PASSWORD"
             placeholder="请输入密码"
@@ -40,18 +40,39 @@
   </va-form>
 </template>
 <script>
+  import {mapState} from "vuex";
+
   export default {
     name: "login",
+    props: ['form'],
     data(){
       return {
-        campus_id: "",
-        password: ""
       }
     },
     methods: {
       loginCheck(){
-        if(this.$refs.loginForm.validate())
-          this.$router.push('/teacher');
+        this.$store.dispatch("account/loginCheck")
+        if (!this.isWrongPassword) {
+          if(this.form.role === 'Teacher')
+            this.$router.push('/teacher')
+          else if(this.form.role === 'Student')
+            this.$router.push('/student')
+        }
+      }
+    },
+    computed: {
+      ...mapState("account", {
+        isWrongPassword: state => !state.accountValid
+      })
+    },
+    watch: {
+      isWrongPassword() {
+        if (!this.isWrongPassword) {
+          if(this.form.role === 'Teacher')
+            this.$router.push('/teacher')
+          else if(this.form.role === 'Student')
+            this.$router.push('/student')
+        }
       }
     }
   }
