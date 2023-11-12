@@ -1,10 +1,15 @@
 import axios from 'axios'
+import app from "../App.vue";
 
-const dataServerUrl = "http://10.21.98.136:8181";
+const dataServerUrl = "http://10.24.176.129:8082";
 
+const axiosInstance = axios.create({
+    baseURL: dataServerUrl,
+    withCredentials: true
+});
 function loginCheck(param, callback) {
-    const url = `${dataServerUrl}/api/user/v1/login`
-    axios.post(url, param)
+    const url = `${dataServerUrl}/user/login`
+    axiosInstance.post(url, param)
         .then(resp => {
             callback(resp)
         }, errResp => {
@@ -13,8 +18,8 @@ function loginCheck(param, callback) {
 }
 
 function registerAccount(param, callback) {
-    const url = `${dataServerUrl}/api/user/v1/register`
-    axios.post(url, param)
+    const url = `${dataServerUrl}/user/register`
+    axiosInstance.post(url, param)
         .then(resp => {
             callback(resp)
         }, errResp => {

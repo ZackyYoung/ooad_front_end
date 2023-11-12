@@ -4,7 +4,7 @@
       <va-icon name="account_circle"></va-icon>
       <va-input
           style="margin: 5px; text-align: left;"
-          v-model="form.campus_id"
+          v-model="form.campusId"
           :rules="[(v) => campusIdValidator(v)]"
           label="CAMPUS ID"
           placeholder="请输入校园号"
@@ -121,12 +121,14 @@ export default {
   },
   methods: {
     registerCheck() {
-      this.$store.dispatch("account/registerAccount");
-      if(this.accountValid) {
-        if (this.form.role === 'Teacher')
-          this.$router.push('/teacher')
-        else if (this.form.role === 'Student')
-          this.$router.push('/student')
+      if(this.$refs.registerForm.validate()) {
+        this.$store.dispatch("account/registerAccount");
+        if (this.accountValid) {
+          if (this.form.role === 'Teacher')
+            this.$router.push('/teacher')
+          else if (this.form.role === 'Student')
+            this.$router.push('/student')
+        }
       }
     }
   },

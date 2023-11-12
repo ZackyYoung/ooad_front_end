@@ -1,33 +1,33 @@
 import dataService from "../../service/dataService.js";
 const state = () =>({
-    form: {
-        "campus_id": "",
+    loginForm: {
+        "campusId": "",
+        "password": ""
+    },
+    registerForm: {
+        "campusId": "",
         "password": "",
         "role": "",
         "comfirmPassword": ""
     },
     accountValid: false,
+    accountRole: null,
     errorMsg: null
 })
 
 const actions = {
     loginCheck(context) {
-        dataService.loginCheck(context.state.form, resp => {
-            if (resp.data.code === 0) {
+        dataService.loginCheck(context.state.loginForm, resp => {
+            if (resp.status === 200) {
+                context.commit("updateRole", resp.data.role)
                 context.commit("changeAccountStatus", true)
             }
         })
     },
     registerAccount(context) {
         //console.log(context.state.form)
-        dataService.registerAccount({
-            "campus_id": context.state.form.campus_id,
-            "role": context.state.form.role,
-            "password": context.state.form.password,
-            "confirmPassword": context.state.form.confirmPassword,
-        }, resp => {
-            //console.log(resp)
-            if (resp.data.code === 0) {
+        dataService.registerAccount(context.state.registerForm, resp => {
+            if (resp.data.code === 200) {
                 context.commit("changeAccountStatus", true)
             } else {
                 context.state.errorMsg = resp.data.msg
@@ -39,9 +39,11 @@ const actions = {
 const mutations = {
     changeAccountStatus(state, status) {
         state.accountValid = status
+    },
+    updateRole(state, role){
+        state.accountRole = role
     }
 }
-
 export default {
     namespaced: true,
     state,

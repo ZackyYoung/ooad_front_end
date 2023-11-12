@@ -4,7 +4,7 @@
       <va-icon name="account_circle"></va-icon>
       <va-input
           style="margin: 5px; text-align: left;"
-          v-model="form.campus_id"
+          v-model="form.campusId"
           label="CAMPUS ID"
           placeholder="请输入校园号"
           :rules="[(value) => (value && value.length > 0) || 'Campus id is required']"
@@ -41,6 +41,7 @@
 </template>
 <script>
   import {mapState} from "vuex";
+  import account from "../store/model/account.js";
 
   export default {
     name: "login",
@@ -51,27 +52,26 @@
     },
     methods: {
       loginCheck(){
-        this.$store.dispatch("account/loginCheck")
-        if (!this.isWrongPassword) {
-          if(this.form.role === 'Teacher')
-            this.$router.push('/teacher')
-          else if(this.form.role === 'Student')
-            this.$router.push('/student')
+        if(this.$refs.loginForm.validate()) {
+          this.$store.dispatch("account/loginCheck")
+          if (!this.isWrongPassword) {
+            if(this.accountRole === "teacher")
+              this.$router.push('/teacher')
+            else this.$router.push('/student')
+          }
         }
       }
     },
     computed: {
       ...mapState("account", {
-        isWrongPassword: state => !state.accountValid
+        isWrongPassword: state => !state.accountValid,
+        accountRole: state => state.accountRole
       })
     },
     watch: {
       isWrongPassword() {
         if (!this.isWrongPassword) {
-          if(this.form.role === 'Teacher')
             this.$router.push('/teacher')
-          else if(this.form.role === 'Student')
-            this.$router.push('/student')
         }
       }
     }

@@ -17,8 +17,8 @@
             Register
           </va-tab>
         </va-tabs>
-        <login :form="computedForm" v-if="activeTab === 'Login' "/>
-        <register :form="computedForm" v-if="activeTab === 'Register' "/>
+        <login :form="loginForm" v-if="activeTab === 'Login' "/>
+        <register :form="registerForm" v-if="activeTab === 'Register' "/>
       </div>
       <div class="right-container">
         <va-image src="src/assets/dormitory.png"></va-image>
@@ -44,7 +44,8 @@
     },
     computed: {
       ...mapState("account", {
-        computedForm: state => state.form
+        registerForm: state => state.registerForm,
+        loginForm: state => state.loginForm
       })
     }
   }
