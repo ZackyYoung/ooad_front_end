@@ -8,9 +8,7 @@ import TeacherMain from "./view/TeacherMain.vue";
 export default {
   name: 'App',
   components: {
-    mainPage,
-    StudentMain,
-    TeacherMain
+    mainPage
   }
 }
 </script>
