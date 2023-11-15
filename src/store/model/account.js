@@ -6,9 +6,9 @@ const state = () =>({
     },
     registerForm: {
         "campusId": "",
-        "password": "",
         "role": "",
-        "comfirmPassword": ""
+        "password": "",
+        "confirmPassword": ""
     },
     accountValid: false,
     accountRole: null,
@@ -25,9 +25,9 @@ const actions = {
         })
     },
     registerAccount(context) {
-        //console.log(context.state.form)
         dataService.registerAccount(context.state.registerForm, resp => {
             if (resp.data.code === 200) {
+                context.commit("updateRole", resp.data.role)
                 context.commit("changeAccountStatus", true)
             } else {
                 context.state.errorMsg = resp.data.msg

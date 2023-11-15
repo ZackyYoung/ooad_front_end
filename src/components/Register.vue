@@ -15,7 +15,7 @@
       <va-select
           style="margin: 5px;text-align: left"
           v-model="form.role"
-          :rules="[(v) => v || 'Role is required']"
+          :rules="[(v) => (v && v.length > 0) || 'Role is required']"
           class="mb-6"
           label="Role"
           :options="role_options"
@@ -49,7 +49,7 @@
         <va-icon name="shield"></va-icon>
         <va-input
             style="margin: 5px; text-align: left"
-            v-model="form.comfirmPassword"
+            v-model="form.confirmPassword"
             :rules="[(v) => confirmPasswordValidator(v)]"
             :type="isPasswordVisible.value ? 'text' : 'password'"
             label="CONFIRM PASSWORD"
@@ -79,16 +79,7 @@ export default {
   name: "register",
   props: ['form'],
   data() {
-    const options = [
-      {
-        text: "Teacher",
-        value: "teacher"
-      },
-      {
-        text: "Student",
-        value: "student"
-      }
-    ]
+    const options = ["teacher", "student"]
     const campusIdValidator = (value) => {
       const re = /^[0-9]{8}$/;
       if (!value) {
@@ -124,16 +115,17 @@ export default {
       if(this.$refs.registerForm.validate()) {
         this.$store.dispatch("account/registerAccount");
         if (this.accountValid) {
-          if (this.form.role === 'Teacher')
+          alert("login successfully")
+          if (this.form.role === 'teacher')
             this.$router.push('/teacher')
-          else if (this.form.role === 'Student')
+          else if (this.form.role === 'student')
             this.$router.push('/student')
         }
       }
     }
   },
   computed: {
-    ...mapState("purchase", {
+    ...mapState("account", {
       accountValid: state => state.accountValid,
       errorMsg: state => state.errorMsg
     })
@@ -141,9 +133,9 @@ export default {
   watch: {
     accountValid() {
       if (this.accountValid) {
-        if(this.form.role === 'Teacher')
+        if (this.form.role === 'teacher')
           this.$router.push('/teacher')
-        else if(this.form.role === 'Student')
+        else if (this.form.role === 'student')
           this.$router.push('/student')
       }
     },

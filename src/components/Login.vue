@@ -55,9 +55,10 @@
         if(this.$refs.loginForm.validate()) {
           this.$store.dispatch("account/loginCheck")
           if (!this.isWrongPassword) {
-            if(this.accountRole === "teacher")
+            if (this.form.role === 'teacher')
               this.$router.push('/teacher')
-            else this.$router.push('/student')
+            else if (this.form.role === 'student')
+              this.$router.push('/student')
           }
         }
       }
@@ -71,7 +72,9 @@
     watch: {
       isWrongPassword() {
         if (!this.isWrongPassword) {
-            this.$router.push('/teacher')
+          if(this.accountRole === "student")
+            this.$router.push('/student')
+          else this.$router.push('/teacher')
         }
       }
     }
