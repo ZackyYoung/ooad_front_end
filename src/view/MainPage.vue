@@ -27,28 +27,17 @@
   </div>
 </template>
 
-<script>
-  import login from '../components/Login.vue'
-  import register from "../components/Register.vue";
-  import {mapState} from "vuex";
-  export default {
-    name: "mainPage",
-    data(){
-      return{
-        activeTab: "Login"
-      }
-    },
-    components:{
-      login,
-      register
-    },
-    computed: {
-      ...mapState("account", {
-        registerForm: state => state.registerForm,
-        loginForm: state => state.loginForm
-      })
-    }
-  }
+<script setup>
+import Login from "@/components/Login.vue";
+import Register from "@/components/Register.vue";
+import {useAccountStore} from "@/store/account.js";
+import {reactive, ref} from "vue";
+
+const accountStore = useAccountStore()
+const activeTab = ref("Login")
+const registerForm = accountStore.registerForm
+const loginForm = accountStore.loginForm
+
 </script>
 
 <style scoped>

@@ -72,75 +72,56 @@
   </va-form>
 </template>
 
-<script>
-import {mapState} from "vuex";
+<script setup>
+import {useAccountStore} from "@/store/account.js";
+import {readonly, ref, watch} from "vue";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "register",
-  props: ['form'],
-  data() {
-    const options = ["teacher", "student"]
-    const campusIdValidator = (value) => {
-      const re = /^[0-9]{8}$/;
-      if (!value) {
-        return 'Campus id is required';
-      }
-      if (!re.test(value)) {
-        return 'Campus id must be consists of 8 digits';
-      }
-    }
-    const passwordValidator = (value) => {
-      const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
-      if (!value) {
-        return 'Password is required';
-      }
-      if (!re.test(value)) {
-        return 'Password must contain figure and letter'
-      }
-    }
-    const confirmPasswordValidator = (value) => {
-      if (value !== this.form.password) {
-        return 'Different with the previous password'
-      }
-    }
-    return {
-      role_options: options,
-      campusIdValidator,
-      passwordValidator,
-      confirmPasswordValidator
-    }
-  },
-  methods: {
-    registerCheck() {
-      if(this.$refs.registerForm.validate()) {
-        this.$store.dispatch("account/registerAccount");
-        if (this.accountValid) {
-          alert("login successfully")
-          if (this.form.role === 'teacher')
-            this.$router.push('/teacher')
-          else if (this.form.role === 'student')
-            this.$router.push('/student')
-        }
-      }
-    }
-  },
-  computed: {
-    ...mapState("account", {
-      accountValid: state => state.accountValid,
-      errorMsg: state => state.errorMsg
-    })
-  },
-  watch: {
-    accountValid() {
-      if (this.accountValid) {
-        if (this.form.role === 'teacher')
-          this.$router.push('/teacher')
-        else if (this.form.role === 'student')
-          this.$router.push('/student')
-      }
-    },
+const accountStore = useAccountStore()
+const props = defineProps(['form'])
+const role_options = readonly(["teacher", "student"])
+const registerForm = ref(null)
+const router = useRouter()
+const campusIdValidator = (value) => {
+  const re = /^[0-9]{8}$/;
+  if (!value) {
+    return 'Campus id is required';
+  }
+  if(!re.test(value)) {
+    return 'Campus id must consist of 8 digits'
   }
 }
+const passwordValidator = (value) => {
+  const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
+  if (!value) {
+    return 'Password is required';
+  }
+  if (!re.test(value)) {
+    return 'Password must contain figure and letter'
+  }
+}
+
+const confirmPasswordValidator = (value) => {
+  if (value !== accountStore.registerForm.password) {
+    return 'Different with the previous password'
+  }
+}
+
+function registerCheck() {
+  if(registerForm.value.validate()){
+    accountStore.registerAccount()
+  }
+}
+
+watch(() => accountStore.accountValid, () => {
+  if(accountStore.accountValid){
+    alert("register successfully")
+    if (accountStore.accountRole === 'teacher')
+      router.push('/teacher')
+    else if (accountStore.accountRole === 'student')
+      router.push('/student')
+  }
+})
 </script>
 
 <style scoped>

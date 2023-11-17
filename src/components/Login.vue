@@ -39,46 +39,30 @@
     <div><va-button style="width: 250px;margin: 15px" @click="loginCheck">Log in</va-button></div>
   </va-form>
 </template>
-<script>
-  import {mapState} from "vuex";
-  import account from "../store/model/account.js";
+<script setup>
+import {useAccountStore} from "@/store/account.js";
+import {nextTick, ref, watch} from "vue";
+import {useRouter} from "vue-router";
 
-  export default {
-    name: "login",
-    props: ['form'],
-    data(){
-      return {
-      }
-    },
-    methods: {
-      loginCheck(){
-        if(this.$refs.loginForm.validate()) {
-          this.$store.dispatch("account/loginCheck")
-          if (!this.isWrongPassword) {
-            if (this.form.role === 'teacher')
-              this.$router.push('/teacher')
-            else if (this.form.role === 'student')
-              this.$router.push('/student')
-          }
-        }
-      }
-    },
-    computed: {
-      ...mapState("account", {
-        isWrongPassword: state => !state.accountValid,
-        accountRole: state => state.accountRole
-      })
-    },
-    watch: {
-      isWrongPassword() {
-        if (!this.isWrongPassword) {
-          if(this.accountRole === "student")
-            this.$router.push('/student')
-          else this.$router.push('/teacher')
-        }
-      }
-    }
+const accountStore = useAccountStore()
+const props = defineProps(['form'])
+const loginForm = ref(null)
+const router = useRouter()
+
+function loginCheck() {
+  if (loginForm.value.validate()) {
+    accountStore.loginCheck()
   }
+}
+
+watch(() => accountStore.accountValid, () => {
+  if (accountStore.accountValid) {
+    if (accountStore.accountRole === 'teacher')
+      router.push('/teacher')
+    else if (accountStore.accountRole === 'student')
+      router.push('/student')
+  }
+})
 </script>
 
 
