@@ -38,6 +38,21 @@
     </div>
     <div><va-button style="width: 250px;margin: 15px" @click="loginCheck">Log in</va-button></div>
   </va-form>
+  <va-modal
+      v-model="successDialog"
+      message="Login successfully"
+      ok-text="Confirm"
+      @ok="loginRoute"
+      size="small"
+      blur
+  />
+  <va-modal
+      v-model="failDialog"
+      :message="accountStore.errorMsg"
+      ok-text="Confirm"
+      size="small"
+      blur
+  />
 </template>
 <script setup>
 import {useAccountStore} from "@/store/account.js";
@@ -48,21 +63,31 @@ const accountStore = useAccountStore()
 const props = defineProps(['form'])
 const loginForm = ref(null)
 const router = useRouter()
-
-function loginCheck() {
+const successDialog = ref(false)
+const failDialog = ref(false)
+async function loginCheck() {
   if (loginForm.value.validate()) {
-    accountStore.loginCheck()
+    await accountStore.loginCheck()
+    if (accountStore.accountValid) {
+      successDialog.value = true
+    }
+    else failDialog.value = true
   }
 }
 
-watch(() => accountStore.accountValid, () => {
-  if (accountStore.accountValid) {
-    if (accountStore.accountRole === 'teacher')
-      router.push('/teacher')
-    else if (accountStore.accountRole === 'student')
-      router.push('/student')
-  }
-})
+// watch(() => accountStore.accountValid, () => {
+//   if (accountStore.accountValid) {
+//     successDialog.value = true
+//   }
+//   else failDialog.value = true
+// })
+
+function loginRoute () {
+  if (accountStore.accountRole === 'teacher')
+    router.push('/teacher')
+  else if (accountStore.accountRole === 'student')
+    router.push('/student')
+}
 </script>
 
 

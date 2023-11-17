@@ -70,6 +70,21 @@
       <va-button style="width: 250px;margin: 15px" @click="registerCheck">Register</va-button>
     </div>
   </va-form>
+  <va-modal
+      v-model="successDialog"
+      message="Register successfully"
+      ok-text="Confirm"
+      @ok="registerRoute"
+      size="small"
+      blur
+  />
+  <va-modal
+      v-model="failDialog"
+      :message="accountStore.errorMsg"
+      ok-text="Confirm"
+      size="small"
+      blur
+  />
 </template>
 
 <script setup>
@@ -82,6 +97,8 @@ const props = defineProps(['form'])
 const role_options = readonly(["teacher", "student"])
 const registerForm = ref(null)
 const router = useRouter()
+const successDialog = ref(false)
+const failDialog = ref(false)
 const campusIdValidator = (value) => {
   const re = /^[0-9]{8}$/;
   if (!value) {
@@ -107,21 +124,29 @@ const confirmPasswordValidator = (value) => {
   }
 }
 
-function registerCheck() {
+async function registerCheck() {
   if(registerForm.value.validate()){
-    accountStore.registerAccount()
-  }
+    await accountStore.registerAccount()
+    if(accountStore.accountValid){
+      successDialog.value = true
+    }
+    else failDialog.value = true
+    }
 }
 
-watch(() => accountStore.accountValid, () => {
-  if(accountStore.accountValid){
-    alert("register successfully")
-    if (accountStore.accountRole === 'teacher')
-      router.push('/teacher')
-    else if (accountStore.accountRole === 'student')
-      router.push('/student')
-  }
-})
+// watch(() => accountStore.accountValid, () => {
+//   if(accountStore.accountValid){
+//     successDialog.value = true
+//   }
+//   else failDialog.value = true
+// })
+
+function registerRoute () {
+  if (accountStore.accountRole === 'teacher')
+    router.push('/teacher')
+  else if (accountStore.accountRole === 'student')
+    router.push('/student')
+}
 </script>
 
 <style scoped>

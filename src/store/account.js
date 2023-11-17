@@ -10,17 +10,20 @@ export const useAccountStore = defineStore('account', () => {
         campusId: "",
         password: ""
     })
-    function loginCheck () {
-        dataService.loginCheck(loginForm, resp => {
-            if (resp.status === 200) {
-                accountRole.value = resp.data.role
-                accountValid.value = true
-            }
-            else{
-                accountValid.value = false
-                errorMsg.value = resp.data.msg
-            }
-        })
+async function loginCheck () {
+        return new Promise((resolve, reject) => {
+            dataService.loginCheck(loginForm, resp => {
+                if (resp.data.code === 0) {
+                    accountRole.value = resp.data.data.role
+                    accountValid.value = true
+                    resolve()
+                } else {
+                    accountValid.value = false
+                    errorMsg.value = resp.data.msg
+                    resolve()
+                }
+            });
+        });
     }
 
     const registerForm = reactive({
@@ -30,15 +33,19 @@ export const useAccountStore = defineStore('account', () => {
         confirmPassword: ""
     })
 
-    function registerAccount () {
-        dataService.registerAccount(registerForm, resp => {
-            if (resp.status === 200) {
-                accountRole.value = resp.data.role
-                accountValid.value = true
-            } else {
-                accountValid.value = false
-                errorMsg.value = resp.data.msg
-            }
+async function registerAccount () {
+        return new Promise((resolve, reject) => {
+            dataService.registerAccount(registerForm, resp => {
+                if (resp.data.code === 0) {
+                    accountRole.value = resp.data.data.role
+                    accountValid.value = true
+                    resolve()
+                } else {
+                    accountValid.value = false
+                    errorMsg.value = resp.data.msg
+                    resolve()
+                }
+            })
         })
     }
 
@@ -52,55 +59,3 @@ export const useAccountStore = defineStore('account', () => {
         registerAccount
     }
 })
-
-// const state = () =>({
-//     loginForm: {
-//         "campusId": "",
-//         "password": ""
-//     },
-//     registerForm: {
-//         "campusId": "",
-//         "role": "",
-//         "password": "",
-//         "confirmPassword": ""
-//     },
-//     accountValid: false,
-//     accountRole: null,
-//     errorMsg: null
-// })
-//
-// const actions = {
-//     loginCheck(context) {
-//         dataService.loginCheck(context.state.loginForm, resp => {
-//             if (resp.status === 200) {
-//                 context.commit("updateRole", resp.data.role)
-//                 context.commit("changeAccountStatus", true)
-//             }
-//         })
-//     },
-//     registerAccount(context) {
-//         dataService.registerAccount(context.state.registerForm, resp => {
-//             if (resp.data.code === 200) {
-//                 context.commit("updateRole", resp.data.role)
-//                 context.commit("changeAccountStatus", true)
-//             } else {
-//                 context.state.errorMsg = resp.data.msg
-//             }
-//         })
-//     },
-// }
-//
-// const mutations = {
-//     changeAccountStatus(state, status) {
-//         state.accountValid = status
-//     },
-//     updateRole(state, role){
-//         state.accountRole = role
-//     }
-// }
-// export default {
-//     namespaced: true,
-//     state,
-//     actions,
-//     mutations
-// }

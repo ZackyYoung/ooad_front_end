@@ -1,7 +1,7 @@
 import axios from 'axios'
 import app from "../App.vue";
 
-const dataServerUrl = "http://10.24.176.129:8082";
+const dataServerUrl = "http://10.32.60.95:8082";
 
 const axiosInstance = axios.create({
     baseURL: dataServerUrl,
