@@ -5,7 +5,7 @@ import {reactive, ref} from "vue";
 export const useAccountStore = defineStore('account', () => {
     const accountValid = ref(false)
     const accountRole = ref(null)
-    const errorMsg = ref(null)
+    const msg = ref("")
     const loginForm = reactive({
         campusId: "",
         password: ""
@@ -19,7 +19,7 @@ async function loginCheck () {
                     resolve()
                 } else {
                     accountValid.value = false
-                    errorMsg.value = resp.data.msg
+                    msg.value = resp.data.msg
                     resolve()
                 }
             });
@@ -42,20 +42,46 @@ async function registerAccount () {
                     resolve()
                 } else {
                     accountValid.value = false
-                    errorMsg.value = resp.data.msg
+                    msg.value = resp.data.msg
                     resolve()
                 }
             })
         })
     }
-
+    const editPasswordForm = reactive({
+        oldPasswd: "",
+        newPasswd: "",
+        newPasswdConfirm: ""
+    })
+async function editPassword () {
+        return new Promise((resolve, reject) => {
+            dataService.editPassword({
+                campusId: loginForm.campusId,
+                oldPassword: editPasswordForm.oldPasswd,
+                newPassword: editPasswordForm.newPasswd
+            },resp => {
+                if(resp.data.code === 0)
+                {
+                    msg.value = "Edit password successfully!"
+                    resolve()
+                }
+                else
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
+}
     return {
         accountValid,
         accountRole,
-        errorMsg,
+        msg,
         loginForm,
         loginCheck,
         registerForm,
-        registerAccount
+        registerAccount,
+        editPasswordForm,
+        editPassword
     }
 })

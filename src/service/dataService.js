@@ -26,7 +26,18 @@ function registerAccount(param, callback) {
             console.log(errResp)
         })
 }
+
+function editPassword(param, callback) {
+    const url = `${dataServerUrl}/user/updatePassword`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
-    registerAccount
+    registerAccount,
+    editPassword
 }

@@ -76,14 +76,12 @@
       ok-text="Confirm"
       @ok="registerRoute"
       size="small"
-      blur
   />
   <va-modal
       v-model="failDialog"
-      :message="accountStore.errorMsg"
+      :message="accountStore.msg"
       ok-text="Confirm"
       size="small"
-      blur
   />
 </template>
 
@@ -119,6 +117,9 @@ const passwordValidator = (value) => {
 }
 
 const confirmPasswordValidator = (value) => {
+  if (!value) {
+    return 'You should confirm your password'
+  }
   if (value !== accountStore.registerForm.password) {
     return 'Different with the previous password'
   }

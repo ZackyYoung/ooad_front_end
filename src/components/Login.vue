@@ -44,14 +44,12 @@
       ok-text="Confirm"
       @ok="loginRoute"
       size="small"
-      blur
   />
   <va-modal
       v-model="failDialog"
-      :message="accountStore.errorMsg"
+      :message="accountStore.msg"
       ok-text="Confirm"
       size="small"
-      blur
   />
 </template>
 <script setup>

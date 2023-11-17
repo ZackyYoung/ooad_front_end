@@ -4,9 +4,33 @@
       <va-card-title style="font-size: 1rem" class="passwd-card__title">修改密码</va-card-title>
       <va-card-content class="passwd-card__content">
         <va-form class="flex flex-col items-baseline gap-6"
-                 ref="formRef"
+                 ref="editPasswordForm"
                  :model="form"
         >
+          <div>
+            <va-value v-slot="isPasswordVisible"
+                      :default-value="false"
+            >
+              <va-icon name="key"></va-icon>
+              <va-input
+                  style="margin: 5px; text-align: left"
+                  v-model="form.oldPasswd"
+                  :type="isPasswordVisible.value ? 'text' : 'password'"
+                  label='Old Password'
+                  placeholder='请输入旧密码'
+                  :rules="[v => validateOld(v)]"
+                  @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
+              >
+                <template #appendInner>
+                  <va-icon
+                      :name="isPasswordVisible.value ? 'visibility_off' : 'visibility'"
+                      size="small"
+                      color="primary"
+                  />
+                </template>
+              </va-input>
+            </va-value>
+          </div>
           <div>
             <va-value v-slot="isPasswordVisible"
                       :default-value="false"
@@ -16,7 +40,7 @@
                   style="margin: 5px; text-align: left"
                   v-model="form.newPasswd"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='新密码'
+                  label='New Password'
                   placeholder='请输入新密码'
                   :rules="[v => validateNew(v)]"
                   @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
@@ -35,12 +59,12 @@
             <va-value v-slot="isPasswordVisible"
                       :default-value="false"
             >
-              <va-icon name="lock"></va-icon>
+              <va-icon name="shield"></va-icon>
               <va-input
                   style="margin: 5px; text-align: left"
                   v-model=form.newPasswdConfirm
                   :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='确认新密码'
+                  label='Confirm New Password'
                   placeholder='请确认新密码'
                   :rules="[v => validateConfirm(v)]"
                   @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
@@ -55,149 +79,68 @@
               </va-input>
             </va-value>
           </div>
+
           <div>
-            <va-value v-slot="isPasswordVisible"
-                      :default-value="false"
-            >
-              <va-icon name="key"></va-icon>
-              <va-input
-                  style="margin: 5px; text-align: left"
-                  v-model="form.oldPasswd"
-                  :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='旧密码'
-                  placeholder='请输入旧密码'
-                  :rules="[v => validateOld(v)]"
-                  @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
-              >
-                <template #appendInner>
-                  <va-icon
-                      :name="isPasswordVisible.value ? 'visibility_off' : 'visibility'"
-                      size="small"
-                      color="primary"
-                  />
-                </template>
-              </va-input>
-            </va-value>
-          </div>
-          <div>
-            <va-button style="width: 250px;margin: 15px" @click="validate() && submit()">确认修改</va-button>
+            <va-button style="width: 250px;margin: 15px" @click="editPassword()">Confirm</va-button>
           </div>
         </va-form>
       </va-card-content>
     </va-card>
+    <va-modal
+        v-model="edited"
+        :message="accountStore.msg"
+        ok-text="Confirm"
+        size="small"
+    />
   </div>
 </template>
-<script setup lang="ts">
-import {computed, reactive, watch} from "vue";
+<script setup>
+import {computed, reactive, ref, watch} from "vue";
 import {useForm} from 'vuestic-ui'
+import {useAccountStore} from "@/store/account.js";
+import {storeToRefs} from "pinia";
 
-const {isValid, validate, resetValidation} = useForm('formRef')
-// const items = computed(() => [
-//   {
-//     label: '旧密码',
-//     placeholder: '请输入旧密码',
-//     visible: false,
-//     model: form.oldPasswd
-//   },
-//   {
-//     label: '新密码',
-//     placeholder: '请输入新密码',
-//     visible: false,
-//     model: form.newPasswd
-//   },
-//   {
-//     label: '确认新密码',
-//     placeholder: '请确认新密码',
-//     visible: false,
-//     model: form.newPasswdConfirm
-//   }
-// ]);
-
-const form = reactive({
-  oldPasswd: '',
-  newPasswd: '',
-  newPasswdConfirm: ''
-})
-
-const validateOld = (value: string) => {
-  if (value === '') {
-    return '旧密码不能为空'
-  } else {
+const accountStore = useAccountStore()
+const edited = ref(false)
+const form = accountStore.editPasswordForm
+const editPasswordForm = ref(null)
+const validateOld = (value) => {
+  const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
+  if (!value) {
+    return 'Old password is required';
   }
-};
+}
 
-const validateNew = (value: string) => {
-  resetValidation()
-  if (value === '') {
-    return '新密码不能为空'
-  } else {
-    if (form.newPasswdConfirm !== '') {
-    }
+const validateNew = (value) => {
+  const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
+  if (!value) {
+    return 'New password is required';
   }
-};
-
-const validateConfirm = (value: string) => {
-  if (value === '') {
-    return '请确认密码'
-  } else if (value !== form.newPasswd) {
-    return '两次密码输入不一致！'
-  } else {
+  if (!re.test(value)) {
+    return 'Password must contain figure and letter'
   }
-};
+  if (value === accountStore.editPasswordForm.oldPasswd) {
+    return 'New password are the same as old password'
+  }
+}
 
-const rules = reactive({
-  oldPasswd: [{validator: validateOld, trigger: 'change'}],
-  newPasswd: [{validator: validateNew, trigger: 'change'}],
-  newPasswdConfirm: [{validator: validateConfirm, trigger: 'change'}],
-});
-const submit = () => {
-  console.log('submit')
-};
-// name: "login",
-//           props: ['form'],
-//           setup(props) {
-//         const store = useStore();
-//         const router = useRouter();
-//
-//         const isWrongPassword = computed(() => !store.state.accountValid);
-//
-//         const loginCheck = () => {
-//           store.dispatch("account/loginCheck");
-//           if (!isWrongPassword.value) {
-//             if (props.form.role === 'Teacher')
-//               router.push('/teacher');
-//             else if (props.form.role === 'Student')
-//               router.push('/student');
-//           }
-//         };
-//
-//         watch(isWrongPassword, (newValue) => {
-//           if (!newValue) {
-//             if (props.form.role === 'Teacher')
-//               router.push('/teacher');
-//             else if (props.form.role === 'Student')
-//         router.push('/student');
-//     }
-//   });
-//
-//   return {
-//     isWrongPassword,
-//     loginCheck
-//   };
-// }
+const validateConfirm = (value) => {
+  if (!value) {
+    return 'You should confirm your password'
+  }
+  if (value !== accountStore.editPasswordForm.newPasswd) {
+    return 'Different with the previous password'
+  }
+}
 
-// const save = async () => {
-//
-//   await formRef.value.validate()
-//   const result = await reqAddOrUpdateUser(userParams)
-//   if (result.code == 200) {
-//     ElMessage({
-//       type: 'success',
-//       message: userParams.id ? '更新成功' : '新增成功',
-//     })
-//     showDrawer.value = false
-//   }
-// }
+
+async function editPassword () {
+  if(editPasswordForm.value.validate())
+  {
+    await accountStore.editPassword()
+    edited.value = true
+  }
+}
 
 </script>
 

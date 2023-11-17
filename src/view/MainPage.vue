@@ -51,7 +51,7 @@ const loginForm = accountStore.loginForm
 .mid-container {
   display: flex;
   border-radius: 20px;
-  height: 75%;
+  height: 78%;
   width: 80%;
   position: absolute;
   top: 50%;
