@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
-import StudentSideBar from "@/components/student/StudentSideBar.vue";
+import SideBar from "@/components/SideBar.vue";
 import StudentInfo from "@/components/student/StudentInfo.vue";
 import StudentEditPasswd from "@/components/student/center/StudentEditPasswd.vue";
+
 import {ref} from "vue";
 
 
@@ -31,11 +32,11 @@ function updateOption(option: string) {
 
 <template>
   <div class="center-wrapper">
-    <student-header class="header"/>
+    <StudentHeader class="header"/>
     <div class="center-container">
-      <StudentSideBar :sidebar-items="center_sidebar_items" @updateOption="updateOption" class="sidebar"/>
+      <SideBar :sidebar-items="center_sidebar_items" @updateOption="updateOption" class="sidebar"/>
       <div class="center-content">
-        <StudentInfo :student-info="s1" v-if="centerActiveOption==='我的资料'"/>
+        <StudentInfo v-bind="s1" v-if="centerActiveOption==='我的资料'"/>
         <StudentEditPasswd v-if="centerActiveOption==='修改密码'"/>
       </div>
     </div>

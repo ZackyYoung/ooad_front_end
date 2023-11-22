@@ -4,7 +4,7 @@
       <div class="container" @click="toMain">
         <va-image class="logo" :src="logoName"/>
         <p class="title">
-          研究生宿舍选择系统
+          研究生宿舍选择管理端
         </p>
       </div>
     </div>
@@ -13,7 +13,7 @@
     </div>
     <div class="right">
       <p class="welcome">
-        欢迎，{{ userinfo.name }}
+        欢迎，管理员：{{ userinfo.name }}
       </p>
       <va-button
           v-for="(link, index) in links"
@@ -40,17 +40,12 @@ import logoName from '@/assets/images/logo_name.png'
 
 const userinfo = reactive(
     {
-      name: "Susu",
-      sid: 12110000
+      name: "管理员1",
+      sid: 10086
     }
 );
 
 const links = computed(() => [
-  {
-    text: '广场',
-    icon: 'local_mall',
-    to: '',
-  },
   {
     text: '个人中心',
     icon: 'account_circle',
@@ -58,13 +53,13 @@ const links = computed(() => [
     target: '_blank',
   },
   {
-    text: '我的队伍',
-    icon: 'group',
+    text: '学生管理',
+    icon: 'groups_3',
     to: '',
   },
   {
-    text: '消息通知',
-    icon: 'notifications',
+    text: '选房管理',
+    icon: 'holiday_village',
     to: '',
   },
 ])

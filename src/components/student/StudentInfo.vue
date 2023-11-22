@@ -4,9 +4,14 @@ import {computed, ref} from "vue";
 import {reactive} from "vue";
 
 const props = defineProps<{
-  studentInfo: StudentInfo
+  sid: number
+  name: string
+  gender: number
+  degree: number
+  major: string
+  intro: string | null
 }>()
-const studentInfo = reactive(props.studentInfo)
+const studentInfo = reactive(props)
 
 </script>
 

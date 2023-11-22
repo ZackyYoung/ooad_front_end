@@ -1,130 +1,259 @@
-<script setup lang="ts">
-import {computed, defineComponent, reactive, ref} from "vue";
-import {TeamInfo} from "@/utils/types/type";
-
-const defaultItem = {
-  name: "",
-  username: "",
-  email: "",
-};
-
-const props = defineProps<{
-  teamInfo: TeamInfo
-}>()
-
-
-//TODO:
-const user = 12110000
-const teamInfo = reactive(props.teamInfo)
-
-const creator = ref(teamInfo.creator_id)
-const members = teamInfo.members.map(member => ({
-  sid: member.sid,
-  name: member.name
-}));
-
-const columns = [
-  {key: "姓名"},
-  {key: "学号"},
-  {key: "操作"},
-];
-
-
-let editedItemId = ref(-1);
-let editedItem = ref(-1);
-let createdItem = reactive({...defaultItem});
-
-// const
-//     isNewData = computed(() => {
-//       return Object.keys(createdItem).every(
-//           (key) => !!createdItem[key]
-//       );
-//     })
-//
-// function resetEditedItem() {
-//   editedItem.value = -1;
-//   editedItemId.value = -1;
-// }
-//
-// function resetCreatedItem() {
-//   createdItem = reactive({...defaultItem});
-// }
-//
-//
-// function deleteItemById(id: number) {
-//   items = [...items.slice(0, id), ...items.slice(id + 1)];
-// }
-//
-// function addNewItem() {
-//   items = [...items, {...createdItem}];
-//   resetCreatedItem();
-// }
-//
-// function editItem() {
-//   items = [
-//     ...items.slice(0, editedItemId.value),
-//     {...editedItem},
-//     ...items.slice(editedItemId.value + 1),
-//   ];
-//   resetEditedItem();
-// }
-//
-// function openModalToEditItemById(id: number) {
-//   editedItemId.value = id;
-//   editedItem.value = {...items[id]};
-// }
-</script>
-
 <template>
-  <div class="va-table-responsive">
-    <table class="va-table va-table--clickable va-table--striped">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Sid</th>
-        <th v-if="teamInfo.creator_id===user">Option</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr
-          v-for="member in members"
-          :key="member.sid"
-      >
-        <td>{{ member.name }}</td>
-        <td>{{ member.sid }}</td>
-        <td v-if="teamInfo.creator_id===user">
+  <div class="team-manager-container">
+    <va-card class="team-manager-card">
+      <div class="team-info">
+        <va-data-table
+            :items="teamMembers.value"
+            :columns="columns"
+        >
+          <template #cell(feature)="{ row }">
+            <div v-if="is_creator">
+              <div v-if="creator_id!==row.rowData.sid">
+                <va-button
+                    round
+                    class="mr-2 mb-2"
+                    color="secondary"
+                    @click="selectedMemberIndex=row.initialIndex; showModalConfirmTransfer = true;"
+                >
+                  转让
+                </va-button>
+                <va-button
+                    round
+                    class="mr-2 mb-2"
+                    color="danger"
+                    @click="selectedMemberIndex=row.initialIndex; showModalConfirmRemove = true;"
+                >
+                  移除
+                </va-button>
+                <va-modal
+                    class="modal-crud"
+                    v-model="showModalConfirmTransfer"
+                    close-button
+                    :message=transferMessage
+                    ok-text="确认转让"
+                    title="Confirm Transfer?"
+                    @ok="transferAndSubmit"
+                />
+                <va-modal
+                    class="modal-crud"
+                    v-model="showModalConfirmRemove"
+                    close-button
+                    :message=removeMessage
+                    ok-text="确认移除"
+                    title="Confirm Remove?"
+                    @ok="removeAndSubmit"
+                />
+              </div>
+              <div v-else>
+                <va-chip
+                    class="mr-3 mb-2"
+                    color="primary"
+                >
+                  队长
+                </va-chip>
+              </div>
+            </div>
+
+            <div v-else>
+              <va-chip
+                  class="mr-3 mb-2"
+                  color="primary"
+                  v-if="row.rowData.sid===creator_id"
+              >
+                队长
+              </va-chip>
+              <va-chip
+                  class="mr-3 mb-2"
+                  color="secondary"
+                  v-if="row.rowData.sid!==creator_id"
+              >
+                成员
+              </va-chip>
+            </div>
+          </template>
+        </va-data-table>
+      </div>
+
+      <div class="invite-exit flex">
+        <div class="invite">
           <va-button
-              class="mr-3 mb-2"
-              color="danger"
+              class="mr-2 mb-2"
+              color="primary"
+              @click="showInvite=true"
           >
-            移除
+            邀请成员
           </va-button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+          <va-button
+              class="mr-2 mb-2"
+              color="primary"
+              @click="showInviteList=true"
+          >
+            邀请列表
+          </va-button>
+        </div>
+
+        <div class="exit-delete">
+          <div class="delete-team" v-if="is_creator">
+            <va-button
+                class="mr-2 mb-2"
+                color="danger"
+                @click="showModalConfirmDeleteTeam=true"
+            >
+              解散群组
+            </va-button>
+            <va-modal
+                class="modal-crud"
+                v-model="showModalConfirmDeleteTeam"
+                close-button
+                message="这将解散当前群组，确定吗？"
+                ok-text="确认解散"
+                title="Confirm Delete?"
+                @ok="deleteTeamAndSubmit"
+            />
+          </div>
+          <div class="exit-team" v-else>
+            <va-button
+                class="mr-2 mb-2"
+                color="danger"
+                @click="showModalConfirmExitTeam=true"
+            >
+              退出群组
+            </va-button>
+            <va-modal
+                class="modal-crud"
+                v-model="showModalConfirmExitTeam"
+                close-button
+                message="这将退出当前群组，确定吗？"
+                ok-text="确认退出"
+                title="Confirm Exit?"
+                @ok="exitTeamAndSubmit"
+            />
+          </div>
+        </div>
+      </div>
+      <va-modal
+          v-model="showInviteList"
+          max-height="600px"
+      >
+        <div>
+          <MemberInvitation
+              :invitation-infos=inv1
+          />
+        </div>
+      </va-modal>
+    </va-card>
   </div>
-
-
-<!--  <va-modal-->
-<!--      class="modal-crud"-->
-<!--      :model-value="editedItem!==-1"-->
-<!--      title="Edit item"-->
-<!--      size="small"-->
-<!--      @ok="editItem"-->
-<!--      @cancel="resetEditedItem"-->
-<!--  >-->
-<!--  </va-modal>-->
 </template>
 
-<style lang="scss" scoped>
-.va-table-responsive {
-  overflow: auto;
+
+<script setup lang="ts">
+import MemberInvitation from "@/components/student/team/MemberInvitation.vue";
+
+import {computed, defineComponent, reactive, ref, toRef} from "vue";
+import {InvitationInfoType, TeamInfoType} from "@/utils/types/type";
+import {useTeamStore} from "@/store/team.js";
+import {storeToRefs} from "pinia";
+
+const teamStore = useTeamStore();
+const {creator_id, cur_user_id} = storeToRefs(teamStore);
+
+const teamMembers = reactive(teamStore.teamMembers);
+const is_creator = computed(() => teamStore.is_creator);
+
+
+const columns = [
+  {key: "name", label: "姓名"},
+  {key: "sid", label: "学号"},
+  {key: "feature", label: "功能"}
+];
+
+const inv1: InvitationInfoType[] = [
+  {
+    name: "新人想进1",
+    sid: 12112000,
+    is_invitation: false,
+  },
+  {
+    name: "邀请了xx",
+    sid: 12112001,
+    is_invitation: true
+  }
+]
+
+const selectedMemberIndex = ref(0);
+
+const showInvite = ref(false);
+const showInviteList = ref(false);
+const showModalConfirmTransfer = ref(false);
+const showModalConfirmRemove = ref(false);
+const showModalConfirmExitTeam = ref(false);
+const showModalConfirmDeleteTeam = ref(false);
+
+const transferMessage = computed(() => {
+  return "确认要把队长转让给：" + teamMembers.value[selectedMemberIndex.value].name;
+})
+
+function transferAndSubmit() {
+  teamStore.transOwner(teamMembers.value[selectedMemberIndex.value].sid);
+  selectedMemberIndex.value = 0;
+
+
 }
 
-.modal-crud {
-  .va-input {
-    display: block;
+
+const removeMessage = computed(() => {
+  return "这会从队伍中移除：" + teamMembers.value[selectedMemberIndex.value].name
+})
+
+function removeAndSubmit() {
+  teamStore.removeMember(teamMembers.value[selectedMemberIndex.value].sid);
+  selectedMemberIndex.value = 0;
+
+}
+
+function deleteTeamAndSubmit() {
+
+}
+
+function exitTeamAndSubmit() {
+  teamStore.exitTeam();
+
+}
+
+
+</script>
+
+<style lang="scss" scoped>
+.team-manager-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  text-align: center;
+}
+
+.team-manager-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .team-info {
+    overflow: auto;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 1rem;
+  }
+
+  .modal-crud {
+    .va-input {
+      display: block;
+    }
+  }
+
+  .invite-exit {
+    display: flex;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 1rem;
   }
 }
+
 </style>

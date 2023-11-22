@@ -1,18 +1,24 @@
 <script setup lang="ts">
-import {TeamInfo} from "@/utils/types/type";
-import {reactive} from "vue";
+import {TeamInfoType} from "@/utils/types/type";
+import {reactive, toRef} from "vue";
 import StudentInfo from "@/components/student/StudentInfo.vue";
+import {useTeamStore} from "@/store/team.js";
 
-const props = defineProps<{
-  teamInfo: TeamInfo
-}>()
+const teamStore = useTeamStore();
 
-const teamInfo = reactive(props.teamInfo)
+const members = toRef(teamStore.teamMembers);
 </script>
 
 <template>
-  <div class="team-info-container flex flex-col items-baseline gap-6" v-for="member in teamInfo.members">
-    <StudentInfo :student-info="member"/>
+  <div class="team-info-container flex flex-col items-baseline gap-6" v-for="member in members.value">
+    <StudentInfo
+        :sid="member.sid"
+        :name="member.name"
+        :degree="member.degree"
+        :gender="member.gender"
+        :major="member.major"
+        :intro="member.intro"
+    />
   </div>
 </template>
 

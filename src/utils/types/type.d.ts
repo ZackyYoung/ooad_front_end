@@ -7,16 +7,23 @@ export class StudentInfo {
     intro: string
 }
 
-export class TeamInfo {
+export class TeamInfoType {
     team_id: number
     creator_id: number
     members: StudentInfo[]
 }
 
-export class SidebarItem{
+export class InvitationInfoType {
+    sid: number
+    name: string
+    is_invitation: boolean
+}
+
+export class SidebarItemType {
     title: string
     icon: string
 }
+
 export class EditPasswdForm {
     sid: number
     oldPasswd: number

@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import MainPage from '../view/MainPage.vue';
-import StudentCenterPage from "../view/StudentCenterPage.vue";
-import TeacherMain from "../view/TeacherMain.vue";
+import MainPage from '@/view/MainPage.vue';
+import StudentCenterPage from "@/view/StudentCenterPage.vue";
+import TeacherUserManagePage from "@/view/TeacherUserManagePage.vue";
 
 const routes = [
     {
@@ -17,7 +17,7 @@ const routes = [
     {
         path: '/teacher',
         name: 'TeacherMain',
-        component: TeacherMain
+        component: TeacherUserManagePage
     }
 ];
 

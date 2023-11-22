@@ -38,10 +38,10 @@
 
 <script setup lang="ts">
 import {ref, defineEmits, readonly} from "vue";
-import {SidebarItem} from "@/utils/types/type";
+import {SidebarItemType} from "@/utils/types/type";
 
 const props = defineProps<{
-  sidebarItems: SidebarItem[]
+  sidebarItems: SidebarItemType[]
 }>()
 const items = readonly(props.sidebarItems)
 const activeElement = ref(items[0].title);

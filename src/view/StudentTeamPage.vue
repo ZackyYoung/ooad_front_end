@@ -2,49 +2,14 @@
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import TeamInfo from "@/components/student/TeamInfo.vue";
-import StudentSideBar from "@/components/student/StudentSideBar.vue";
+import SideBar from "@/components/SideBar.vue";
 import StudentEditPasswd from "@/components/student/center/StudentEditPasswd.vue";
 import {ref} from "vue";
 import MemberManage from "@/components/student/team/MemberManage.vue";
+import {useTeamStore} from "@/store/team";
+import {storeToRefs} from "pinia";
 
-const t1 = {
-  team_id: 1,
-  creator_id: 12110001,
-  members: [
-    {
-      sid: 12110000,
-      name: '苏苏',
-      gender: 2,
-      degree: 2021,
-      major: '计算机科学与工程系',
-      intro: '大家好'
-    },
-    {
-      sid: 12110001,
-      name: '南小科',
-      gender: 1,
-      degree: 2022,
-      major: '电子系',
-      intro: '大家坏'
-    },
-    {
-      sid: 12110002,
-      name: '玉群',
-      gender: 1,
-      degree: 2020,
-      major: '软件工程',
-      intro: '不想写ooad'
-    },
-    {
-      sid: 12110003,
-      name: '坤坤',
-      gender: 1,
-      degree: 2022,
-      major: '物理系',
-      intro: '开学了啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊'
-    },
-  ],
-}
+
 const team_sidebar_items = [
   {title: "队伍资料", icon: "group"},
   {title: "成员管理", icon: "group_add"},
@@ -53,6 +18,9 @@ const team_sidebar_items = [
 
 const centerActiveOption = ref(team_sidebar_items[0].title);
 
+const teamStore = useTeamStore();
+const {user_has_team} = storeToRefs(teamStore);
+
 function updateOption(option: string) {
   centerActiveOption.value = option;
 }
@@ -60,12 +28,39 @@ function updateOption(option: string) {
 
 <template>
   <div class="team-wrapper">
-    <student-header class="header"/>
+    <StudentHeader class="header"/>
     <div class="team-container">
-      <StudentSideBar :sidebar-items="team_sidebar_items" @updateOption="updateOption" class="sidebar"/>
-      <div class="team-content">
-        <TeamInfo :team-info="t1" v-if="centerActiveOption==='队伍资料'"/>
-        <MemberManage :team-info="t1" v-if="centerActiveOption==='成员管理'"/>
+      <SideBar :sidebar-items="team_sidebar_items" @updateOption="updateOption" class="sidebar"/>
+      <div class="team-content" v-if="user_has_team">
+        <TeamInfo v-if="centerActiveOption==='队伍资料'"/>
+        <MemberManage v-if="centerActiveOption==='成员管理'"/>
+      </div>
+      <div class="no-team" v-else>
+        <div class="no-team-container">
+          <va-card style="padding: 5rem">
+            <p
+                style="font-size: 2rem; margin: 1rem"
+            >
+              您还没有任何队伍
+            </p>
+            <div>
+              <va-button
+                  class="mr-3 mb-3"
+                  @click="teamStore.createTeam"
+              >
+                创建队伍
+                <va-icon class="ml-1" name="add_circle"/>
+              </va-button>
+              <va-button
+                  class="mr-3 mb-3"
+                  @click=""
+              >
+                寻找队友
+                <va-icon class="ml-1" name="person_search"/>
+              </va-button>
+            </div>
+          </va-card>
+        </div>
       </div>
     </div>
   </div>
@@ -97,8 +92,24 @@ function updateOption(option: string) {
     }
 
     .team-content {
-    //float: right; flex-grow: 1; flex-shrink: 1; height: 100%;
+      float: right;
+      flex-grow: 1;
+      flex-shrink: 1;
+      height: 100%;
+    }
+
+    .no-team {
+      float: right;
+      flex-grow: 1;
+      flex-shrink: 1;
+
+      .no-team-container {
+        padding: 0.5rem 1rem;
+        text-align: center;
+      }
     }
   }
+
+
 }
 </style>
