@@ -7,6 +7,7 @@ import {ref} from "vue";
 import MemberManage from "@/components/student/team/MemberManage.vue";
 import TeacherHeader from "@/components/teacher/TeacherHeader.vue";
 import CreateUser from "@/components/teacher/UserManage/CreateUser.vue";
+import EditUser from "@/components/teacher/UserManage/EditUser.vue";
 
 
 const team_sidebar_items = [
@@ -28,7 +29,7 @@ function updateOption(option: string) {
       <SideBar :sidebar-items="team_sidebar_items" @updateOption="updateOption" class="sidebar"/>
       <div class="user-manage-content">
         <CreateUser v-if="centerActiveOption==='创建学生'"/>
-        <MemberManage v-if="centerActiveOption==='成员管理'"/>
+        <EditUser v-if="centerActiveOption==='编辑学生'"/>
       </div>
     </div>
   </div>
