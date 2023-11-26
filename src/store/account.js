@@ -91,16 +91,16 @@ async function editPassword () {
         })
 }
 
-async function createStudent(studentId) {
+async function createStudent(form) {
     return new Promise((resolve, reject) => {
         dataService.registerAccount({
-            campusId: studentId,
+            campusId: form.studentId,
             role: "student",
             password: "123456",
             confirmPassword: "123456"
         }, async resp => {
             if (resp.data.code === 0) {
-                await updateStudent()
+                await updateStudent(form)
                 msg.value = "Create student account successfully"
                 resolve()
             } else {
@@ -111,9 +111,9 @@ async function createStudent(studentId) {
     })
 }
 
-async function updateStudent(){
+async function updateStudent(form){
     return new Promise((resolve, reject) => {
-        dataService.updateStudent(studentInformationForm, resp => {
+        dataService.updateStudent(form, resp => {
             if (resp.data.code === 0) {
                 msg.value = "Update student information successfully"
                 resolve()

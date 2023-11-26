@@ -9,9 +9,14 @@
             v-model="info_file"
             style="margin:1rem;"
             dropzone
-            file-types="csv"
-            dropZoneText="上传学生信息文件（.csv）"
+            file-types="xlsx"
+            dropZoneText="上传学生信息文件（.xlsx）"
         />
+        <div style="text-align: center">
+          <va-button @click="file_import(info_file[0])">
+            确认提交
+          </va-button>
+        </div>
       </div>
       <div class="input-info">
         <p class="my-title">
@@ -54,7 +59,7 @@
           />
         </va-form>
         <div class="form_b">
-          <va-button class="save-button" :disabled="!isValid" @click="validate() && submit()">
+          <va-button class="save-button" :disabled="!isValid" @click="validate() && createStudent(form)">
             提交信息
           </va-button>
         </div>
@@ -75,12 +80,18 @@
 import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
 import {useAccountStore} from "@/store/account.js";
-
+import * as XLSX from 'xlsx';
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
 const accountStore = useAccountStore()
-const info_file = ref([])
 
-const form = accountStore.studentInformationForm
+const form = reactive({
+  studentId: "",
+  name: null,
+  gender: null,
+  degree: null,
+  major: null,
+  info: null
+})
 
 const campusIdValidator = (value) => {
   const re = /^[0-9]{8}$/;
@@ -118,11 +129,45 @@ const degree_options = readonly(["硕士生", "博士生"])
 // }
 
 const dialogVisible = ref(false)
-async function submit() {
-  await accountStore.createStudent(accountStore.studentInformationForm.studentId)
+async function createStudent(form) {
+  await accountStore.createStudent(form)
   dialogVisible.value = true
 }
+const info_file = ref([])
+async function file_import(file)
+{
+  const fileReader = new FileReader();
 
+  fileReader.onload = async (event) => {
+    const arrayBuffer = event.target.result;
+
+    // 将 Array Buffer 转换为工作簿对象
+    const workbook = XLSX.read(arrayBuffer, {type: 'array'});
+
+    // 获取第一个工作表
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    // 将工作表转换为 JSON 数据
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+    const headers = jsonData[0];
+
+    // 构建带属性的 JSON
+    const result = jsonData.slice(1).map((row) => {
+      const obj = {}
+      headers.forEach((header, index) => {
+        obj[header] = row[index] || null
+      })
+      return obj
+    });
+    for (const item of result) {
+      await createStudent(item)
+    }
+
+  };
+
+  fileReader.readAsArrayBuffer(file);
+}
 </script>
 
 <style lang="scss" scoped>
