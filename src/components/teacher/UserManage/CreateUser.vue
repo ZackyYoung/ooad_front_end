@@ -20,8 +20,7 @@
 
         <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
           <va-input
-              v-model="form.sid"
-              value:
+              v-model="form.studentId"
               :rules="[(v) => campusIdValidator(v)]"
               label="学号"
               placeholder="请输入学生学号"
@@ -34,24 +33,24 @@
           <div>
             <span class="va-title">性别</span>
             <va-option-list
-                v-model="form.gender"
-                :options="gender_option"
-                type="radio"
+              v-model="form.gender"
+              :options="gender_option"
+              type="radio"
             />
           </div>
           <va-select
-              v-model="form.major"
-              class="mb-6"
-              label="专业"
-              placeholder="选择专业"
-              :options="major_options"
+            v-model="form.major"
+            class="mb-6"
+            label="专业"
+            placeholder="选择专业"
+            :options="major_options"
           />
           <va-select
-              v-model="form.degree"
-              class="mb-6"
-              label="学级"
-              placeholder="选择学级"
-              :options="year_options"
+            v-model="form.degree"
+            class="mb-6"
+            label="在读学历"
+            placeholder="选择在读学历"
+            :options="degree_options"
           />
         </va-form>
         <div class="form_b">
@@ -60,29 +59,28 @@
           </va-button>
         </div>
       </div>
+      <va-modal
+          v-model="dialogVisible"
+          :message="accountStore.msg"
+          ok-text="Confirm"
+          size="small"
+      />
     </va-card>
   </div>
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 
 import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
+import {useAccountStore} from "@/store/account.js";
 
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
+const accountStore = useAccountStore()
+const info_file = ref([])
 
-
-const info_file = ref([]);
-
-const form = reactive({
-  sid: '',
-  name: '',
-  gender: 0,
-  degree: '',
-  major: ''
-})
-
+const form = accountStore.studentInformationForm
 
 const campusIdValidator = (value) => {
   const re = /^[0-9]{8}$/;
@@ -94,65 +92,35 @@ const campusIdValidator = (value) => {
   }
 }
 
-const gender_option = readonly([
-  {
-    text: '男',
-    value: 0,
-  },
-  {
-    text: '女',
-    value: 1,
-  },
-])
+const gender_option = readonly(["男", "女"])
 
 const major_options = readonly([
-  {
-    text: "计算机科学与工程系",
-    value: "计算机科学与工程系"
-  },
-  {
-    text: "电子系",
-    value: "电子系",
-  },
-  {
-    text: "物理系",
-    value: "物理系",
-  },
-  {
-    text: "化学系",
-    value: "化学系",
-  },
-  {
-    text: "数学系",
-    value: "数学系",
-  },
-  {
-    text: "生物系",
-    value: "生物系",
-  },
-  {
-    text: "环境系",
-    value: "环境系",
-  },
-  {
-    text: "材料系",
-    value: "材料系",
-  },
+    "计算机科学与工程系",
+    "电子系",
+    "物理系",
+    "化学系",
+    "数学系",
+    "生物系",
+    "环境系",
+    "材料系"
 ]);
 
-const year_options = computed(getYear)
+const degree_options = readonly(["硕士生", "博士生"])
+// const year_options = computed(getYear)
+//
+// function getYear() {
+//   const currentYear = new Date().getFullYear();
+//   const years = [];
+//   for (let i = 0; i < 7; i++) {
+//     years.push({value: currentYear - i, text: (currentYear - i)});
+//   }
+//   return years;
+// }
 
-function getYear() {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let i = 0; i < 7; i++) {
-    years.push({value: currentYear - i, text: (currentYear - i)});
-  }
-  return years;
-}
-
-function submit() {
-
+const dialogVisible = ref(false)
+async function submit() {
+  await accountStore.createStudent(accountStore.studentInformationForm.studentId)
+  dialogVisible.value = true
 }
 
 </script>

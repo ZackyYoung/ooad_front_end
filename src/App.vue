@@ -4,13 +4,13 @@
 <script>
 import mainPage from "@/view/MainPage.vue";
 import StudentCenterPage from "@/view/StudentCenterPage.vue";
-import TeacherMain from "@/view/TeacherMain.vue";
+import TeacherUserManagePage from "@/view/TeacherUserManagePage.vue";
 export default {
   name: 'App',
   components: {
     mainPage,
     StudentCenterPage,
-    TeacherMain
+    TeacherUserManagePage
   }
 }
 </script>
