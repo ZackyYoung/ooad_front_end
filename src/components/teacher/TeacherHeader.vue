@@ -43,7 +43,7 @@ const accountStore = useAccountStore()
 const router = useRouter()
 const userinfo = reactive(
     {
-      name: accountStore.accountName === null?"管理员1":accountStore.accountName,
+      name: accountStore.accountName?accountStore.accountName:"管理员1",
       sid: 10086
     }
 );

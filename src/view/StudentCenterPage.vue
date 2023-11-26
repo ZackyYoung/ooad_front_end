@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
@@ -6,7 +6,8 @@ import StudentInfo from "@/components/student/StudentInfo.vue";
 import StudentEditPasswd from "@/components/student/center/StudentEditPasswd.vue";
 
 import {ref} from "vue";
-
+import {useAccountStore} from "@/store/account.js";
+const accountStore = useAccountStore()
 
 const center_sidebar_items = [
   {title: "我的资料", icon: "person"},
@@ -24,7 +25,7 @@ const s1 = {
 };
 const centerActiveOption = ref(center_sidebar_items[0].title);
 
-function updateOption(option: string) {
+function updateOption(option) {
   centerActiveOption.value = option;
 }
 

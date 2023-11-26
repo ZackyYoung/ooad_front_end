@@ -20,6 +20,10 @@ async function loginCheck () {
                     accountValid.value = true
                     dataService.fetchInformation(loginForm.campusId, accountRole.value, info =>{
                         accountName.value = info.data.data.name
+                        if(accountRole.value === "student"){
+                            this.studentInformationForm = info.data.data
+                        }
+
                     })
                     resolve()
                 } else {

@@ -43,7 +43,7 @@ const accountStore = useAccountStore()
 const router = useRouter()
 const userinfo = reactive(
     {
-      name: accountStore.accountName?"student1":accountStore.accountName,
+      name: accountStore.accountName?accountStore.accountName:"学生1",
       sid: accountStore.studentInformationForm.studentId
     }
 );
