@@ -22,6 +22,7 @@ export class InvitationInfoType {
 export class SidebarItemType {
     title: string
     icon: string
+    router_path: string
 }
 
 export class EditPasswdForm {

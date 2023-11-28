@@ -16,16 +16,14 @@
         欢迎，管理员：{{ userinfo.name }}
       </p>
       <va-button
-          v-for="(link, index) in links"
+          v-for="(item, index) in t_head_bar_items"
           :key="index"
           class="mr-1"
           preset="secondary"
-          :to="link.to"
-          :href="link.url"
-          :target="link.target"
+          :to="item.router_path"
       >
-        {{ link.text }}
-        <va-icon class="ml-1" :name="link.icon"/>
+        {{ item.text }}
+        <va-icon class="ml-1" :name="item.icon"/>
       </va-button>
       <va-button class="logout" @click="logout">
         <va-icon name="logout"/>
@@ -39,6 +37,8 @@ import {computed, reactive, ref} from 'vue'
 import logoName from '@/assets/images/logo_name.png'
 import {useAccountStore} from "@/store/account.js"
 import {useRouter} from "vue-router"
+import {t_head_bar_items} from "@/utils/TBarItems.js";
+
 const accountStore = useAccountStore()
 const router = useRouter()
 const userinfo = reactive(
@@ -47,25 +47,9 @@ const userinfo = reactive(
       sid: 10086
     }
 );
-
-const links = computed(() => [
-  {
-    text: '个人中心',
-    icon: 'account_circle',
-    url: '',
-    target: '_blank',
-  },
-  {
-    text: '学生管理',
-    icon: 'groups_3',
-    to: '',
-  },
-  {
-    text: '选房管理',
-    icon: 'holiday_village',
-    to: '',
-  },
-])
+function toMain(){
+  router.push('/teacher')
+}
 
 function logout () {
   router.push('/')

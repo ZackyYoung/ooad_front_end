@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
+    "element-plus": "^2.4.2",
     "pinia": "^2.1.7",
     "vue": "latest",
     "vue-router": "^4.2.5",
@@ -22,6 +23,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "element-plus": "^2.4.2",
     "@types/node": "^20.8.10",
     "@vitejs/plugin-vue": "^4.2.3",
     "material-design-icons-iconfont": "^6.7.0",
