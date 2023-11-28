@@ -1,7 +1,7 @@
 import axios from 'axios'
 import app from "../App.vue";
 
-const dataServerUrl = "http://10.32.60.95:8082";
+const dataServerUrl = "http://10.24.176.129:8082";
 
 const axiosInstance = axios.create({
     baseURL: dataServerUrl,
@@ -36,8 +36,40 @@ function editPassword(param, callback) {
             console.log(errResp)
         })
 }
+
+function updateStudent(param, callback) {
+    const url = `${dataServerUrl}/student/update`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function fetchInformation(campusId, role, callback){
+    if(role === 'teacher'){
+        const url = `${dataServerUrl}/teacher/findById/${campusId}`
+        axiosInstance.get(url)
+            .then(resp =>{
+                callback(resp)
+            }, errResp => {
+                console.log(errResp)
+            })
+    }else if(role === 'student'){
+        const url = `${dataServerUrl}/student/findById/${campusId}`
+        axiosInstance.get(url)
+            .then(resp =>{
+                callback(resp)
+            }, errResp => {
+                console.log(errResp)
+            })
+    }
+}
 export default{
     loginCheck,
     registerAccount,
-    editPassword
+    editPassword,
+    updateStudent,
+    fetchInformation
 }

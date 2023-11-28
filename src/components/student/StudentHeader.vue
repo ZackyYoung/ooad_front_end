@@ -34,14 +34,17 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import {computed, reactive} from 'vue'
+<script setup>
+import {computed, reactive, ref} from 'vue'
 import logoName from '@/assets/images/logo_name.png'
-
+import {useAccountStore} from "@/store/account";
+import {useRouter} from "vue-router";
+const accountStore = useAccountStore()
+const router = useRouter()
 const userinfo = reactive(
     {
-      name: "Susu",
-      sid: 12110000
+      name: accountStore.accountName?accountStore.accountName:"学生1",
+      sid: accountStore.studentInformationForm.studentId
     }
 );
 
@@ -68,6 +71,10 @@ const links = computed(() => [
     to: '',
   },
 ])
+
+function logout () {
+  router.push('/')
+}
 </script>
 
 

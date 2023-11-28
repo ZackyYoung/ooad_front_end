@@ -8,6 +8,9 @@ const routes = [
         path: '/',
         name: 'MainPage',
         component: MainPage,
+        meta: {
+            reload: true
+        }
     },
     {
         path: '/student',

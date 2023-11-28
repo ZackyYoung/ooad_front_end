@@ -2,16 +2,10 @@
 import {StudentInfo} from '@/utils/types/type'
 import {computed, ref} from "vue";
 import {reactive} from "vue";
+import {useAccountStore} from "@/store/account";
 
-const props = defineProps<{
-  sid: number
-  name: string
-  gender: number
-  degree: number
-  major: string
-  intro: string | null
-}>()
-const studentInfo = reactive(props)
+const accountStore = useAccountStore()
+const studentInfo = accountStore.studentInformationForm
 
 </script>
 
@@ -21,20 +15,20 @@ const studentInfo = reactive(props)
       <va-card-title class="info-card__title">{{ studentInfo.name }}的个人简介</va-card-title>
       <va-card-content class="info-card__content">
         <div class="info-card__content__sid">
-          学号：{{ studentInfo.sid }}
+          学号：{{ studentInfo.studentId }}
         </div>
         <div class="info-card__content__gender">
-          性别：{{ studentInfo.gender === 1 ? '男' : '女' }}
+          性别：{{ studentInfo.gender }}
         </div>
         <div class="info-card__content__major">
           专业：{{ studentInfo.major }}
         </div>
         <div class="info-card__content__degree">
-          学级：{{ studentInfo.degree }}级
+          在读学历：{{ studentInfo.degree }}
         </div>
         <div class="info-card__content__intro">
           个人简介:<br>
-          {{ studentInfo.intro ? studentInfo.intro : '尚未填写简介~' }}
+          {{ studentInfo.info ? studentInfo.info : '尚未填写简介~' }}
         </div>
       </va-card-content>
     </va-card>
