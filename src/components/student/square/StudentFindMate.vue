@@ -1,5 +1,5 @@
 <template>
-  <va-card page-content-card>
+  <va-card class="page-content-card">
     <va-card-title>
       搜索学生
     </va-card-title>
@@ -17,10 +17,22 @@
             />
           </template>
         </va-input>
+        <va-select
+            v-model="searchForm.major"
+            style="margin: 0.5rem"
+            placeholder="选择专业"
+            :options="major_options"
+        />
+        <va-select
+            v-model="searchForm.degree"
+            style="margin: 0.5rem"
+            placeholder="选择学级"
+            :options="year_options"
+        />
 
         <va-button
             style="margin: 0.5rem"
-            :disabled="!search_key"
+            :disabled="!search_key&&!searchForm.major&&!searchForm.degree"
             @click="search"
         >
           搜索
@@ -30,7 +42,7 @@
         </va-button>
         <va-button
             style="margin: 0.5rem"
-            :disabled="!search_key"
+            :disabled="!search_key&&!searchForm.major&&!searchForm.degree"
             @click="resetSearch"
         >
           清除
@@ -42,7 +54,7 @@
     </va-form>
   </va-card>
 
-  <va-card style="padding: 1rem;">
+  <va-card class="page-content-card">
     <va-card-title>
       学生列表
     </va-card-title>
@@ -58,22 +70,22 @@
             round
             class="mr-2 mb-2"
             color="primary"
-            @click="updateAndShowEditForm(rowData)"
+            @click="updateAndShowInfo(rowData)"
         >
           <va-icon
-              name="edit"
+              name="visibility"
           />
         </va-button>
-        <va-button
-            round
-            class="mr-2 mb-2"
-            color="danger"
-            @click="deleteAndConfirm(rowData.sid)"
-        >
-          <va-icon
-              name="delete"
-          />
-        </va-button>
+        <!--        <va-button-->
+        <!--            round-->
+        <!--            class="mr-2 mb-2"-->
+        <!--            color="danger"-->
+        <!--            @click="deleteAndConfirm(rowData.sid)"-->
+        <!--        >-->
+        <!--          <va-icon-->
+        <!--              name="delete"-->
+        <!--          />-->
+        <!--        </va-button>-->
       </template>
       <template #cell(gender)="{ rowData }">
         {{ rowData.gender === 2 ? '女' : '男' }}
@@ -88,39 +100,68 @@
         @update:model-value="getUserByNeedNumber"
     />
   </va-card>
+  <va-modal
+      v-model="show_detail"
+      hide-default-actions
+  >
+    <StudentInfo
+        :student-id=infoForm.sid
+        :gender="infoForm.gender"
+        :info="infoForm.info"
+        :major="infoForm.major"
+        :name="infoForm.name"
+        :degree="infoForm.degree"
+    />
+    <template #footer>
+      <va-button @click=" submitInvite()">
+        邀请此人
+      </va-button>
+    </template>
+  </va-modal>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
 import {useForm, useModal} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
+import StudentInfo from "@/components/student/StudentInfo.vue";
+import {useAccountStore} from "@/store/account";
 
 const {isValid, validate} = useForm('formRef')
+
+const accountStore = useAccountStore()
 
 let search_key = ref<string>('');
 const perPage = ref(2);
 const need_serial_number = ref<number>(1);
 const pageSize = ref<number>(2);
+const show_detail = ref(false);
 
-
-const form = reactive({
+const infoForm = reactive({
   sid: 0,
   name: 'name',
   gender: 1,
   degree: 0,
-  major: ''
+  major: '',
+  info: '',
 })
 
-const showEdit = ref<boolean>(false);
+const searchForm = reactive({
+  degree: '',
+  major: '',
+})
 
-function updateAndShowEditForm(student) {
-  form.sid = student.sid;
-  form.degree = student.degree;
-  form.gender = student.gender;
-  form.name = student.name;
-  form.major = student.major;
-  showEdit.value = true;
+function updateAndShowInfo(student) {
+  infoForm.sid = student.sid;
+  infoForm.degree = student.degree;
+  infoForm.gender = student.gender;
+  infoForm.name = student.name;
+  infoForm.major = student.major;
+  infoForm.info = student.info;
+  show_detail.value = true;
 }
+
+const search_gender = accountStore.studentInformationForm.gender
 
 const validateName = (value: string) => {
   console.log(value.length === 0)
@@ -129,15 +170,15 @@ const validateName = (value: string) => {
   }
 }
 
-function submitEdit() {
-  console.log(form.name);
+function submitInvite() {
+  console.log(infoForm.sid);
   console.log('submit!');
   //
 
 
   //
 
-  showEdit.value = false;
+  show_detail.value = false;
 }
 
 const gender_option = readonly([
@@ -244,7 +285,10 @@ function search() {
 
 function resetSearch() {
   search_key.value = ''
+  searchForm.degree = ''
+  searchForm.major = ''
   console.log('Search by key: ' + search_key.value)
+
   getUserByNeedNumber(1)
 }
 </script>

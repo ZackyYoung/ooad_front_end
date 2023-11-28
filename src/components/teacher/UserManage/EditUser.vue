@@ -1,5 +1,5 @@
 <template>
-  <va-card class="page-content-card" >
+  <va-card class="page-content-card">
     <va-card-title>
       搜索学生
     </va-card-title>
@@ -122,7 +122,7 @@
             class="mb-6"
             label="学级"
             placeholder="选择学级"
-            :options="year_options"
+            :options="degree_options"
         />
       </va-form>
       <template #footer>
@@ -138,6 +138,7 @@
 import {ref} from "vue";
 import {useForm, useModal} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
+import {major_options, degree_options} from "@/utils/UserOptions";
 
 const {isValid, validate} = useForm('formRef')
 
@@ -189,22 +190,6 @@ const gender_option = readonly([
   {text: '女', value: 2},
 ])
 
-const major_options = readonly([
-  "计算机科学与工程系", "电子系", "物理系",
-  "化学系", "数学系", "生物系", "生物系",
-  "环境系", "材料系", "软件工程"
-]);
-
-const year_options = computed(getYear)
-
-function getYear() {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let i = 0; i < 7; i++) {
-    years.push(currentYear - i);
-  }
-  return years;
-}
 
 const user_data = [
   {

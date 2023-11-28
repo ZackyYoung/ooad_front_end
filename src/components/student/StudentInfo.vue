@@ -7,28 +7,37 @@ import {useAccountStore} from "@/store/account";
 const accountStore = useAccountStore()
 const studentInfo = accountStore.studentInformationForm
 
+const props = defineProps([
+  'name',
+  'studentId',
+  "major",
+  "degree",
+  "gender",
+  "info",
+])
+
 </script>
 
 <template>
   <div class="info-container">
     <va-card class="info-card">
-      <va-card-title class="info-card__title">{{ studentInfo.name }}的个人简介</va-card-title>
+      <va-card-title class="info-card__title">{{ props.name }}的个人简介</va-card-title>
       <va-card-content class="info-card__content">
         <div class="info-card__content__sid">
-          学号：{{ studentInfo.studentId }}
+          学号：{{ props.studentId }}
         </div>
         <div class="info-card__content__gender">
-          性别：{{ studentInfo.gender }}
+          性别：{{ props.gender }}
         </div>
         <div class="info-card__content__major">
-          专业：{{ studentInfo.major }}
+          专业：{{props.major }}
         </div>
         <div class="info-card__content__degree">
-          在读学历：{{ studentInfo.degree }}
+          在读学历：{{ props.degree }}
         </div>
         <div class="info-card__content__intro">
           个人简介:<br>
-          {{ studentInfo.info ? studentInfo.info : '尚未填写简介~' }}
+          {{ props.info ? studentInfo.info : '尚未填写简介~' }}
         </div>
       </va-card-content>
     </va-card>

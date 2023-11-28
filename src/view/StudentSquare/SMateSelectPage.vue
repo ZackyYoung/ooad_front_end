@@ -4,6 +4,7 @@ import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
 
 import {s_square_sidebar_items} from "@/utils/SBarItems.js";
+import StudentFindMate from "@/components/student/square/StudentFindMate.vue";
 
 </script>
 
@@ -13,7 +14,7 @@ import {s_square_sidebar_items} from "@/utils/SBarItems.js";
     <div class="page-container">
       <SideBar :sidebar-items="s_square_sidebar_items" :active_id=1 class="sidebar"/>
       <div class="page-content">
-        <!--TODO:-->
+        <StudentFindMate/>
       </div>
     </div>
   </div>

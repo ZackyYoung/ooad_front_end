@@ -12,12 +12,12 @@ const members = toRef(teamStore.teamMembers);
 <template>
   <div class="team-info-container flex flex-col items-baseline gap-6" v-for="member in members.value">
     <StudentInfo
-        :sid="member.sid"
+        :student-id="member.sid"
         :name="member.name"
         :degree="member.degree"
         :gender="member.gender"
         :major="member.major"
-        :intro="member.intro"
+        :info="member.intro"
     />
   </div>
 </template>

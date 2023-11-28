@@ -5,10 +5,10 @@
     </va-card-title>
     <va-card-content>
       <p class="my_para">选房起始时间：
-        <span> {{ timeForm[0] }}</span>
+        <span> {{ timeData[0] }}</span>
       </p>
       <p class="my_para">选房结束时间：
-        <span> {{ timeForm[1] }}</span>
+        <span> {{ timeData[1] }}</span>
       </p>
     </va-card-content>
   </va-card>
@@ -27,8 +27,16 @@
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
-          @change="submitStart"
       />
+      <div>
+        <va-button
+            icon="save"
+            @click="submitTime"
+            style="margin-left: 1rem;margin-top: 0.5rem"
+        >
+          保存新时间
+        </va-button>
+      </div>
     </va-card-content>
   </va-card>
   <va-card class="my_card">
@@ -50,15 +58,17 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-const timeForm = ref<string[]>([
+
+const timeData = ref<string[]>([
   "2023/12/10 08:00:00",
   "2023/12/25 23:59:59"
 ]);
+const timeForm = ref<string[]>(timeData.value);
 const disabledDateFn = (time: Date) => {
   return time.getTime() < Date.now() - 8.64e7;
 };
 
-async function submitStart() {
+async function submitTime() {
   console.log('current form:' + timeForm)
 
 }

@@ -13,7 +13,7 @@
                     round
                     class="mr-2 mb-2"
                     color="secondary"
-                    @click="selectedMemberIndex=row.initialIndex; showModalConfirmTransfer = true;"
+                    @click="transferAndSubmit(row.initialIndex)"
                 >
                   转让
                 </va-button>
@@ -21,28 +21,10 @@
                     round
                     class="mr-2 mb-2"
                     color="danger"
-                    @click="selectedMemberIndex=row.initialIndex; showModalConfirmRemove = true;"
+                    @click="removeAndSubmit(row.initialIndex)"
                 >
                   移除
                 </va-button>
-                <va-modal
-                    class="modal-crud"
-                    v-model="showModalConfirmTransfer"
-                    close-button
-                    :message=transferMessage
-                    ok-text="确认转让"
-                    title="Confirm Transfer?"
-                    @ok="transferAndSubmit"
-                />
-                <va-modal
-                    class="modal-crud"
-                    v-model="showModalConfirmRemove"
-                    close-button
-                    :message=removeMessage
-                    ok-text="确认移除"
-                    title="Confirm Remove?"
-                    @ok="removeAndSubmit"
-                />
               </div>
               <div v-else>
                 <va-chip
@@ -74,60 +56,25 @@
         </va-data-table>
       </div>
 
-      <div class="invite-exit flex">
-        <div class="invite">
-          <va-button
-              class="mr-2 mb-2"
-              color="primary"
-              @click="showInvite=true"
-          >
-            邀请成员
-          </va-button>
-          <va-button
-              class="mr-2 mb-2"
-              color="primary"
-              @click="showInviteList=true"
-          >
-            邀请列表
-          </va-button>
-        </div>
-
+      <div class="exit flex">
         <div class="exit-delete">
           <div class="delete-team" v-if="is_creator">
             <va-button
                 class="mr-2 mb-2"
                 color="danger"
-                @click="showModalConfirmDeleteTeam=true"
+                @click="deleteTeamAndSubmit"
             >
               解散群组
             </va-button>
-            <va-modal
-                class="modal-crud"
-                v-model="showModalConfirmDeleteTeam"
-                close-button
-                message="这将解散当前群组，确定吗？"
-                ok-text="确认解散"
-                title="Confirm Delete?"
-                @ok="deleteTeamAndSubmit"
-            />
           </div>
           <div class="exit-team" v-else>
             <va-button
                 class="mr-2 mb-2"
                 color="danger"
-                @click="showModalConfirmExitTeam=true"
+                @click="exitTeamAndSubmit"
             >
               退出群组
             </va-button>
-            <va-modal
-                class="modal-crud"
-                v-model="showModalConfirmExitTeam"
-                close-button
-                message="这将退出当前群组，确定吗？"
-                ok-text="确认退出"
-                title="Confirm Exit?"
-                @ok="exitTeamAndSubmit"
-            />
           </div>
         </div>
       </div>
@@ -137,10 +84,8 @@
 
 
 <script setup lang="ts">
-import MemberInvitation from "@/components/student/team/MemberInvitation.vue";
 
-import {computed, defineComponent, reactive, ref, toRef} from "vue";
-import {InvitationInfoType, TeamInfoType} from "@/utils/types/type";
+import {computed,  reactive,} from "vue";
 import {useTeamStore} from "@/store/team.js";
 import {storeToRefs} from "pinia";
 
@@ -149,6 +94,10 @@ const {creator_id, cur_user_id} = storeToRefs(teamStore);
 
 const teamMembers = reactive(teamStore.teamMembers);
 const is_creator = computed(() => teamStore.is_creator);
+import {useModal, useToast} from 'vuestic-ui'
+
+const {confirm} = useModal()
+const {init} = useToast()
 
 
 const columns = [
@@ -157,43 +106,69 @@ const columns = [
   {key: "feature", label: "功能"}
 ];
 
-const selectedMemberIndex = ref(0);
+async function transferAndSubmit(memberIndex) {
+  const result = await confirm({
+    message: "确认要把队长转让给：" + teamMembers.value[memberIndex].name,
+    title: '确认？',
+    okText: "转让",
+    cancelText: "取消",
+  })
 
-const showInvite = ref(false);
-const showInviteList = ref(false);
-const showModalConfirmTransfer = ref(false);
-const showModalConfirmRemove = ref(false);
-const showModalConfirmExitTeam = ref(false);
-const showModalConfirmDeleteTeam = ref(false);
-
-const transferMessage = computed(() => {
-  return "确认要把队长转让给：" + teamMembers.value[selectedMemberIndex.value].name;
-})
-
-function transferAndSubmit() {
-  teamStore.transOwner(teamMembers.value[selectedMemberIndex.value].sid);
-  selectedMemberIndex.value = 0;
-
+  if (result) {
+    teamStore.transOwner(teamMembers.value[memberIndex].sid);
+  } else {
+    init("取消转让队长")
+  }
 
 }
 
+async function removeAndSubmit(memberIndex) {
+  const result = await confirm({
+    message: "这会从队伍中移除：" + teamMembers.value[memberIndex].name,
+    title: '确认？',
+    okText: "移除",
+    cancelText: "取消",
+  })
 
-const removeMessage = computed(() => {
-  return "这会从队伍中移除：" + teamMembers.value[selectedMemberIndex.value].name
-})
-
-function removeAndSubmit() {
-  teamStore.removeMember(teamMembers.value[selectedMemberIndex.value].sid);
-  selectedMemberIndex.value = 0;
+  if (result) {
+    teamStore.removeMember(teamMembers.value[memberIndex].sid);
+  } else {
+    init("取消移除成员")
+  }
 
 }
 
-function deleteTeamAndSubmit() {
+async function deleteTeamAndSubmit() {
+  const result = await confirm({
+    message: "这会解散群组",
+    title: '确认？',
+    okText: "解散",
+    cancelText: "取消",
+  })
 
+  if (result) {
+    //
+
+    //
+  } else {
+    init("取消")
+  }
 }
 
-function exitTeamAndSubmit() {
-  teamStore.exitTeam();
+async function exitTeamAndSubmit() {
+  const result = await confirm({
+    message: "这将退出当前群组，确认吗",
+    title: '确认？',
+    okText: "退出群组",
+    cancelText: "取消",
+  })
+
+  if (result) {
+    teamStore.exitTeam();
+  } else {
+    init("取消退出群组")
+  }
+
 
 }
 
@@ -226,7 +201,7 @@ function exitTeamAndSubmit() {
     }
   }
 
-  .invite-exit {
+  .exit {
     display: flex;
     padding: 0.5rem 1rem;
     margin: 0.5rem 1rem;

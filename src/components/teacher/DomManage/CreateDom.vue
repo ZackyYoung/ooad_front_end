@@ -9,7 +9,7 @@
         <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
           <va-select
               v-model="form.zones"
-              :options="['湖畔','荔园','二期']"
+              :options="zone_options"
               :rules="[(v) => Boolean(v)|| '区域不能为空！']"
               label="区域"
               placeholder="请选择宿舍区域"
@@ -42,7 +42,7 @@
               label="宿舍性别"
               :rules="[(v) => Boolean(v)|| '性别不能为空！']"
               placeholder="选择宿舍性别"
-              :options="gender_option"
+              :options="gender_options"
               value-by="value"
           />
           <va-textarea
@@ -67,6 +67,8 @@
 
 import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
+import {gender_options, type_options, zone_options} from "@/utils/DomOptions.js";
+
 
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
 
@@ -79,16 +81,7 @@ const form = reactive({
   room_type: '',
   description: ''
 })
-const type_options = readonly([
-  {text: '单人房', value: 1},
-  {text: '双人房', value: 2},
-  {text: '四人房', value: 4},
-])
 
-const gender_option = readonly([
-  {text: '男', value: 1},
-  {text: '女', value: 2},
-])
 
 const buildingIdValidator = (value) => {
   const re = /^\d+$/;

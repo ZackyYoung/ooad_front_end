@@ -81,6 +81,7 @@ import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
 import {useAccountStore} from "@/store/account.js";
 import * as XLSX from 'xlsx';
+import {major_options, degree_options,} from "@/utils/UserOptions.js";
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
 const accountStore = useAccountStore()
 
@@ -105,28 +106,6 @@ const campusIdValidator = (value) => {
 
 const gender_option = readonly(["男", "女"])
 
-const major_options = readonly([
-    "计算机科学与工程系",
-    "电子系",
-    "物理系",
-    "化学系",
-    "数学系",
-    "生物系",
-    "环境系",
-    "材料系"
-]);
-
-const degree_options = readonly(["硕士生", "博士生"])
-// const year_options = computed(getYear)
-//
-// function getYear() {
-//   const currentYear = new Date().getFullYear();
-//   const years = [];
-//   for (let i = 0; i < 7; i++) {
-//     years.push({value: currentYear - i, text: (currentYear - i)});
-//   }
-//   return years;
-// }
 
 const dialogVisible = ref(false)
 async function createStudent(form) {
