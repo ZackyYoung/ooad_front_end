@@ -1,5 +1,5 @@
 <template>
-  <div class="create-dom-container">
+  <div class="page-content-card create-dom-container">
     <va-card class="create-dom-card">
       <div class="input-info">
         <p class="my-title">

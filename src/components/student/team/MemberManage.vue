@@ -1,6 +1,6 @@
 <template>
   <div class="team-manager-container">
-    <va-card class="team-manager-card">
+    <va-card class="page-content-card team-manager-card">
       <div class="team-info">
         <va-data-table
             :items="teamMembers.value"
@@ -131,16 +131,6 @@
           </div>
         </div>
       </div>
-      <va-modal
-          v-model="showInviteList"
-          max-height="600px"
-      >
-        <div>
-          <MemberInvitation
-              :invitation-infos=inv1
-          />
-        </div>
-      </va-modal>
     </va-card>
   </div>
 </template>
@@ -166,19 +156,6 @@ const columns = [
   {key: "sid", label: "学号"},
   {key: "feature", label: "功能"}
 ];
-
-const inv1: InvitationInfoType[] = [
-  {
-    name: "新人想进1",
-    sid: 12112000,
-    is_invitation: false,
-  },
-  {
-    name: "邀请了xx",
-    sid: 12112001,
-    is_invitation: true
-  }
-]
 
 const selectedMemberIndex = ref(0);
 

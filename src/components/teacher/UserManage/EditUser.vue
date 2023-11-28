@@ -1,5 +1,5 @@
 <template>
-  <va-card>
+  <va-card class="page-content-card" >
     <va-card-title>
       搜索学生
     </va-card-title>

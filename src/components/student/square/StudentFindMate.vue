@@ -1,5 +1,5 @@
 <template>
-  <va-card>
+  <va-card page-content-card>
     <va-card-title>
       搜索学生
     </va-card-title>
@@ -87,50 +87,6 @@
         class="justify-center sm:justify-start"
         @update:model-value="getUserByNeedNumber"
     />
-    <va-modal
-        v-model="showEdit"
-        hide-default-actions
-    >
-      <h3 class="va-h3">
-        编辑：Sid: {{ form.sid }}
-      </h3>
-      <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
-        <va-input
-            v-model="form.name"
-            :rules="[(v) => validateName(v)]"
-            label="姓名"
-            placeholder="请输入学生姓名"
-        />
-        <div>
-          <span class="va-title">性别</span>
-          <va-option-list
-              v-model="form.gender"
-              value-by="value"
-              :options="gender_option"
-              type="radio"
-          />
-        </div>
-        <va-select
-            v-model="form.major"
-            class="mb-6"
-            label="专业"
-            placeholder="选择专业"
-            :options="major_options"
-        />
-        <va-select
-            v-model="form.degree"
-            class="mb-6"
-            label="学级"
-            placeholder="选择学级"
-            :options="year_options"
-        />
-      </va-form>
-      <template #footer>
-        <va-button class="save-button" :disabled="form.name.length===0" @click=" submitEdit()">
-          提交修改
-        </va-button>
-      </template>
-    </va-modal>
   </va-card>
 </template>
 

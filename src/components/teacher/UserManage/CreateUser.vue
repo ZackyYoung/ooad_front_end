@@ -1,6 +1,6 @@
 <template>
   <div class="create-user-container">
-    <va-card class="create-user-card">
+    <va-card class="page-content-card create-user-card">
       <div class="upload-file">
         <p class="my-title">
           通过文件批量导入

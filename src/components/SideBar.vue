@@ -12,7 +12,7 @@
       >
         <va-sidebar-item
             :active="item.title===activeElement"
-            @click="activeElement = item.title; updateActive(item.title)">
+            @click="activeElement = item.title; updateActive(item.router_path)">
           <va-sidebar-item-content>
             <va-icon :name="item.icon"/>
             <va-sidebar-item-title>
@@ -39,17 +39,22 @@
 <script setup lang="ts">
 import {ref, defineEmits, readonly} from "vue";
 import {SidebarItemType} from "@/utils/types/type";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps<{
-  sidebarItems: SidebarItemType[]
-}>()
+  sidebarItems: SidebarItemType[],
+  active_id: number
+}>();
 const items = readonly(props.sidebarItems)
-const activeElement = ref(items[0].title);
+const x = props.active_id;
+const activeElement = ref(items[props.active_id].title);
 const minimized = ref(false);
-const emits = defineEmits(["updateOption"]);
 
-function updateActive(option: string) {
-  emits("updateOption", option);
+function updateActive(link: string) {
+  console.log('router by side bar:' + link);
+  router.push(link);
 }
 </script>
 

@@ -77,7 +77,7 @@ const loginForm = accountStore.loginForm
   margin-top: 10px;
   text-align: center;
   font-size: 30px;
-  font-family: 华光准圆_CNKI,serif;
+  font-family: HGY3,serif;
 }
 
 </style>
