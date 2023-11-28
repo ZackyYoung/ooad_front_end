@@ -2,6 +2,7 @@
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
+import StudentFindMate from "@/components/student/square/StudentFindMate.vue";
 import {ref} from "vue";
 
 
@@ -10,10 +11,10 @@ const ground_sidebar_items = [
   {title: "选择舍友", icon: "group_add"}
 ];
 
-const centerActiveOption = ref(ground_sidebar_items[0].title);
+const squareActiveOption = ref(ground_sidebar_items[0].title);
 
 function updateOption(option: string) {
-  centerActiveOption.value = option;
+  squareActiveOption.value = option;
 }
 
 </script>
@@ -24,6 +25,8 @@ function updateOption(option: string) {
     <div class="square-container">
       <SideBar :sidebar-items="ground_sidebar_items" @updateOption="updateOption" class="sidebar"/>
       <div class="square-content">
+<!--        <??? v-if="squareActiveOption==='房子查看'"/>-->
+        <StudentFindMate v-if="squareActiveOption==='选择舍友'"/>
       </div>
     </div>
   </div>
