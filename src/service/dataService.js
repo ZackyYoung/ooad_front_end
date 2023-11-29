@@ -1,7 +1,7 @@
 import axios from 'axios'
 import app from "../App.vue";
 
-const dataServerUrl = "http://10.24.176.129:8082";
+const dataServerUrl = "http://10.26.80.100:8082";
 
 const axiosInstance = axios.create({
     baseURL: dataServerUrl,
@@ -66,10 +66,22 @@ function fetchInformation(campusId, role, callback){
             })
     }
 }
+
+function findAllStudent(callback)
+{
+    const url = `${dataServerUrl}/student/findAll`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
     editPassword,
     updateStudent,
-    fetchInformation
+    fetchInformation,
+    findAllStudent
 }

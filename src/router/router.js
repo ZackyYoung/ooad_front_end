@@ -31,11 +31,17 @@ const routes = [
         path: '/student',
         name: 'StudentMain',
         component: SInfoPage,
+        meta: {
+            reload: true
+        }
     },
     {
         path: '/teacher',
         name: 'TeacherMain',
         component: TEditPasswdPage,
+        meta: {
+            reload: true
+        }
     },
 
     {
@@ -141,4 +147,10 @@ const router = createRouter({
     routes
 });
 
+router.beforeEach((to, from, next)=>{
+    if(to.path === '/')  return next()
+    const tokenStr = window.sessionStorage.getItem("token")
+    if(!tokenStr) return next('/')
+    next()
+})
 export default router;

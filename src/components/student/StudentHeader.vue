@@ -54,6 +54,7 @@ function toMain() {
 
 function logout() {
   router.push('/')
+  window.sessionStorage.clear("token")
 }
 </script>
 

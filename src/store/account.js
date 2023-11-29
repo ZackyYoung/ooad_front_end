@@ -20,6 +20,7 @@ async function loginCheck () {
                     accountValid.value = true
                     dataService.fetchInformation(loginForm.campusId, accountRole.value, info =>{
                         accountName.value = info.data.data.name
+                        window.sessionStorage.setItem("token", loginForm.campusId)
                         if(accountRole.value === "student"){
                             this.studentInformationForm = info.data.data
                         }
@@ -56,6 +57,7 @@ async function registerAccount () {
                 if (resp.data.code === 0) {
                     accountRole.value = resp.data.data.role
                     accountValid.value = true
+                    window.sessionStorage.setItem("token", registerForm.campusId)
                     resolve()
                 } else {
                     accountValid.value = false
