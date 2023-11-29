@@ -77,11 +77,23 @@ function findAllStudent(callback)
             console.log(errResp)
         })
 }
+
+function deleteUser(delete_id, callback)
+{
+    const url = `${dataServerUrl}/student/deleteById/${delete_id}`
+    axiosInstance.delete(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
     editPassword,
     updateStudent,
     fetchInformation,
-    findAllStudent
+    findAllStudent,
+    deleteUser
 }

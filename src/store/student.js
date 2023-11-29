@@ -9,6 +9,7 @@ async function findAllStudent(){
     return new Promise((resolve, reject) => {
         dataService.findAllStudent(resp => {
             if (resp.status === 200) {
+                let respForm = resp.data.data
                 studentData.value = resp.data.data
                 resolve()
             } else {

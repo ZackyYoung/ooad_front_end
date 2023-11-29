@@ -190,8 +190,6 @@ const filtered_total = ref(studentStore.studentData.length)
 
 const {confirm} = useModal();
 
-
-
 async function deleteAndConfirm(delete_id) {
   const result = await confirm({
     message: `你确认删除用户 ID: ${delete_id} 吗`,
@@ -201,21 +199,17 @@ async function deleteAndConfirm(delete_id) {
   })
 
   if (result) {
-
+    await accountStore.deleteUser(delete_id)
+    dialogVisible.value = true
+    await studentStore.findAllStudent()
   }
 }
 
-// function pages() {
-//   return perPage && perPage.value !== 0
-//       ? Math.ceil(user_data.length / perPage.value)
-//       : user_data.length;
-// }
-
 const columns = [
-  {key: "studentId", label: "学号"},
-  {key: "name", label: "姓名"},
+  {key: "studentId", label: "学号", sortable: true},
+  {key: "name", label: "姓名", sortable: true},
   {key: "gender", label: "性别"},
-  {key: "degree", label: "学级"},
+  {key: "degree", label: "在读学历"},
   {key: "major", label: "专业"},
   {key: "option", label: "操作"}
 ];

@@ -128,6 +128,15 @@ async function updateStudent(form){
     })
 }
 
+async function deleteUser(delete_id){
+    return new Promise((resolve, reject) => {
+        dataService.deleteUser(delete_id, resp => {
+            msg.value = resp.data.msg
+            resolve()
+        })
+    })
+}
+
     return {
         accountValid,
         accountRole,
@@ -141,6 +150,7 @@ async function updateStudent(form){
         editPassword,
         studentInformationForm,
         createStudent,
-        updateStudent
+        updateStudent,
+        deleteUser
     }
 })
