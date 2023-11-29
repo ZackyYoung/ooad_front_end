@@ -149,7 +149,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next)=>{
     if(to.path === '/')  return next()
-    const tokenStr = window.sessionStorage.getItem("token")
+    const tokenStr = window.sessionStorage.getItem("campusId")
     if(!tokenStr) return next('/')
     next()
 })

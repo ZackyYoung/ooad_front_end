@@ -13,7 +13,7 @@
     </div>
     <div class="right">
       <p class="welcome">
-        欢迎，{{ userinfo.name }}
+        欢迎，{{ accountStore.accountCampusId }}
       </p>
       <va-button
           v-for="(item, index) in s_head_bar_items"
@@ -41,12 +41,6 @@ import {s_head_bar_items} from "@/utils/SBarItems.js";
 
 const accountStore = useAccountStore()
 const router = useRouter()
-const userinfo = reactive(
-    {
-      name: accountStore.accountName ? accountStore.accountName : "学生1",
-      sid: accountStore.studentInformationForm.studentId
-    }
-);
 
 function toMain() {
   router.push('/student')
@@ -54,7 +48,7 @@ function toMain() {
 
 function logout() {
   router.push('/')
-  window.sessionStorage.clear("token")
+  window.sessionStorage.clear()
 }
 </script>
 

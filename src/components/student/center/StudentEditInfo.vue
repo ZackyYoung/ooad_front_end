@@ -31,77 +31,77 @@
           class="mb-6"
           label="学级"
           placeholder="选择学级"
-          :options="year_options"
+          :options="degree_options"
       />
       <va-textarea
-          v-model="form.intro"
+          v-model="form.info"
           label="简介"
           placeholder="请给出你的简介吧"
-          autosize
+          max-length="200"
+          counter
+          :autosize="true"
       />
     </va-form>
     <va-button class="save-button" :disabled="!isValid" @click=" submitEdit()">
       提交修改
     </va-button>
+    <va-modal
+        v-model="dialogVisible"
+        :message="accountStore.msg"
+        ok-text="Confirm"
+        size="small"
+    />
   </va-card>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {ref} from "vue";
 import {useForm, useModal} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
-import {gender_options, major_options, year_options} from "@/utils/UserOptions.js";
+import {gender_options, major_options, degree_options} from "@/utils/UserOptions.js";
+import {useAccountStore} from "@/store/account.js";
 
 
 const {isValid, validate} = useForm('formRef')
 
-
+const accountStore = useAccountStore()
 const form = reactive({
-  sid: 0,
-  name: '',
-  gender: 1,
-  degree: 0,
-  major: '',
-  intro: '',
+  studentId: accountStore.accountCampusId,
+  name: accountStore.studentInformationForm.name,
+  gender: accountStore.studentInformationForm.gender,
+  degree: accountStore.studentInformationForm.degree,
+  major: accountStore.studentInformationForm.major,
+  info: accountStore.studentInformationForm.info
 })
 
-const showEdit = ref<boolean>(false);
+const showEdit = ref(false);
 
-function updateAndShowEditForm(student) {
-  form.sid = student.sid;
-  form.degree = student.degree;
-  form.gender = student.gender;
-  form.name = student.name;
-  form.major = student.major;
-  showEdit.value = true;
-}
 
-const validateName = (value: string) => {
+
+const validateName = (value) => {
   console.log(value.length === 0)
-  if (value.length == 0) {
+  if (value.length === 0) {
     return 'Field is required'
   }
 }
 
-function submitEdit() {
-  console.log(form.name);
-  console.log('submit!');
-  //
 
-
-  //
-
-  showEdit.value = false;
+const dialogVisible = ref(null)
+async function submitEdit() {
+  form.studentId = accountStore.accountCampusId
+  await accountStore.updateStudent(form)
+  showEdit.value = false
+  dialogVisible.value = true
 }
 
 
 const {confirm} = useModal();
 
 const columns = [
-  {key: "sid", label: "学号"},
+  {key: "studentId", label: "学号"},
   {key: "name", label: "姓名"},
   {key: "gender", label: "性别"},
-  {key: "degree", label: "学级"},
+  {key: "degree", label: "在读学历"},
   {key: "major", label: "专业"},
   {key: "option", label: "操作"}
 ];

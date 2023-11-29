@@ -1,43 +1,39 @@
 <script setup lang="ts">
 import {StudentInfo} from '@/utils/types/type'
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {reactive} from "vue";
 import {useAccountStore} from "@/store/account";
 
 const accountStore = useAccountStore()
-const studentInfo = accountStore.studentInformationForm
 
-const props = defineProps([
-  'name',
-  'studentId',
-  "major",
-  "degree",
-  "gender",
-  "info",
-])
+onMounted(async ()=>{
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
+
 
 </script>
 
 <template>
   <div class="info-container">
     <va-card class="info-card">
-      <va-card-title class="info-card__title">{{ props.name }}的个人简介</va-card-title>
+      <va-card-title class="info-card__title">{{ accountStore.studentInformationForm.name }} 的个人简介</va-card-title>
       <va-card-content class="info-card__content">
         <div class="info-card__content__sid">
-          学号：{{ props.studentId }}
+          学号：{{ accountStore.studentInformationForm.studentId }}
         </div>
         <div class="info-card__content__gender">
-          性别：{{ props.gender }}
+          性别：{{ accountStore.studentInformationForm.gender }}
         </div>
         <div class="info-card__content__major">
-          专业：{{props.major }}
+          专业：{{accountStore.studentInformationForm.major }}
         </div>
         <div class="info-card__content__degree">
-          在读学历：{{ props.degree }}
+          在读学历：{{ accountStore.studentInformationForm.degree }}
         </div>
         <div class="info-card__content__intro">
           个人简介:<br>
-          {{ props.info ? studentInfo.info : '尚未填写简介~' }}
+          {{ accountStore.studentInformationForm.info ? accountStore.studentInformationForm.info : '尚未填写简介~' }}
         </div>
       </va-card-content>
     </va-card>

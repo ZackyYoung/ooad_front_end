@@ -1,9 +1,5 @@
-export const gender_option = [
-    '男', '女'
-]
 export const gender_options = [
-    {text: '男', value: 1},
-    {text: '女', value: 2},
+    '男', '女'
 ]
 
 export const major_options = [

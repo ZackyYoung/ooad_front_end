@@ -84,7 +84,7 @@ import * as XLSX from 'xlsx';
 import {major_options, degree_options,} from "@/utils/UserOptions.js";
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
 const accountStore = useAccountStore()
-
+const formRef = ref(null)
 const form = reactive({
   studentId: "",
   name: null,
@@ -111,7 +111,10 @@ const dialogVisible = ref(false)
 async function createStudent(form) {
   await accountStore.createStudent(form)
   dialogVisible.value = true
+  formRef.value.reset()
 }
+
+
 const info_file = ref([])
 async function file_import(file)
 {

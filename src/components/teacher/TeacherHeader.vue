@@ -13,7 +13,7 @@
     </div>
     <div class="right">
       <p class="welcome">
-        欢迎，管理员：{{ userinfo.name }}
+        欢迎，管理员：{{ accountStore.accountCampusId }}
       </p>
       <va-button
           v-for="(item, index) in t_head_bar_items"
@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import {computed, reactive, ref} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import logoName from '@/assets/images/logo_name.png'
 import {useAccountStore} from "@/store/account.js"
 import {useRouter} from "vue-router"
@@ -41,20 +41,18 @@ import {t_head_bar_items} from "@/utils/TBarItems.js";
 
 const accountStore = useAccountStore()
 const router = useRouter()
-const userinfo = reactive(
-    {
-      name: accountStore.accountName?accountStore.accountName:"管理员1",
-      sid: 10086
-    }
-);
 function toMain(){
   router.push('/teacher')
 }
 
 function logout () {
   router.push('/')
-  window.sessionStorage.clear("token")
+  window.sessionStorage.clear()
 }
+
+onMounted(async ()=>{
+  await accountStore.refreshSession()
+})
 </script>
 
 

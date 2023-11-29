@@ -48,23 +48,13 @@ function updateStudent(param, callback) {
 }
 
 function fetchInformation(campusId, role, callback){
-    if(role === 'teacher'){
-        const url = `${dataServerUrl}/teacher/findById/${campusId}`
-        axiosInstance.get(url)
-            .then(resp =>{
-                callback(resp)
-            }, errResp => {
-                console.log(errResp)
-            })
-    }else if(role === 'student'){
-        const url = `${dataServerUrl}/student/findById/${campusId}`
-        axiosInstance.get(url)
-            .then(resp =>{
-                callback(resp)
-            }, errResp => {
-                console.log(errResp)
-            })
-    }
+    const url = `${dataServerUrl}/${role}/findById/${campusId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
 }
 
 function findAllStudent(callback)

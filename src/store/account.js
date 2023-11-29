@@ -5,27 +5,45 @@ import {reactive, ref} from "vue";
 export const useAccountStore = defineStore('account', () => {
     const accountValid = ref(false)
     const accountRole = ref(null)
-    const accountName = ref(null)
+    const accountCampusId = ref(null)
     const msg = ref("")
     const loginForm = reactive({
         campusId: "",
         password: ""
     })
+    const studentInformationForm = reactive({
+        studentId: "",
+        name: null,
+        gender: null,
+        degree: null,
+        major: null,
+        info: null
+    })
+
+async function refreshSession()
+{
+    accountCampusId.value = window.sessionStorage.getItem("campusId")
+    accountRole.value = window.sessionStorage.getItem("role")
+    accountValid.value = true
+}
+async function fetchInformation()
+{
+    return new Promise((resolve, reject) => {
+        dataService.fetchInformation(accountCampusId.value, accountRole.value, resp =>{
+            this.studentInformationForm = resp.data.data
+        })
+    })
+}
 
 async function loginCheck () {
         return new Promise((resolve, reject) => {
-            dataService.loginCheck(loginForm, resp => {
+            dataService.loginCheck(loginForm, async resp => {
                 if (resp.data.code === 0) {
                     accountRole.value = resp.data.data.role
                     accountValid.value = true
-                    dataService.fetchInformation(loginForm.campusId, accountRole.value, info =>{
-                        accountName.value = info.data.data.name
-                        window.sessionStorage.setItem("token", loginForm.campusId)
-                        if(accountRole.value === "student"){
-                            this.studentInformationForm = info.data.data
-                        }
-
-                    })
+                    accountCampusId.value = loginForm.campusId
+                    window.sessionStorage.setItem("campusId", loginForm.campusId)
+                    window.sessionStorage.setItem("role", resp.data.data.role)
                     resolve()
                 } else {
                     accountValid.value = false
@@ -35,7 +53,6 @@ async function loginCheck () {
             });
         });
     }
-
     const registerForm = reactive({
         campusId: "",
         role: "",
@@ -43,21 +60,15 @@ async function loginCheck () {
         confirmPassword: ""
     })
 
-    const studentInformationForm = reactive({
-        studentId: "",
-        name: null,
-        gender: null,
-        degree: null,
-        major: null,
-        info: null
-    })
 async function registerAccount () {
         return new Promise((resolve, reject) => {
             dataService.registerAccount(registerForm, resp => {
                 if (resp.data.code === 0) {
                     accountRole.value = resp.data.data.role
                     accountValid.value = true
-                    window.sessionStorage.setItem("token", registerForm.campusId)
+                    accountCampusId.value = registerForm.campusId
+                    window.sessionStorage.setItem("campusId", registerForm.campusId)
+                    window.sessionStorage.setItem("role", resp.data.data.role)
                     resolve()
                 } else {
                     accountValid.value = false
@@ -140,17 +151,19 @@ async function deleteUser(delete_id){
     return {
         accountValid,
         accountRole,
-        accountName,
+        accountCampusId,
         msg,
         loginForm,
         loginCheck,
         registerForm,
         registerAccount,
+        fetchInformation,
         editPasswordForm,
         editPassword,
         studentInformationForm,
         createStudent,
         updateStudent,
-        deleteUser
+        deleteUser,
+        refreshSession
     }
 })
