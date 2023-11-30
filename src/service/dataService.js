@@ -100,6 +100,16 @@ function findTeam(studentId, callback)
             console.log(errResp)
         })
 }
+
+function createTeam(param, callback){
+    const url = `${dataServerUrl}/team/addTeam`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -109,5 +119,6 @@ export default{
     findAllStudent,
     deleteUser,
     findAllTeam,
-    findTeam
+    findTeam,
+    createTeam
 }

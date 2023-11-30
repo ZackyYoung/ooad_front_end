@@ -17,9 +17,11 @@
             />
           </template>
         </va-input>
-
-
+        <va-button class="right-aligned-button" @click="createTeamFormVisible=true">
+          创建队伍
+        </va-button>
       </div>
+
     </va-form>
   </va-card>
 
@@ -74,6 +76,33 @@
       </va-button>
     </template>
   </va-modal>
+  <va-modal
+      v-model="createTeamFormVisible"
+      hide-default-actions
+      cancel-text="取消"
+  >
+    <h3 class="va-h3">
+      创建队伍
+    </h3>
+    <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
+      <va-input
+          v-model="teamStore.createTeamForm.teamName"
+          label="队伍名称"
+          placeholder="请输入队伍名称"
+      />
+    </va-form>
+    <template #footer>
+      <va-button class="save-button" @click="createTeam">
+        确认创建
+      </va-button>
+    </template>
+  </va-modal>
+  <va-modal
+      v-model="dialogVisible"
+      :message="teamStore.msg"
+      ok-text="Confirm"
+      size="small"
+  />
 </template>
 
 <script setup>
@@ -84,6 +113,7 @@ import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
 import {useTeamStore} from "@/store/team.js";
 import TeamInfoSimple from "@/components/student/team/TeamInfoSimple.vue";
+import {degree_options, major_options} from "@/utils/UserOptions.js";
 
 const {isValid, validate} = useForm('formRef')
 
@@ -98,6 +128,7 @@ const current_page = ref(1)
 
 onMounted(() => {
   teamStore.findAllTeam()
+  teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
 const infoForm = reactive({
@@ -117,11 +148,18 @@ function updateAndShowInfo(team) {
 }
 
 
-
+const createTeamFormVisible = ref(false)
+const dialogVisible = ref(false)
+async function createTeam(){
+  createTeamFormVisible.value = false
+  teamStore.createTeamForm.creatorId = accountStore.accountCampusId
+  await teamStore.createTeam()
+  await teamStore.findAllTeam()
+  dialogVisible.value = true
+}
 
 function submitApplication() {
-  console.log(infoForm.studentId);
-  console.log('submit!');
+
   show_detail.value = false;
 }
 
@@ -152,5 +190,8 @@ const columns = [
   gap: 1rem;
   padding: 1.5rem;
 }
-
+.right-aligned-button {
+  position: absolute;
+  right: 30px;
+}
 </style>
