@@ -11,11 +11,19 @@ const props = defineProps(['teamInfo'])
     <va-card class="info-card">
       <va-card-title class="info-card__title">{{ props.teamInfo.teamName }}的队伍介绍</va-card-title>
       <va-card-content class="info-card__content">
-        <div class="info-card__content__sid">
-          创建者：{{ props.teamInfo.creatorName }}
+        <div class="creator-name">
+          <va-chip class="mr-3">
+            队长
+          </va-chip>
+          {{ props.teamInfo.creatorName }}
         </div>
-        <div class="info-card__content__gender">
-          队员：{{ props.teamInfo.teamMembers }}
+        <div class="member-name" v-if="props.teamInfo.teamMembers">
+          <va-chip outline class="mr-3">
+            队员
+          </va-chip>
+          <span v-for="(member,index) in props.teamInfo.teamMembers">
+            <span v-if="index > 0">，</span>{{ member }}
+          </span>
         </div>
       </va-card-content>
     </va-card>
@@ -23,5 +31,13 @@ const props = defineProps(['teamInfo'])
 </template>
 
 <style scoped>
+.creator-name {
+  margin: 0.5rem;
+  padding: 0.2rem;
+}
 
+.member-name {
+  margin: 0.5rem;
+  padding: 0.2rem;
+}
 </style>
