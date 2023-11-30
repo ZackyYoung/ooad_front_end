@@ -1,18 +1,18 @@
 <template>
   <va-card class="page-content-card">
     <va-card-title>
-      搜索学生
+      搜索队伍
     </va-card-title>
     <va-form>
       <div>
         <va-input
             style="margin: 0.5rem"
             v-model="filter"
-            placeholder="请输入要搜索的学号或姓名"
+            placeholder="请输入队伍名称或队长学号"
         >
           <template #prependInner>
             <va-icon
-                name="person"
+                name="flag"
                 color="secondary"
             />
           </template>
@@ -25,12 +25,12 @@
 
   <va-card class="page-content-card">
     <va-card-title>
-      学生列表
+      队伍列表
     </va-card-title>
 
     <va-data-table
         style="padding: 1rem"
-        :items="studentStore.studentData"
+        :items="teamStore.teamData"
         :per-page="perPage"
         :current-page="current_page"
         :columns="columns"
@@ -51,9 +51,6 @@
           />
         </va-button>
       </template>
-      <template #cell(gender)="{ rowData }">
-        {{ rowData.gender}}
-      </template>
     </va-data-table>
     <VaPagination
         v-model="current_page"
@@ -68,12 +65,12 @@
       v-model="show_detail"
       hide-default-actions
   >
-    <StudentInfo
-        :student-info="infoForm"
+    <TeamInfoSimple
+        :team-info="infoForm"
     />
     <template #footer>
-      <va-button @click=" submitInvite()">
-        邀请此人
+      <va-button @click=" submitApplication()">
+        申请入队
       </va-button>
     </template>
   </va-modal>
@@ -83,14 +80,16 @@
 import {onMounted, ref} from "vue";
 import {useForm, useModal} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
-import StudentInfo from "@/components/student/center/StudentInfo.vue";
 import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
+import {useTeamStore} from "@/store/team.js";
+import TeamInfoSimple from "@/components/student/team/TeamInfoSimple.vue";
 
 const {isValid, validate} = useForm('formRef')
 
 
 const accountStore = useAccountStore()
+const teamStore = useTeamStore()
 const studentStore = useStudentStore()
 
 const perPage = ref(5);
@@ -98,36 +97,34 @@ const show_detail = ref(false);
 const current_page = ref(1)
 
 onMounted(() => {
-  studentStore.findAllStudent()
+  teamStore.findAllTeam()
 })
 
 const infoForm = reactive({
-  studentId: 0,
-  name: 'name',
-  gender: 1,
-  degree: 0,
-  major: '',
-  info: '',
+  teamName: '',
+  creatorId: '',
+  creatorName: '',
+  teamMembers: []
 })
 
 
-function updateAndShowInfo(student) {
-  infoForm.studentId = student.studentId;
-  infoForm.degree = student.degree;
-  infoForm.gender = student.gender;
-  infoForm.name = student.name;
-  infoForm.major = student.major;
-  infoForm.info = student.info;
+function updateAndShowInfo(team) {
+  infoForm.teamName = team.teamName
+  infoForm.creatorId = team.creatorId
+  infoForm.creatorName = team.creatorName
+  infoForm.teamMembers = team.teamMembers
   show_detail.value = true;
 }
 
 
-function submitInvite() {
+
+
+function submitApplication() {
   console.log(infoForm.studentId);
   console.log('submit!');
-
   show_detail.value = false;
 }
+
 
 
 const filter = ref("")
@@ -136,11 +133,10 @@ const filtered_total = ref(studentStore.studentData.length)
 
 
 const columns = [
-  {key: "studentId", label: "学号", sortable: true},
-  {key: "name", label: "姓名", sortable: true},
-  {key: "gender", label: "性别"},
-  {key: "degree", label: "在读学历"},
-  {key: "major", label: "专业"},
+  {key: "teamName", label: "队名", sortable: true},
+  {key: "creatorId", label: "队长学号", sortable: true},
+  {key: "creatorName", label: "队长姓名", sortable: true},
+  {key: "teamMembers", label: "队员"},
   {key: "option", label: "操作"}
 ];
 

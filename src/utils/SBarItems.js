@@ -13,7 +13,8 @@ export const s_team_sidebar_items = [
 
 export const s_square_sidebar_items = [
     {title: "房子查看", icon: "king_bed", router_path: '/student/square/dormitory'},
-    {title: "选择舍友", icon: "group_add", router_path: '/student/square/schoolmate'}
+    {title: "选择舍友", icon: "group_add", router_path: '/student/square/schoolmate'},
+    {title: "选择队伍", icon: "flag", router_path: '/student/square/teamSelect'}
 ];
 
 export const s_notif_sidebar_items = [

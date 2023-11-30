@@ -78,6 +78,28 @@ function deleteUser(delete_id, callback)
             console.log(errResp)
         })
 }
+
+function findAllTeam(callback)
+{
+    const url = `${dataServerUrl}/team/findAll`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function findTeam(studentId, callback)
+{
+    const url = `${dataServerUrl}/student/isInTeam/${studentId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -85,5 +107,7 @@ export default{
     updateStudent,
     fetchInformation,
     findAllStudent,
-    deleteUser
+    deleteUser,
+    findAllTeam,
+    findTeam
 }

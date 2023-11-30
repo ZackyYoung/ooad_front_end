@@ -2,7 +2,7 @@
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
-import StudentInfo from "@/components/student/StudentInfo.vue";
+import StudentInfo from "@/components/student/center/StudentInfo.vue";
 
 import {s_center_sidebar_items} from "@/utils/SBarItems.js";
 
@@ -17,7 +17,9 @@ const accountStore = useAccountStore()
     <div class="page-container">
       <SideBar :sidebar-items="s_center_sidebar_items" :active_id=0 class="sidebar"/>
       <div class="page-content">
-        <StudentInfo/>
+        <StudentInfo
+            :studentInfo="accountStore.studentInformationForm"
+        />
       </div>
     </div>
   </div>

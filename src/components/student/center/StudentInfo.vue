@@ -10,35 +10,36 @@ onMounted(async ()=>{
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
 })
-
+const props = defineProps(['studentInfo'])
 
 </script>
 
 <template>
   <div class="info-container">
     <va-card class="info-card">
-      <va-card-title class="info-card__title">{{ accountStore.studentInformationForm.name }} 的个人简介</va-card-title>
+      <va-card-title class="info-card__title">{{ props.studentInfo.name }}的个人简介</va-card-title>
       <va-card-content class="info-card__content">
         <div class="info-card__content__sid">
-          学号：{{ accountStore.studentInformationForm.studentId }}
+          学号：{{ props.studentInfo.studentId }}
         </div>
         <div class="info-card__content__gender">
-          性别：{{ accountStore.studentInformationForm.gender }}
+          性别：{{ props.studentInfo.gender }}
         </div>
         <div class="info-card__content__major">
-          专业：{{accountStore.studentInformationForm.major }}
+          专业：{{props.studentInfo.major }}
         </div>
         <div class="info-card__content__degree">
-          在读学历：{{ accountStore.studentInformationForm.degree }}
+          在读学历：{{ props.studentInfo.degree }}
         </div>
         <div class="info-card__content__intro">
           个人简介:<br>
-          {{ accountStore.studentInformationForm.info ? accountStore.studentInformationForm.info : '尚未填写简介~' }}
+          {{ props.studentInfo.info ? props.studentInfo.info : '尚未填写简介~' }}
         </div>
       </va-card-content>
     </va-card>
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .info-container {

@@ -17,6 +17,7 @@ import SEditInfoPage from "@/view/StudentCenter/SEditInfoPage.vue";
 import SCommentNotifPage from "@/view/StudentNotif/SCommentNotifPage.vue";
 import SInvitationNotifPage from "@/view/StudentNotif/SInvitationNotifPage.vue";
 import STeamInvitationPage from "@/view/StudentTeam/STeamInvitationPage.vue";
+import STeamSelect from "@/view/StudentSquare/STeamSelect.vue";
 
 const routes = [
     {
@@ -95,6 +96,12 @@ const routes = [
     },
 
     {
+        path: '/student/square/teamSelect',
+        name: 'STeamSelect',
+        component: STeamSelect
+    },
+
+    {
         path: '/student/notification/comment',
         name: 'SCommentNotif',
         component: SCommentNotifPage
@@ -147,10 +154,10 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next)=>{
-    if(to.path === '/')  return next()
-    const tokenStr = window.sessionStorage.getItem("campusId")
-    if(!tokenStr) return next('/')
-    next()
-})
+// router.beforeEach((to, from, next)=>{
+//     if(to.path === '/')  return next()
+//     const tokenStr = window.sessionStorage.getItem("campusId")
+//     if(!tokenStr) return next('/')
+//     next()
+// })
 export default router;

@@ -159,7 +159,6 @@ function updateAndShowEditForm(student) {
   form.gender = student.gender;
   form.name = student.name;
   form.major = student.major;
-
   showEdit.value = true;
 }
 
