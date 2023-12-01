@@ -107,13 +107,14 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
-import {useForm, useModal} from "vuestic-ui";
+import {useForm, useModal, useToast} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
 import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
 import {useTeamStore} from "@/store/team.js";
 import TeamInfoSimple from "@/components/student/team/TeamInfoSimple.vue";
-import {degree_options, major_options} from "@/utils/UserOptions.js";
+
+const {init} = useToast()
 
 const {isValid, validate} = useForm('formRef')
 
@@ -126,9 +127,11 @@ const perPage = ref(5);
 const show_detail = ref(false);
 const current_page = ref(1)
 
-onMounted(() => {
-  teamStore.findAllTeam()
-  teamStore.fetchTeamInformation(accountStore.accountCampusId)
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender)
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
 const infoForm = reactive({
@@ -153,14 +156,24 @@ const dialogVisible = ref(false)
 async function createTeam(){
   createTeamFormVisible.value = false
   teamStore.createTeamForm.creatorId = accountStore.accountCampusId
+  teamStore.createTeamForm.gender = accountStore.studentInformationForm.gender
   await teamStore.createTeam()
-  await teamStore.findAllTeam()
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender)
   dialogVisible.value = true
 }
 
-function submitApplication() {
-
-  show_detail.value = false;
+async function submitApplication() {
+  show_detail.value = false
+  if(teamStore.joined){
+    init("你已经加入了一个队伍")
+  }
+  else if(infoForm.teamMembers.length === 3) {
+    init("你申请的队伍人数已满")
+  }
+  else{
+    await teamStore.applyToJoinTeam(infoForm.creatorId, accountStore.accountCampusId)
+    dialogVisible.value = true
+  }
 }
 
 

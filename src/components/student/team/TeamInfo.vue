@@ -1,12 +1,4 @@
 <template>
-  <!--  <div class="team-info-container flex flex-col items-baseline gap-6" v-if="teamStore.joined"-->
-  <!--       v-for="member in team_info">-->
-  <!--    <StudentInfo-->
-  <!--        :student-info="member"-->
-  <!--    />-->
-  <!--    -->
-  <!--  </div>-->
-
   <div class="team-manager-container" v-if="teamStore.joined">
     <va-card class="page-content-card team-manager-card">
       <va-card-title style="font-size: 1rem">
@@ -51,8 +43,7 @@
           <StudentInfo
               :student-info="infoForm"
           />
-          <template #footer v-if="teamStore.current_team.creatorId === accountStore.accountCampusId
-            && infoForm.studentId !== accountStore.accountCampusId">
+          <template #footer v-if="isCreator && infoForm.studentId !== accountStore.accountCampusId">
             <va-button
                 round
                 class="mr-2 mb-2"
@@ -75,7 +66,7 @@
 
       <div class="exit flex">
         <div class="exit-delete">
-          <div class="delete-team" v-if="accountStore.accountCampusId === teamStore.current_team.creatorId">
+          <div class="delete-team" v-if="isCreator">
             <va-button
                 class="mr-2 mb-2"
                 color="danger"
@@ -124,7 +115,7 @@ import {useTeamStore} from "@/store/team.js";
 import {useAccountStore} from "@/store/account";
 
 
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {useModal, useToast} from 'vuestic-ui'
 
 const accountStore = useAccountStore()
@@ -138,6 +129,10 @@ onMounted(async () => {
 
 const {confirm} = useModal()
 const {init} = useToast()
+
+const isCreator = computed(()=>{
+  return accountStore.accountCampusId === teamStore.current_team.creatorId
+})
 
 const columns = [
   {key: "teamRole", label: "职位"},
@@ -181,7 +176,7 @@ async function transferAndSubmit(memberId, memberName) {
   } else {
     init("取消转让队长")
   }
-
+  showDetail.value = false
 }
 
 async function removeAndSubmit(memberId, memberName) {
@@ -199,7 +194,7 @@ async function removeAndSubmit(memberId, memberName) {
   } else {
     init("取消移除成员")
   }
-
+  showDetail.value = false
 }
 
 async function deleteTeamAndSubmit() {
@@ -217,6 +212,7 @@ async function deleteTeamAndSubmit() {
   } else {
     init("取消解散队伍")
   }
+  showDetail.value = false
 }
 
 async function exitTeamAndSubmit() {
@@ -234,7 +230,7 @@ async function exitTeamAndSubmit() {
   } else {
     init("取消退出队伍")
   }
-
+  showDetail.value = false
 
 }
 

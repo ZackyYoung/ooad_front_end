@@ -131,7 +131,8 @@ async function removeAndSubmit(memberIndex) {
   })
 
   if (result) {
-    teamStore.removeMember(teamMembers.value[memberIndex].sid);
+    await teamStore.removeMember(teamMembers.value[memberIndex].sid);
+    init("移除成员成功")
   } else {
     init("取消移除成员")
   }

@@ -10,29 +10,32 @@ export const useTeamStore = defineStore('team', () => {
     const msg = ref(null)
     const createTeamForm = reactive({
         teamName: '',
-        creatorId: ''
+        creatorId: '',
+        gender: ''
     })
-    async function findAllTeam(){
+    async function findAllTeam(gender){
         teamData.length = 0
         return new Promise((resolve, reject) => {
             dataService.findAllTeam(resp => {
                 if (resp.status === 200) {
                     resp.data.data.forEach((team)=>{
-                        let teamMemberNames = []
-                        let creatorName
-                        team.teamMembers.forEach((member)=>{
-                            if(member.studentId === team.creatorId)
-                                creatorName = member.name
-                            else
-                                teamMemberNames.push(member.name)
-                        })
-                        teamData.push({
-                            teamId: team.teamId,
-                            teamName: team.teamName,
-                            creatorId: team.creatorId,
-                            creatorName: creatorName,
-                            teamMembers: teamMemberNames
-                        })
+                        if(team.gender === gender) {
+                            let teamMemberNames = []
+                            let creatorName
+                            team.teamMembers.forEach((member) => {
+                                if (member.studentId === team.creatorId)
+                                    creatorName = member.name
+                                else
+                                    teamMemberNames.push(member.name)
+                            })
+                            teamData.push({
+                                teamId: team.teamId,
+                                teamName: team.teamName,
+                                creatorId: team.creatorId,
+                                creatorName: creatorName,
+                                teamMembers: teamMemberNames
+                            })
+                        }
                     })
                     resolve()
                 } else {
@@ -138,61 +141,37 @@ export const useTeamStore = defineStore('team', () => {
         })
     }
 
-    const team_id = ref(0)
-    const creator_id = ref(0)
-    const teamMembers = reactive({})
-    const cur_user_id = ref(0)
-    const user_has_team = ref(true)
-
-    function getInfo() {
-        team_id.value = 1;
-        creator_id.value = 12110001;
-        cur_user_id.value = 12110001;
-        teamMembers.value = [
-            {
-                sid: 12110000,
-                name: '苏苏',
-                gender: 2,
-                degree: 2021,
-                major: '计算机科学与工程系',
-                intro: '大家好'
-            },
-            {
-                sid: 12110001,
-                name: '南小科',
-                gender: 1,
-                degree: 2022,
-                major: '电子系',
-                intro: '大家坏'
-            },
-            {
-                sid: 12110002,
-                name: '玉群',
-                gender: 1,
-                degree: 2020,
-                major: '软件工程',
-                intro: '不想写ooad'
-            },
-            {
-                sid: 12110003,
-                name: '坤坤',
-                gender: 1,
-                degree: 2022,
-                major: '物理系',
-                intro: '开学了啊啊啊啊啊啊啊啊'
-            },
-        ]
+    async function applyToJoinTeam(creatorId, applierId){
+        return new Promise((resolve, reject) => {
+            dataService.addInvitation({
+                creatorId: creatorId,
+                studentId: applierId,
+                invitation: false
+            }, resp => {
+                if (resp.data.code === 0)
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+                else{
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
     }
 
-    getInfo();
-
-    const is_creator = computed(() => creator_id.value === cur_user_id.value)
-
-
-
-
-
-
+    async function addMember(creatorId, studentId){
+        return new Promise((resolve, reject) => {
+            dataService.addMember({
+                creatorId: creatorId,
+                studentId: studentId,
+            }, resp => {
+                    msg.value = resp.data.msg
+                    resolve()
+            })
+        })
+    }
 
 
     return {
@@ -207,10 +186,7 @@ export const useTeamStore = defineStore('team', () => {
         removeMember,
         deleteTeam,
         alterLeader,
-        user_has_team,
-        creator_id,
-        cur_user_id,
-        teamMembers,
-        is_creator
+        applyToJoinTeam,
+        addMember
     }
 })

@@ -5,7 +5,7 @@ import SideBar from "@/components/SideBar.vue";
 
 import {s_team_sidebar_items} from "@/utils/SBarItems.js";
 import {useAccountStore} from "@/store/account.js";
-import MemberManage from "@/components/student/team/MemberManage.vue";
+import MemberManage from "@/unused/MemberManage.vue";
 
 const accountStore = useAccountStore()
 

@@ -30,7 +30,15 @@ async function fetchInformation()
 {
     return new Promise((resolve, reject) => {
         dataService.fetchInformation(accountCampusId.value, accountRole.value, resp =>{
-            this.studentInformationForm = resp.data.data
+            this.studentInformationForm = {
+                studentId: resp.data.data.studentId,
+                name: resp.data.data.name,
+                gender: resp.data.data.gender,
+                degree: resp.data.data.degree,
+                major: resp.data.data.major,
+                info: resp.data.data.info
+            }
+            resolve()
         })
     })
 }

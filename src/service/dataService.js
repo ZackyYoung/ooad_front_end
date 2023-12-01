@@ -139,6 +139,56 @@ function alterLeader(param, callback){
             console.log(errResp)
         })
 }
+
+function addMember(param, callback){
+    const url = `${dataServerUrl}/team/addMember`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function addInvitation(param, callback){
+    const url = `${dataServerUrl}/invitation/addInvitation`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function getStudentRelatedInvitation(studentId, callback){
+    const url = `${dataServerUrl}/invitation/findStudentRelated/${studentId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function getTeamRelatedInvitation(teamId, callback){
+    const url = `${dataServerUrl}/invitation/findTeamRelated/${teamId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function deleteInvitation(param, callback){
+    const url = `${dataServerUrl}/invitation/deleteInvitation`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -152,5 +202,10 @@ export default{
     createTeam,
     deleteMember,
     deleteTeam,
-    alterLeader
+    alterLeader,
+    addMember,
+    addInvitation,
+    getTeamRelatedInvitation,
+    getStudentRelatedInvitation,
+    deleteInvitation
 }
