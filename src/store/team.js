@@ -87,6 +87,57 @@ export const useTeamStore = defineStore('team', () => {
             }
         })
     }
+
+    async function removeMember(studentId) {
+        return new Promise((resolve, reject) => {
+            dataService.deleteMember(studentId, resp =>{
+                if (resp.data.code === 0)
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+                else{
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
+    }
+
+    async function deleteTeam(creatorId){
+        return new Promise((resolve, reject) => {
+            dataService.deleteTeam(creatorId, resp =>{
+                if (resp.data.code === 0)
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+                else{
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
+    }
+    async function alterLeader(creatorId, leaderId) {
+        return new Promise((resolve, reject) => {
+            dataService.alterLeader({
+                oldId: creatorId,
+                leaderId: leaderId
+            }, resp => {
+                if (resp.data.code === 0)
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+                else{
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
+    }
+
     const team_id = ref(0)
     const creator_id = ref(0)
     const teamMembers = reactive({})
@@ -137,30 +188,10 @@ export const useTeamStore = defineStore('team', () => {
 
     const is_creator = computed(() => creator_id.value === cur_user_id.value)
 
-    function transOwner(sid) {
-        creator_id.value = sid;
-    }
 
 
 
-    function removeMember(sid) {
-        teamMembers.value = teamMembers.value.filter(member => member.sid !== sid);
 
-        //
-
-
-        //
-    }
-
-    function exitTeam() {
-        removeMember(cur_user_id);
-
-        //
-
-        //
-
-        user_has_team.value = false;
-    }
 
 
 
@@ -173,13 +204,13 @@ export const useTeamStore = defineStore('team', () => {
         msg,
         fetchTeamInformation,
         createTeam,
+        removeMember,
+        deleteTeam,
+        alterLeader,
         user_has_team,
         creator_id,
         cur_user_id,
         teamMembers,
-        is_creator,
-        transOwner,
-        exitTeam,
-        removeMember
+        is_creator
     }
 })

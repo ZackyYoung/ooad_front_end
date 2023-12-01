@@ -18,7 +18,7 @@
             :columns="columns"
         >
           <template #cell(teamRole)="{ rowData }">
-            <div v-if="teamStore.current_team.creatorId===rowData.studentId">
+            <div v-if="teamStore.current_team.creatorId === rowData.studentId">
               <va-chip>
                 队长
               </va-chip>
@@ -51,8 +51,8 @@
           <StudentInfo
               :student-info="infoForm"
           />
-          <template #footer v-if="teamStore.current_team.creatorId===accountStore.studentInformationForm.studentId
-            && infoForm.studentId!=accountStore.studentInformationForm.studentId">
+          <template #footer v-if="teamStore.current_team.creatorId === accountStore.accountCampusId
+            && infoForm.studentId !== accountStore.accountCampusId">
             <va-button
                 round
                 class="mr-2 mb-2"
@@ -75,13 +75,13 @@
 
       <div class="exit flex">
         <div class="exit-delete">
-          <div class="delete-team" v-if="accountStore.studentInformationForm.studentId===teamStore.current_team.creatorId">
+          <div class="delete-team" v-if="accountStore.accountCampusId === teamStore.current_team.creatorId">
             <va-button
                 class="mr-2 mb-2"
                 color="danger"
                 @click="deleteTeamAndSubmit"
             >
-              解散群组
+              解散队伍
             </va-button>
           </div>
           <div class="exit-team" v-else>
@@ -90,7 +90,7 @@
                 color="danger"
                 @click="exitTeamAndSubmit"
             >
-              退出群组
+              退出队伍
             </va-button>
           </div>
         </div>
@@ -117,7 +117,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 
 import StudentInfo from "@/components/student/center/StudentInfo.vue";
 import {useTeamStore} from "@/store/team.js";
@@ -130,12 +130,10 @@ import {useModal, useToast} from 'vuestic-ui'
 const accountStore = useAccountStore()
 const teamStore = useTeamStore();
 
-// import {team_info, user_info} from "@/test_data/student_test_data";
-// const accountStore = user_info;
-// const teamStore = team_info;
 
-onMounted(() => {
-  teamStore.fetchTeamInformation(accountStore.accountCampusId)
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
 const {confirm} = useModal()
@@ -177,7 +175,9 @@ async function transferAndSubmit(memberId, memberName) {
   })
 
   if (result) {
-    teamStore.transOwner(memberId);
+    await teamStore.alterLeader(accountStore.accountCampusId, memberId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    init("转让队长成功")
   } else {
     init("取消转让队长")
   }
@@ -193,7 +193,9 @@ async function removeAndSubmit(memberId, memberName) {
   })
 
   if (result) {
-    teamStore.removeMember(memberId);
+    await teamStore.removeMember(memberId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    init("移除队员成功")
   } else {
     init("取消移除成员")
   }
@@ -202,33 +204,35 @@ async function removeAndSubmit(memberId, memberName) {
 
 async function deleteTeamAndSubmit() {
   const result = await confirm({
-    message: "这会解散群组",
+    message: "这会解散队伍",
     title: '确认？',
     okText: "解散",
     cancelText: "取消",
   })
 
   if (result) {
-    //
-
-    //
+    await teamStore.deleteTeam(accountStore.accountCampusId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    init("解散队伍成功")
   } else {
-    init("取消")
+    init("取消解散队伍")
   }
 }
 
 async function exitTeamAndSubmit() {
   const result = await confirm({
-    message: "这将退出当前群组，确认吗",
+    message: "这将退出当前队伍，确认吗",
     title: '确认？',
-    okText: "退出群组",
+    okText: "退出队伍",
     cancelText: "取消",
   })
 
   if (result) {
-    teamStore.exitTeam();
+    await teamStore.removeMember(accountStore.accountCampusId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    init("退出队伍成功")
   } else {
-    init("取消退出群组")
+    init("取消退出队伍")
   }
 
 

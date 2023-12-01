@@ -6,7 +6,7 @@ export const s_center_sidebar_items = [
 
 export const s_team_sidebar_items = [
     {title: "队伍资料", icon: "group", router_path: '/student/team/info'},
-    {title: "成员管理", icon: "group_add", router_path: '/student/team/manage'},
+    // {title: "成员管理", icon: "group_add", router_path: '/student/team/manage'},
     {title: "队伍收藏", icon: "bookmark", router_path: '/student/team/favor'},
     {title: "邀请列表", icon: "handshake", router_path: '/student/team/invitation'},
 ];

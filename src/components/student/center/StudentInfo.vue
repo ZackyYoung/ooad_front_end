@@ -1,5 +1,4 @@
-<script setup lang="ts">
-import {StudentInfo} from '@/utils/types/type'
+<script setup>
 import {computed, onMounted, ref} from "vue";
 import {reactive} from "vue";
 import {useAccountStore} from "@/store/account";

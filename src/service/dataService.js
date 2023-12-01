@@ -92,7 +92,7 @@ function findAllTeam(callback)
 
 function findTeam(studentId, callback)
 {
-    const url = `${dataServerUrl}/student/isInTeam/${studentId}`
+    const url = `${dataServerUrl}/team/isInTeam/${studentId}`
     axiosInstance.get(url)
         .then(resp =>{
             callback(resp)
@@ -110,6 +110,35 @@ function createTeam(param, callback){
             console.log(errResp)
         })
 }
+
+function deleteMember(studentId, callback){
+    const url = `${dataServerUrl}/team/deleteMember/${studentId}`
+    axiosInstance.delete(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+function deleteTeam(creatorId, callback){
+    const url = `${dataServerUrl}/team/deleteByCreator/${creatorId}`
+    axiosInstance.delete(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function alterLeader(param, callback){
+    const url = `${dataServerUrl}/team/alterLeader`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -120,5 +149,8 @@ export default{
     deleteUser,
     findAllTeam,
     findTeam,
-    createTeam
+    createTeam,
+    deleteMember,
+    deleteTeam,
+    alterLeader
 }
