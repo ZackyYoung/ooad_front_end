@@ -9,7 +9,7 @@
         <template #cell(is_invitation)="{ rowData }">
           <va-chip
               v-if="rowData.is_invitation"
-              color="secondary"
+              color="primary"
           >
             已邀请
           </va-chip>
@@ -38,6 +38,15 @@
               忽略
             </va-button>
           </div>
+          <div v-else>
+            <va-button
+                class="mr-2 mb-2"
+                color="secondary"
+                @click="cancelInvitation(rowData.studentId)"
+            >
+              取消
+            </va-button>
+          </div>
         </template>
       </va-data-table>
     </va-card>
@@ -52,7 +61,7 @@
         <template #cell(is_invitation)="{ rowData }">
           <va-chip
               v-if="rowData.is_invitation"
-              color="secondary"
+              color="primary"
           >
             待接受
           </va-chip>
@@ -65,7 +74,7 @@
         </template>
 
         <template #cell(options)="{ row, rowData }">
-          <div v-if="!rowData.is_invitation">
+          <div v-if="rowData.is_invitation">
             <va-button
                 class="mr-2 mb-2"
                 color="primary"
@@ -79,6 +88,15 @@
                 @click="rejectInvitation(rowData.creatorId)"
             >
               忽略
+            </va-button>
+          </div>
+          <div v-else>
+            <va-button
+                class="mr-2 mb-2"
+                color="secondary"
+                @click="cancelApplication(rowData.creatorId)"
+            >
+              取消
             </va-button>
           </div>
         </template>
@@ -128,23 +146,30 @@ const studentColumns = [
 
 
 async function acceptApplication(studentId) {
-  if(teamStore.current_team.teamMembers.length === 3)
+  if(teamStore.current_team.teamMembers.length === 4)
   {
     init("队伍已满，无法通过加入申请")
   }
   else
   {
     await teamStore.addMember(accountStore.accountCampusId, studentId)
-    await invitationStore.deleteStudentRelatedInvitation(studentId)
+    init("通过加入申请")
   }
+  await invitationStore.deleteInvitation(accountStore.accountCampusId, studentId, false)
+  await invitationStore.deleteStudentRelatedInvitation(studentId)
   await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
-  init("通过加入申请")
 }
 
 async function rejectApplication(studentId) {
-  await invitationStore.deleteInvitation(teamStore.current_team.teamId, studentId, false)
+  await invitationStore.deleteInvitation(accountStore.accountCampusId, studentId, false)
   await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
   init("拒绝加入申请")
+}
+
+async function cancelInvitation(studentId){
+  await invitationStore.deleteInvitation(accountStore.accountCampusId, studentId, true)
+  await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
+  init("取消邀请")
 }
 
 
@@ -159,21 +184,31 @@ const teamColumns = [
 
 async function acceptInvitation(creatorId, teamMemberNames){
   if(teamMemberNames.length === 3){
+    await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, true)
+    await invitationStore.getStudentRelatedInvitation(accountStore.accountCampusId)
     init("队伍已满，无法加入")
   }
   else{
     await teamStore.addMember(creatorId, accountStore.accountCampusId)
+    await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, true)
     await invitationStore.deleteStudentRelatedInvitation(accountStore.accountCampusId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
+    init("成功加入队伍")
   }
-  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
-  await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
-  init("成功加入队伍")
+
 }
 
 async function rejectInvitation(creatorId){
-  await invitationStore.deleteInvitation(teamStore.current_team.teamId, studentId, false)
+  await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, true)
   await invitationStore.getStudentRelatedInvitation(accountStore.accountCampusId)
   init("已拒绝邀请")
+}
+
+async function cancelApplication(creatorId){
+  await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, false)
+  await invitationStore.getStudentRelatedInvitation(accountStore.accountCampusId)
+  init("取消申请")
 }
 
 </script>

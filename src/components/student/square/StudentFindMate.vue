@@ -77,28 +77,38 @@
       </va-button>
     </template>
   </va-modal>
+  <va-modal
+      v-model="dialogVisible"
+      :message="teamStore.msg"
+      ok-text="Confirm"
+      size="small"
+  />
 </template>
 
 <script setup>
 import {onMounted, ref} from "vue";
-import {useForm, useModal} from "vuestic-ui";
+import {useForm, useModal, useToast} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
 import StudentInfo from "@/components/student/center/StudentInfo.vue";
 import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
+import {useTeamStore} from "@/store/team.js";
 
 const {isValid, validate} = useForm('formRef')
 
 
 const accountStore = useAccountStore()
 const studentStore = useStudentStore()
-
+const teamStore = useTeamStore()
 const perPage = ref(5);
 const show_detail = ref(false);
 const current_page = ref(1)
 
-onMounted(() => {
-  studentStore.findAllStudent()
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+  await studentStore.findAllStudent(accountStore.studentInformationForm.gender)
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
 const infoForm = reactive({
@@ -120,13 +130,16 @@ function updateAndShowInfo(student) {
   infoForm.info = student.info;
   show_detail.value = true;
 }
-
-
-function submitInvite() {
-  console.log(infoForm.studentId);
-  console.log('submit!');
-
+const {init} = useToast()
+const dialogVisible = ref(false)
+async function submitInvite() {
   show_detail.value = false;
+  if (teamStore.current_team.teamMembers.length === 4) {
+    init("你的队伍人数已满")
+  } else {
+    await teamStore.inviteToJoinTeam(teamStore.current_team.creatorId, infoForm.studentId)
+    dialogVisible.value = true
+  }
 }
 
 

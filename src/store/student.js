@@ -3,13 +3,16 @@ import {defineStore} from "pinia";
 import {reactive, ref} from "vue";
 
 export const useStudentStore = defineStore('student', () =>{
-    const studentData = ref([])
+    const studentData = reactive([])
 
-async function findAllStudent(){
+async function findAllStudent(gender){
     return new Promise((resolve, reject) => {
         dataService.findAllStudent(resp => {
             if (resp.status === 200) {
-                studentData.value = resp.data.data
+                resp.data.data.forEach((student) =>{
+                    if(student.gender === gender)
+                        studentData.push(student)
+                })
                 resolve()
             } else {
                 reject()

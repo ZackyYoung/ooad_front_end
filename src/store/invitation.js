@@ -4,7 +4,6 @@ import {reactive, ref} from "vue";
 
 export const useInvitationStore = defineStore('invitation', () =>{
     const invitationData = reactive([])
-
     async function getStudentRelatedInvitation(studentId){
         invitationData.length = 0
         return new Promise((resolve, reject) => {
@@ -38,10 +37,9 @@ export const useInvitationStore = defineStore('invitation', () =>{
     async function getTeamRelatedInvitation(teamId) {
         invitationData.length = 0
         return new Promise((resolve, reject) => {
-            dataService.getTeamRelatedInvitation(teamId, resp =>{
-                if(resp.data.code === 0)
-                {
-                    resp.data.data.forEach((application) =>{
+            dataService.getTeamRelatedInvitation(teamId, resp => {
+                if (resp.data.code === 0) {
+                    resp.data.data.forEach((application) => {
                         invitationData.push({
                             name: application.student.name,
                             studentId: application.student.studentId,
@@ -54,10 +52,10 @@ export const useInvitationStore = defineStore('invitation', () =>{
         })
     }
 
-    async function deleteInvitation(teamId, studentId, invitation){
+    async function deleteInvitation(creatorId, studentId, invitation){
         return new Promise((resolve, reject) => {
             dataService.deleteInvitation({
-                teamId: teamId,
+                creatorId: creatorId,
                 studentId: studentId,
                 invitation: invitation
             }, resp =>{
@@ -67,16 +65,22 @@ export const useInvitationStore = defineStore('invitation', () =>{
     }
 
     async function deleteStudentRelatedInvitation(studentId){
-        await getStudentRelatedInvitation(studentId)
         return new Promise((resolve, reject) => {
-            invitationData.forEach((invitation) => {
-                dataService.deleteInvitation({
-                    teamId: invitation.team.teamId,
-                    studentId: invitation.studentId.studentId,
-                    invitation: invitation.invitation
-                })
+            dataService.getStudentRelatedInvitation(studentId, resp =>{
+                if(resp.data.code === 0)
+                {
+                    resp.data.data.forEach((invitation) => {
+                        dataService.deleteInvitation({
+                            creatorId: invitation.team.creatorId,
+                            studentId: invitation.student.studentId,
+                            invitation: invitation.invitation
+                        }, resp => {
+
+                        })
+                    })
+                }
+                resolve()
             })
-            resolve()
         })
     }
     return{

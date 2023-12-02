@@ -173,7 +173,25 @@ export const useTeamStore = defineStore('team', () => {
         })
     }
 
-
+    async function inviteToJoinTeam(creatorId, studentId){
+        return new Promise((resolve, reject) => {
+            dataService.addInvitation({
+                creatorId: creatorId,
+                studentId: studentId,
+                invitation: true
+            }, resp => {
+                if (resp.data.code === 0)
+                {
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+                else{
+                    msg.value = resp.data.msg
+                    resolve()
+                }
+            })
+        })
+    }
     return {
         teamData,
         findAllTeam,
@@ -187,6 +205,7 @@ export const useTeamStore = defineStore('team', () => {
         deleteTeam,
         alterLeader,
         applyToJoinTeam,
-        addMember
+        addMember,
+        inviteToJoinTeam
     }
 })
