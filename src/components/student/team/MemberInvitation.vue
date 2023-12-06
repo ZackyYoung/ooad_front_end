@@ -183,7 +183,7 @@ const teamColumns = [
 ]
 
 async function acceptInvitation(creatorId, teamMemberNames){
-  if(teamMemberNames.length === 3){
+  if(teamMemberNames.length === 4){
     await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, true)
     await invitationStore.getStudentRelatedInvitation(accountStore.accountCampusId)
     init("队伍已满，无法加入")

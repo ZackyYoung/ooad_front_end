@@ -8,7 +8,7 @@
         <va-input
             style="margin: 0.5rem"
             v-model="filter"
-            placeholder="请输入要搜索的学生学号"
+            placeholder="请输入要搜索的学号或姓名"
         >
           <template #prependInner>
             <va-icon
@@ -174,14 +174,14 @@ async function submitEdit(form) {
   await accountStore.updateStudent(form)
   showEdit.value = false
   dialogVisible.value = true
-  await studentStore.findAllStudent()
+  await studentStore.findAllStudent(null, true)
 }
 
 const gender_option = readonly(['男', '女'])
 
 
 onMounted(() => {
-  studentStore.findAllStudent()
+  studentStore.findAllStudent(null, true)
 })
 
 const filter = ref("")
@@ -200,7 +200,7 @@ async function deleteAndConfirm(delete_id) {
   if (result) {
     await accountStore.deleteUser(delete_id)
     dialogVisible.value = true
-    await studentStore.findAllStudent()
+    await studentStore.findAllStudent(null, true)
   }
 }
 

@@ -107,7 +107,7 @@ const current_page = ref(1)
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
-  await studentStore.findAllStudent(accountStore.studentInformationForm.gender)
+  await studentStore.findAllStudent(accountStore.studentInformationForm.gender, false)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
@@ -134,7 +134,7 @@ const {init} = useToast()
 const dialogVisible = ref(false)
 async function submitInvite() {
   show_detail.value = false;
-  if (teamStore.current_team.teamMembers.length === 4) {
+  if (teamStore.current_team.teamMembers.length === 5) {
     init("你的队伍人数已满")
   } else {
     await teamStore.inviteToJoinTeam(teamStore.current_team.creatorId, infoForm.studentId)

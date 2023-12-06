@@ -167,7 +167,7 @@ async function submitApplication() {
   if(teamStore.joined){
     init("你已经加入了一个队伍")
   }
-  else if(infoForm.teamMembers.length === 3) {
+  else if(infoForm.teamMembers.length === 4) {
     init("你申请的队伍人数已满")
   }
   else{

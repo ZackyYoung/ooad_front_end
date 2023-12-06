@@ -94,7 +94,7 @@ async function registerAccount () {
 async function editPassword () {
         return new Promise((resolve, reject) => {
             dataService.editPassword({
-                campusId: loginForm.campusId,
+                campusId: accountCampusId.value,
                 oldPassword: editPasswordForm.oldPasswd,
                 newPassword: editPasswordForm.newPasswd
             },resp => {

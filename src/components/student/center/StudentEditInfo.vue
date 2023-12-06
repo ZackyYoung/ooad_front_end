@@ -29,8 +29,8 @@
       <va-select
           v-model="form.degree"
           class="mb-6"
-          label="学级"
-          placeholder="选择学级"
+          label="在读学历"
+          placeholder="选择在读学历"
           :options="degree_options"
       />
       <va-textarea
