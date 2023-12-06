@@ -68,7 +68,6 @@
 import {ref, computed, onMounted, watch} from 'vue';
 import { rooms } from '@/testData/roomData.js'; //用来测试
 import axios from 'axios'; //实际使用
-import router from "@/router/router.js";
 import { useRouter } from 'vue-router';
 
 export default {

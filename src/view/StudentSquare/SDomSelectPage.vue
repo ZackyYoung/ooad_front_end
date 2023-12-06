@@ -4,6 +4,7 @@ import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
 
 import {s_square_sidebar_items} from "@/utils/SBarItems.js";
+import DisplayRooms from "@/components/student/square/DisplayRooms.vue";
 
 </script>
 
@@ -13,7 +14,7 @@ import {s_square_sidebar_items} from "@/utils/SBarItems.js";
     <div class="page-container">
       <SideBar :sidebar-items="s_square_sidebar_items" :active_id=0 class="sidebar"/>
       <div class="page-content">
-        <!--TODO:-->
+        <DisplayRooms/>
       </div>
     </div>
   </div>

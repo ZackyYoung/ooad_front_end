@@ -1,14 +1,20 @@
 <template>
-  <div class="room-container">
+  <div>
+    <StudentHeader class="header"/>
+    <div class="back-button" @click="back">
+      <va-icon name="va-arrow-left" size="2em" color="#333" class="icon"></va-icon>
+      <span class="button-text">返回</span>
+    </div>
+    <div class="room-container">
     <div class="images">
       <va-carousel v-model="value" :items="items" :ratio="16 / 9" />
     </div>
     <div v-for="(room, index) in filteredRooms" :key="index" class="room-intro" >
-      <p>区划：{{room.district}}</p>
-      <p>楼栋: {{ room.building }}</p>
-      <p>楼层: {{ room.floor }}</p>
-      <p>房间: {{ room.roomNumber }}</p>
-      <p>户型: {{ room.description }}</p>
+      <p>区划：{{ room.district}}</p>
+      <p>楼栋： {{ room.building }}</p>
+      <p>楼层： {{ room.floor }}</p>
+      <p>房间： {{ room.roomNumber }}</p>
+      <p>户型： {{ room.description }}</p>
       <va-button @click="toggleFavorite(room)" color="info" text-color="warning" gradient class="favorite-button">
         <va-icon v-if="!room.isFavorite" name="star" :color="room.isFavorite ? '#ffffff' : ''" class="icon-star"></va-icon>
         {{ room.isFavorite ? '取消收藏' : '收藏' }}
@@ -68,15 +74,23 @@
       </div>
     </va-card-content>
   </va-card>
-</template>>
+  </div>
+</template>
 
 <script setup>
+import StudentHeader from "@/components/student/StudentHeader.vue";
 import { computed, ref, reactive } from 'vue';
 import { rooms } from '@/testData/roomData.js';
 import faker from 'faker';
 import Room1Image from '@/assets/Room1.jpg';
 import Room2Image from '@/assets/Room2.png';
+import {useRouter} from "vue-router";
 
+const router = useRouter();
+
+const back = () => {
+  this.$router.go(-1)
+}
 // 生成随机评论
 const generateComment = () => {
   return {
@@ -152,67 +166,100 @@ const addReply = (commentIndex) => {
 
 const toggleFavorite = (room) => {
   room.isFavorite = !room.isFavorite;
-  // TODO: 在这里可以添加其他逻辑，比如将收藏状态保存到后端或本地存储中
+  // TODO: 在这里可以添加其他逻辑，将收藏状态保存到后端
 };
 </script>
 
 <style>
+.back-button {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  max-width: 130px;
+}
+
+.icon {
+  margin-top: 8px;
+  margin-left: 15px;
+  margin-right: 5px;
+}
+
+.button-text {
+  margin-top: 8px;
+  font-size: 1.3em;
+}
+
 .room-container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 20px;
 }
 
 .images {
   flex: 1;
-  margin-left: 300px;
-  margin-top: 100px;
+  margin-left: 90px;
+  margin-top: 50px;
+  margin-right: 30px;
+}
+
+.room-intro,
+.room-info {
+  flex: 1;
+  margin-top: 50px;
+  margin-right: 30px;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 25px;
+  line-height: 1.8;
 }
 
 .room-intro {
-  flex: 1;
-  margin-top: 100px;
-  margin-left: 50px;
-  font-size: 25px;
-  align-self: flex-start;
-  line-height: 2.0;
-  max-width: 250px;
+  max-width: 300px;
 }
 
 .room-info {
-  flex: 1;
-  margin-top: 100px;
-  margin-left: 0;
-  margin-right: 100px;
-  font-size: 25px;
-  align-self: flex-start;
-  line-height: 2.0;
+  max-width: 400px;
 }
 
 .description {
   text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .information {
   text-align: left;
   text-indent: 2em;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #333;
 }
 
 .favorite-button {
   margin-top: 20px;
   width: 120px;
   height: 50px;
-  font-size: 50px;
+  font-size: 1.2em;
 }
 
 .icon-star {
   margin-right: 5px;
-
+  font-size: 1.2em;
+  color: #f8d615;
 }
 
+
 .comment-card {
-  margin-left: 300px;
+  margin-left: 200px;
   margin-top: 100px;
-  margin-right: 100px;
+  margin-right: 200px;
   background-color: transparent;
   border: none;
   box-shadow: none;
