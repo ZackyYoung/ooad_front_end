@@ -67,7 +67,7 @@
                   <img src="@/assets/avatar2.png" alt="User Avatar">
                 </div>
                 <div class="reply-content">
-                  <p class="reply-author">{{ reply.author }}</p>
+                  <p class="reply-author">{{ reply.authorName }}</p>
                   <p class="reply-text">{{ reply.content }}</p>
                 </div>
               </div>
