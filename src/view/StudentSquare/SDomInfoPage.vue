@@ -1,11 +1,9 @@
-<script setup>
+<script setup lang="ts">
 
+import {s_square_sidebar_items} from "@/utils/SBarItems";
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
-
-import {s_square_sidebar_items} from "@/utils/SBarItems.js";
-import DisplayRooms from "@/components/student/square/DisplayRooms.vue";
-import RoomInfo from "@/components/student/square/StudentRoomInfo.vue";
+import StudentRoomInfo from "@/components/student/square/StudentRoomInfo.vue";
 
 </script>
 
@@ -13,13 +11,14 @@ import RoomInfo from "@/components/student/square/StudentRoomInfo.vue";
   <div class="page-wrapper">
     <StudentHeader class="header"/>
     <div class="page-container">
-      <SideBar :sidebar-items="s_square_sidebar_items" :active_id=0 class="sidebar"/>
+      <SideBar :sidebar-items="s_square_sidebar_items" active_id="0" class="sidebar"/>
       <div class="page-content">
-        <display-rooms/>
+        <student-room-info/>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+
 </style>

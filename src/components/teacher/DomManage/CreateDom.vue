@@ -8,8 +8,8 @@
 
         <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
           <va-select
-              v-model="form.zones"
-              :options="zone_options"
+              v-model="form.district"
+              :options="district_options"
               :rules="[(v) => Boolean(v)|| '区域不能为空！']"
               label="区域"
               placeholder="请选择宿舍区域"
@@ -26,9 +26,14 @@
               :rules="[(v) => floorValidator(v)]"
               placeholder="请输入楼层（整数数字）"
           />
-
+          <va-input
+              v-model="form.roomNumber"
+              label="房间号"
+              :rules="[(v) => roomNumberValidator(v)]"
+              placeholder="请输入房间号（整数数字）"
+          />
           <va-select
-              v-model="form.room_type"
+              v-model="form.roomType"
               class="mb-6"
               label="户型"
               :rules="[(v) => Boolean(v)|| '户型不能为空！']"
@@ -58,6 +63,12 @@
           </va-button>
         </div>
       </div>
+      <va-modal
+          v-model="dialogVisible"
+          :message="roomStore.msg"
+          ok-text="Confirm"
+          size="small"
+      />
     </va-card>
   </div>
 </template>
@@ -67,18 +78,23 @@
 
 import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
-import {gender_options, type_options, zone_options} from "@/utils/DomOptions.js";
+import {gender_options, type_options, district_options} from "@/utils/DomOptions.js";
+import {useRoomStore} from "@/store/room";
 
 
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
 
+const roomStore = useRoomStore()
+
+const dialogVisible = ref(false)
 
 const form = reactive({
-  zones: '',
+  district: '',
   building: '',
+  roomNumber: '',
   floor: '',
   gender: '',
-  room_type: '',
+  roomType: '',
   description: ''
 })
 
@@ -109,9 +125,18 @@ const floorValidator = (value) => {
   }
 }
 
-
-function submit() {
-
+const roomNumberValidator = (value) =>{
+  const re = /^\d+$/;
+  if (!value) {
+    return '房间不能为空！';
+  }
+  if (!re.test(value)) {
+    return '房间号必须为整数数字！'
+  }
+}
+async function submit() {
+  await roomStore.addRoom(form)
+  dialogVisible.value = true
 }
 
 </script>

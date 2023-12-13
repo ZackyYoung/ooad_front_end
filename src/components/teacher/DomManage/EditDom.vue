@@ -62,11 +62,7 @@
           </va-chip>
         </div>
         <div style="text-align: center;display: grid;grid-gap: 10px">
-          <va-button round gradient>
-            <va-icon name="edit"/>
-            编辑
-          </va-button>
-          <va-button round gradient>
+          <va-button round gradient @click="viewDetail(room)">
             <va-icon name="info"/>
             查看详情
           </va-button>
@@ -86,7 +82,7 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted, watch} from 'vue';
+import {ref, computed, onMounted, watch, reactive} from 'vue';
 import { rooms } from '@/testData/roomData.js'; //用来测试
 import { useRouter } from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
@@ -146,10 +142,17 @@ onMounted(async () => {
   await roomStore.findAllRoom()
 });
 
-const goToRoomInfo = () => {
-
-};
-
+const viewDetail = (room) =>{
+  roomStore.roomToView.roomId = room.roomId
+  roomStore.roomToView.district = room.district
+  roomStore.roomToView.building = room.building
+  roomStore.roomToView.roomNumber = room.roomNumber
+  roomStore.roomToView.roomType = room.roomType
+  roomStore.roomToView.floor = room.floor
+  roomStore.roomToView.gender = room.gender
+  roomStore.roomToView.description = room.description
+  router.push('/teacher/dormitory/roomInfo')
+}
 // 初始化时展示全部房间
 
 </script>

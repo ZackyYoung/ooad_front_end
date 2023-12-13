@@ -62,15 +62,7 @@
           </va-chip>
         </div>
         <div style="text-align: center;display: grid;grid-gap: 10px">
-          <va-button round gradient>
-            <va-icon name="star"/>
-            收藏
-          </va-button>
-          <va-button round gradient>
-            <va-icon name="comment"/>
-            评论
-          </va-button>
-          <va-button round gradient>
+          <va-button round gradient @click="viewDetail(room)">
             <va-icon name="info"/>
             查看详情
           </va-button>
@@ -96,7 +88,6 @@ import { useRouter } from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";
 const router = useRouter();
-const roomsData = ref(rooms);
 const roomStore = useRoomStore();
 const perPage = ref(8);
 const current_page = ref(1);
@@ -150,6 +141,17 @@ onMounted(async () => {
   await roomStore.findAllRoom()
 });
 
+const viewDetail = (room) =>{
+  roomStore.roomToView.roomId = room.roomId
+  roomStore.roomToView.district = room.district
+  roomStore.roomToView.building = room.building
+  roomStore.roomToView.roomNumber = room.roomNumber
+  roomStore.roomToView.roomType = room.roomType
+  roomStore.roomToView.floor = room.floor
+  roomStore.roomToView.gender = room.gender
+  roomStore.roomToView.description = room.description
+  router.push('/student/square/dormitory/roomInfo')
+}
 const goToRoomInfo = () => {
 
 };

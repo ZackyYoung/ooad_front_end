@@ -199,6 +199,36 @@ function findAllRoom(callback) {
             console.log(errResp)
         })
 }
+
+function addRoom(param, callback) {
+    const url = `${dataServerUrl}/room/addOne`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function editRoom(param, callback) {
+    const url = `${dataServerUrl}/room/update`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function fetchRoomInfo(building, roomNumber, callback){
+    const url = `${dataServerUrl}/room/findOne/${building}/${roomNumber}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -218,5 +248,8 @@ export default{
     getTeamRelatedInvitation,
     getStudentRelatedInvitation,
     deleteInvitation,
-    findAllRoom
+    findAllRoom,
+    addRoom,
+    editRoom,
+    fetchRoomInfo
 }

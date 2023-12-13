@@ -18,6 +18,8 @@ import SCommentNotifPage from "@/view/StudentNotif/SCommentNotifPage.vue";
 import SInvitationNotifPage from "@/view/StudentNotif/SInvitationNotifPage.vue";
 import STeamInvitationPage from "@/view/StudentTeam/STeamInvitationPage.vue";
 import STeamSelect from "@/view/StudentSquare/STeamSelect.vue";
+import SDomInfoPage from "@/view/StudentSquare/SDomInfoPage.vue";
+import TDomInfo from "@/view/TeacherDoms/TDomInfo.vue";
 
 const routes = [
     {
@@ -90,6 +92,12 @@ const routes = [
         component: SDomSelectPage
     },
     {
+        path: '/student/square/dormitory/roomInfo',
+        name: 'SDomInfoPage',
+        component: SDomInfoPage
+    },
+
+    {
         path: '/student/square/schoolmate',
         name: 'SMateSelect',
         component: SMateSelectPage
@@ -141,11 +149,15 @@ const routes = [
         component: TDomEditPage
     },
     {
+        path: '/teacher/dormitory/roomInfo',
+        name: 'TDomInfo',
+        component: TDomInfo
+    },
+    {
         path: '/teacher/dormitory/time',
         name: 'TDomTime',
         component: TDomTimePage
-    },
-
+    }
 
 ];
 

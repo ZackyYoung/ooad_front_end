@@ -26,13 +26,6 @@
           placeholder="选择专业"
           :options="major_options"
       />
-      <va-select
-          v-model="form.degree"
-          class="mb-6"
-          label="在读学历"
-          placeholder="选择在读学历"
-          :options="degree_options"
-      />
       <va-textarea
           v-model="form.info"
           label="简介"

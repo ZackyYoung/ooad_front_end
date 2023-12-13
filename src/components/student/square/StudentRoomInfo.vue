@@ -1,22 +1,27 @@
 <template>
   <div class="room-container">
     <div class="images">
-      <va-carousel v-model="value" :items="items" :ratio="16 / 9" />
+      <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9" />
     </div>
-    <div v-for="(room, index) in filteredRooms" :key="index" class="room-intro" >
-      <p>区划：{{room.district}}</p>
-      <p>楼栋: {{ room.building }}</p>
-      <p>楼层: {{ room.floor }}</p>
-      <p>房间: {{ room.roomNumber }}</p>
-      <p>户型: {{ room.description }}</p>
-      <va-button @click="toggleFavorite(room)" color="info" text-color="warning" gradient class="favorite-button">
-        <va-icon v-if="!room.isFavorite" name="star" :color="room.isFavorite ? '#ffffff' : ''" class="icon-star"></va-icon>
-        {{ room.isFavorite ? '取消收藏' : '收藏' }}
+    <div class="room-intro" >
+      <p>区划：{{roomToView.district}}</p>
+      <p>楼栋: {{ roomToView.building }}</p>
+      <p>楼层: {{ roomToView.floor }}</p>
+      <p>房间: {{ roomToView.roomNumber }}</p>
+      <p>户型: {{ roomToView.roomType }}</p>
+      <p>宿舍性别: {{ roomToView.gender }}</p>
+      <va-button  color="info" gradient class="favorite-button">
+        <va-icon name="star"></va-icon>
+          收藏
+      </va-button>
+      <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
+        <va-icon name="logout"></va-icon>
+          返回
       </va-button>
     </div>
-    <div v-for="(room, index) in filteredRooms" :key="index" class="room-info" >
-      <p class="description">介绍</p>
-      <p class="information">{{room.information}}</p>
+    <div class="room-info" >
+      <p class="description">简介</p>
+      <p class="information">{{roomToView.description}}</p>
     </div>
   </div>
 
@@ -26,7 +31,7 @@
       <div class="comment-section">
         <!-- 评论输入框 -->
         <div class="comment-input">
-          <va-textarea v-model="newComment" placeholder="说点什么吧..." class="comment-in" ></va-textarea>
+          <va-textarea v-model="newComment" placeholder="说点什么吧..." class="comment-in"></va-textarea>
           <va-button @click="addComment" color="info" gradient class="mr-6 mb-2">发表评论</va-button>
         </div>
 
@@ -71,17 +76,24 @@
 </template>>
 
 <script setup>
-import { computed, ref, reactive } from 'vue';
+import {computed, ref, reactive, onMounted} from 'vue';
 import { rooms } from '@/testData/roomData.js';
-import faker from 'faker';
 import Room1Image from '@/assets/Room1.jpg';
 import Room2Image from '@/assets/Room2.png';
+import {useRoomStore} from "@/store/room.js";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
+const roomStore = useRoomStore()
+const roomToView = computed(() => {
+  return roomStore.roomToView
+})
 
 // 生成随机评论
 const generateComment = () => {
   return {
-    author: faker.name.findName(),
-    text: faker.lorem.sentence(),
+    author: "11",
+    text: "22",
     showReplies: false,
     replies: generateReplies(),
   };
@@ -89,10 +101,10 @@ const generateComment = () => {
 
 // 生成随机回复
 const generateReplies = () => {
-  const numberOfReplies = faker.random.number({ min: 0, max: 3 });
+  const numberOfReplies = 2;
   return Array.from({ length: numberOfReplies }, () => ({
-    author: faker.name.findName(),
-    text: faker.lorem.sentence(),
+    author: "11",
+    text: "22"
   }));
 };
 
@@ -100,7 +112,7 @@ const generateReplies = () => {
 const selectedRoomComments = reactive(Array.from({ length: 15 }, generateComment));
 
 const roomsData = ref(rooms);
-const value = ref(0);
+const imagePage = ref(0);
 const items = [
   Room1Image,
   Room2Image,
@@ -112,10 +124,6 @@ const newComment = ref('');
 const newReply = ref([]);
 
 // 计算属性
-const filteredRooms = computed(() => {
-  // 调整条件以满足过滤要求
-  return roomsData.value.filter((room, index) => index === 0);
-});
 
 const displayedComments = computed(() => {
   return showAllComments.value ? selectedRoomComments : selectedRoomComments.slice(0, 10);
@@ -164,7 +172,7 @@ const toggleFavorite = (room) => {
 
 .images {
   flex: 1;
-  margin-left: 300px;
+  margin-left: 100px;
   margin-top: 100px;
 }
 
@@ -199,18 +207,24 @@ const toggleFavorite = (room) => {
 
 .favorite-button {
   margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 120px;
+  height: 50px;
+  font-size: 50px;
+}
+.back-button {
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   width: 120px;
   height: 50px;
   font-size: 50px;
 }
 
-.icon-star {
-  margin-right: 5px;
-
-}
 
 .comment-card {
-  margin-left: 300px;
+  margin-left: 100px;
   margin-top: 100px;
   margin-right: 100px;
   background-color: transparent;
@@ -229,7 +243,7 @@ const toggleFavorite = (room) => {
   margin-top: 5px;
   margin-bottom: 30px;
   margin-left: 20px;
-  width: 80%;
+  width: 100%;
   padding: 10px;
 }
 
