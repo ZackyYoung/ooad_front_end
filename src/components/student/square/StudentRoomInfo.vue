@@ -34,7 +34,7 @@
   </div>
 
   <va-card class="comment-card">
-    <va-card-title>评论区</va-card-title>
+    <va-card-title style="font-size: 20px">评论区</va-card-title>
     <va-card-content>
       <div class="comment-section">
         <!-- 评论输入框 -->
@@ -51,7 +51,7 @@
           </div>
           <div class="comment-content">
             <p class="comment-author">{{ comment.author }}</p>
-            <p class="comment-text">{{ comment.text }}</p>
+            <p class="comment-text">{{ comment.content }}</p>
             <!-- 回复按钮 -->
             <va-button @click="toggleReplies(commentIndex)" color="info" gradient class="mr-6 mb-2">查看回复</va-button>
             <!-- 回复输入框 -->
@@ -68,7 +68,7 @@
                 </div>
                 <div class="reply-content">
                   <p class="reply-author">{{ reply.author }}</p>
-                  <p class="reply-text">{{ reply.text }}</p>
+                  <p class="reply-text">{{ reply.content }}</p>
                 </div>
               </div>
             </div>
@@ -77,7 +77,15 @@
         </div>
 
         <!-- 加载更多评论按钮 -->
-        <va-button @click="loadMoreComments" color="info" gradient class="mr-6 mb-2">加载更多评论</va-button>
+        <va-button
+            v-if="!showAllComments && roomStore.comments.length > 10"
+            @click="loadMoreComments"
+            color="info"
+            gradient
+            class="mr-6 mb-2"
+        >
+          加载更多评论
+        </va-button>
       </div>
     </va-card-content>
   </va-card>
@@ -104,6 +112,7 @@ const roomToView = computed(() => {
 onMounted(async ()=>{
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  await roomStore.getComments()
 })
 
 const isFavorite = computed(() => {
@@ -124,29 +133,7 @@ const cancelFavorite = async () => {
   await roomStore.cancelFavorite(accountStore.accountCampusId, roomStore.roomToView.building, roomStore.roomToView.roomNumber)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 }
-// 生成随机评论
-const generateComment = () => {
-  return {
-    author: "11",
-    text: "22",
-    showReplies: false,
-    replies: generateReplies(),
-  };
-};
 
-// 生成随机回复
-const generateReplies = () => {
-  const numberOfReplies = 2;
-  return Array.from({ length: numberOfReplies }, () => ({
-    author: "11",
-    text: "22"
-  }));
-};
-
-// 生成多个评论
-const selectedRoomComments = reactive(Array.from({ length: 15 }, generateComment));
-
-const roomsData = ref(rooms);
 const imagePage = ref(0);
 const items = [
   Room1Image,
@@ -154,6 +141,10 @@ const items = [
   Room1Image,
   Room2Image,
 ];
+
+
+
+
 const showAllComments = ref(false);
 const newComment = ref('');
 const newReply = ref([]);
@@ -161,42 +152,42 @@ const newReply = ref([]);
 // 计算属性
 
 const displayedComments = computed(() => {
-  return showAllComments.value ? selectedRoomComments : selectedRoomComments.slice(0, 10);
+  return showAllComments.value ? roomStore.comments : roomStore.comments.slice(0, 10);
 });
 
 // 方法
 const toggleReplies = (commentIndex) => {
-  selectedRoomComments[commentIndex].showReplies = !selectedRoomComments[commentIndex].showReplies;
+  roomStore.comments[commentIndex].showReplies = !roomStore.comments[commentIndex].showReplies;
 };
 
 const loadMoreComments = () => {
   showAllComments.value = !showAllComments.value;
 };
 
-const addComment = () => {
-  selectedRoomComments.push({
-    author: '当前用户',
-    text: newComment.value,
-    showReplies: false,
-    replies: [],
-  });
-
+const addComment = async () => {
+  await roomStore.addComment({
+    authorId: accountStore.accountCampusId,
+    authorName: accountStore.studentInformationForm.name,
+    buildingId: roomStore.roomToView.building,
+    roomNumber: roomStore.roomToView.roomNumber,
+    content: newComment.value
+  })
+  await roomStore.getComments()
   newComment.value = '';
 };
 
-const addReply = (commentIndex) => {
-  selectedRoomComments[commentIndex].replies.push({
-    author: '当前用户',
-    text: newReply.value[commentIndex],
-  });
-
+const addReply = async (commentIndex) => {
+  await roomStore.addReply({
+    authorId: accountStore.accountCampusId,
+    authorName: accountStore.studentInformationForm.name,
+    parentId: roomStore.comments[commentIndex].commentId,
+    content: newReply.value[commentIndex]
+  })
+  await roomStore.getComments()
+  roomStore.comments[commentIndex].showReplies = true
   newReply.value[commentIndex] = '';
 };
 
-const toggleFavorite = (room) => {
-  room.isFavorite = !room.isFavorite;
-  // TODO: 在这里可以添加其他逻辑，比如将收藏状态保存到后端或本地存储中
-};
 </script>
 
 <style>
