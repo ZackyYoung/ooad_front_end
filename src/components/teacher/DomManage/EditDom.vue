@@ -88,7 +88,6 @@ import { useRouter } from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";
 const router = useRouter();
-const roomsData = ref(rooms);
 const roomStore = useRoomStore();
 const perPage = ref(8);
 const current_page = ref(1);

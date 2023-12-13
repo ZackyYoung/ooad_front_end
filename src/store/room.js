@@ -37,6 +37,28 @@ export const useRoomStore = defineStore('room', () => {
         })
     }
 
+    async function findAllRoomByGender(gender) {
+        roomData.length = 0
+        return new Promise((resolve) => {
+            dataService.findAllRoom(resp => {
+                resp.data.data.forEach(room => {
+                    if(room.gender === gender) {
+                        roomData.push({
+                            roomId: room.roomId,
+                            district: room.building.zone,
+                            building: room.building.buildingId,
+                            roomNumber: room.roomNumber,
+                            floor: room.floor,
+                            roomType: room.roomType,
+                            gender: room.gender,
+                            description: room.description
+                        })
+                    }
+                })
+            })
+            resolve()
+        })
+    }
     async function addRoom(form){
         return new Promise((resolve) => {
             dataService.addRoom({
@@ -81,13 +103,50 @@ export const useRoomStore = defineStore('room', () => {
             resolve()
         })
     }
+
+    async function deleteRoom(){
+        return new Promise((resolve) => {
+            dataService.deleteRoom(roomToView.building, roomToView.roomNumber, resp => {
+                msg.value = resp.data.msg
+            })
+            resolve()
+        })
+    }
+
+    async function favoriteRoom(studentId, building, roomNumber) {
+        return new Promise((resolve) => {
+            dataService.favoriteRoom({
+                studentId: studentId,
+                buildingId: building,
+                roomNumber: roomNumber
+            }, resp => {
+                resolve()
+            })
+        })
+    }
+
+    async function cancelFavorite(studentId, building, roomNumber) {
+        return new Promise((resolve) => {
+            dataService.cancelFavorite({
+                studentId: studentId,
+                buildingId: building,
+                roomNumber: roomNumber
+            }, resp => {
+                resolve()
+            })
+        })
+    }
     return{
         msg,
         roomData,
         roomToView,
         findAllRoom,
+        findAllRoomByGender,
         addRoom,
         editRoom,
-        updateRoomToView
+        updateRoomToView,
+        deleteRoom,
+        favoriteRoom,
+        cancelFavorite
     }
 })

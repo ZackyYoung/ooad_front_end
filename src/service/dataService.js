@@ -229,6 +229,36 @@ function fetchRoomInfo(building, roomNumber, callback){
             console.log(errResp)
         })
 }
+
+function deleteRoom(building, roomNumber, callback){
+    const url = `${dataServerUrl}/room/delete/${building}/${roomNumber}`
+    axiosInstance.delete(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function favoriteRoom(param, callback) {
+    const url = `${dataServerUrl}/team/favoriteRoom`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function cancelFavorite(param, callback) {
+    const url = `${dataServerUrl}/team/unfavoriteRoom`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -251,5 +281,8 @@ export default{
     findAllRoom,
     addRoom,
     editRoom,
-    fetchRoomInfo
+    fetchRoomInfo,
+    deleteRoom,
+    favoriteRoom,
+    cancelFavorite
 }

@@ -87,8 +87,10 @@ import { rooms } from '@/testData/roomData.js'; //用来测试
 import { useRouter } from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";
+import {useAccountStore} from "@/store/account.js";
 const router = useRouter();
 const roomStore = useRoomStore();
+const accountStore = useAccountStore()
 const perPage = ref(8);
 const current_page = ref(1);
 const filters = ref({
@@ -138,7 +140,9 @@ const displayedRooms = computed(() => {
 })
 
 onMounted(async () => {
-  await roomStore.findAllRoom()
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+  await roomStore.findAllRoomByGender(accountStore.studentInformationForm.gender)
 });
 
 const viewDetail = (room) =>{

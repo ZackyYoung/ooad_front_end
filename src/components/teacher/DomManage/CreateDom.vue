@@ -14,11 +14,11 @@
               label="区域"
               placeholder="请选择宿舍区域"
           />
-          <va-input
+          <va-select
               v-model="form.building"
               label="楼栋号"
-              :rules="[(v) => buildingIdValidator(v)]"
-              placeholder="请输入楼栋号（整数数字）"
+              placeholder="请选择楼栋号"
+              :options="building_options"
           />
           <va-input
               v-model="form.floor"
@@ -74,11 +74,18 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 
 import {computed, defineComponent, reactive, readonly, ref, toRef} from "vue";
 import {useForm} from "vuestic-ui";
-import {gender_options, type_options, district_options} from "@/utils/DomOptions.js";
+import {
+  gender_options,
+  type_options,
+  district_options,
+  hupan_options,
+  liyuan_options,
+  erqi_options, xinyuan_options
+} from "@/utils/DomOptions.js";
 import {useRoomStore} from "@/store/room";
 
 
@@ -98,6 +105,16 @@ const form = reactive({
   description: ''
 })
 
+const building_options = computed(() => {
+  if(form.district === '湖畔')
+    return hupan_options;
+  if(form.district === '荔园')
+    return liyuan_options;
+  if(form.district === '二期')
+    return erqi_options;
+  if(form.district === '欣园')
+    return xinyuan_options;
+})
 
 const buildingIdValidator = (value) => {
   const re = /^\d+$/;

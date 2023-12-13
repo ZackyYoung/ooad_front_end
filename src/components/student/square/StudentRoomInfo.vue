@@ -10,10 +10,18 @@
       <p>房间: {{ roomToView.roomNumber }}</p>
       <p>户型: {{ roomToView.roomType }}</p>
       <p>宿舍性别: {{ roomToView.gender }}</p>
-      <va-button  color="info" gradient class="favorite-button">
-        <va-icon name="star"></va-icon>
-          收藏
-      </va-button>
+      <div v-if="!isFavorite">
+        <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
+          <va-icon name="star"></va-icon>
+            收藏
+        </va-button>
+      </div>
+      <div v-else>
+        <va-button color="info" text-color="warning" gradient class="favorite-button" @click="cancelFavorite">
+          <va-icon name="star"></va-icon>
+          取消收藏
+        </va-button>
+      </div>
       <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
         <va-icon name="logout"></va-icon>
           返回
@@ -82,13 +90,40 @@ import Room1Image from '@/assets/Room1.jpg';
 import Room2Image from '@/assets/Room2.png';
 import {useRoomStore} from "@/store/room.js";
 import {useRouter} from "vue-router";
+import {useTeamStore} from "@/store/team.js";
+import {useAccountStore} from "@/store/account.js";
 
 const router = useRouter()
 const roomStore = useRoomStore()
+const teamStore = useTeamStore()
+const accountStore = useAccountStore()
 const roomToView = computed(() => {
   return roomStore.roomToView
 })
 
+onMounted(async ()=>{
+  await accountStore.refreshSession()
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+})
+
+const isFavorite = computed(() => {
+  let flag = false
+  teamStore.current_team.favoriteRooms.forEach((room) => {
+    if(room.roomId === roomStore.roomToView.roomId)
+      flag = true
+  })
+  return flag
+})
+
+const favoriteRoom = async () => {
+  await roomStore.favoriteRoom(accountStore.accountCampusId, roomStore.roomToView.building, roomStore.roomToView.roomNumber)
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+}
+
+const cancelFavorite = async () => {
+  await roomStore.cancelFavorite(accountStore.accountCampusId, roomStore.roomToView.building, roomStore.roomToView.roomNumber)
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+}
 // 生成随机评论
 const generateComment = () => {
   return {

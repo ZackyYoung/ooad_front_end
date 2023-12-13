@@ -14,7 +14,11 @@
         <va-icon name="edit"></va-icon>
         编辑
       </va-button>
-      <va-button color="danger" gradient class="back-button" @click="router.push('/teacher/dormitory/edit')">
+      <va-button  color="danger" gradient class="favorite-button" @click="deleteRoom">
+        <va-icon name="delete"></va-icon>
+        删除
+      </va-button>
+      <va-button color="warning" gradient class="back-button" @click="router.push('/teacher/dormitory/edit')">
         <va-icon name="logout"></va-icon>
         返回
       </va-button>
@@ -70,6 +74,13 @@
       ok-text="Confirm"
       size="small"
   />
+  <va-modal
+      v-model="deleteMsgVisible"
+      :message="roomStore.msg"
+      ok-text="Confirm"
+      size="small"
+      @click="router.push('/teacher/dormitory/edit')"
+  />
 </template>>
 
 <script setup>
@@ -91,6 +102,7 @@ const roomToView = computed(() => {
 const showEdit = ref(false)
 const imagePage = ref(0)
 const dialogVisible = ref(false)
+const deleteMsgVisible = ref(false)
 const items = [
   Room1Image,
   Room2Image,
@@ -113,6 +125,11 @@ const submit = async () =>{
   await roomStore.editRoom(form)
   await roomStore.updateRoomToView()
   dialogVisible.value = true
+}
+
+const deleteRoom = async () => {
+  await roomStore.deleteRoom()
+  deleteMsgVisible.value = true
 }
 
 const buildingIdValidator = (value) => {

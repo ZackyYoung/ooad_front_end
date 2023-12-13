@@ -5,6 +5,7 @@ import SideBar from "@/components/SideBar.vue";
 
 import {s_team_sidebar_items} from "@/utils/SBarItems.js";
 import {useAccountStore} from "@/store/account.js";
+import TeamFavor from "@/components/student/team/TeamFavor.vue";
 
 const accountStore = useAccountStore()
 
@@ -16,7 +17,7 @@ const accountStore = useAccountStore()
     <div class="page-container">
       <SideBar :sidebar-items="s_team_sidebar_items" :active_id=1 class="sidebar"/>
       <div class="page-content">
-        <!--TODO:-->
+        <team-favor/>
       </div>
     </div>
   </div>

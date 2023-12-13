@@ -5,13 +5,22 @@ import dataService from "@/service/dataService.js";
 
 export const useTeamStore = defineStore('team', () => {
     const teamData = reactive([])
-    const current_team = ref({})
+    const current_team = reactive({
+        teamId: '',
+        teamName: '',
+        creatorId: '',
+        teamMembers: [],
+        favoriteRooms: []
+    })
     const joined = ref(false)
     const msg = ref(null)
     const createTeamForm = reactive({
         teamName: '',
         creatorId: '',
         gender: ''
+    })
+    const hasFavoriteRoom = computed(()=>{
+        return current_team.favoriteRooms.length !== 0
     })
     async function findAllTeam(gender){
         teamData.length = 0
@@ -51,12 +60,24 @@ export const useTeamStore = defineStore('team', () => {
                 if (resp.status === 200) {
                     if(resp.data.code === 0) {
                         joined.value = true
-                        current_team.value = {
-                            teamId: resp.data.data.teamId,
-                            teamName: resp.data.data.teamName,
-                            creatorId: resp.data.data.creatorId,
-                            teamMembers: resp.data.data.teamMembers
-                        }
+                        let tempRooms = reactive([])
+                        resp.data.data.favoriteRooms.forEach((room) =>{
+                            tempRooms.push({
+                                roomId: room.roomId,
+                                district: room.building.zone,
+                                building: room.building.buildingId,
+                                roomNumber: room.roomNumber,
+                                floor: room.floor,
+                                roomType: room.roomType,
+                                gender: room.gender,
+                                description: room.description
+                            })
+                        })
+                        current_team.teamId = resp.data.data.teamId
+                        current_team.teamName = resp.data.data.teamName
+                        current_team.creatorId = resp.data.data.creatorId
+                        current_team.teamMembers = resp.data.data.teamMembers
+                        current_team.favoriteRooms = tempRooms
                     }
                     else{
                         joined.value = false
@@ -199,6 +220,7 @@ export const useTeamStore = defineStore('team', () => {
         createTeamForm,
         joined,
         msg,
+        hasFavoriteRoom,
         fetchTeamInformation,
         createTeam,
         removeMember,
