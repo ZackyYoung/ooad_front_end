@@ -189,6 +189,16 @@ function deleteInvitation(param, callback){
             console.log(errResp)
         })
 }
+
+function findAllRoom(callback) {
+    const url = `${dataServerUrl}/room/findAll`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -207,5 +217,6 @@ export default{
     addInvitation,
     getTeamRelatedInvitation,
     getStudentRelatedInvitation,
-    deleteInvitation
+    deleteInvitation,
+    findAllRoom
 }

@@ -40,147 +40,122 @@
         clearable-icon="cancel"
     />
 
-    <va-button @click="applyFilters" color="info" class="apply-button">查询</va-button>
   </div>
 
-  <div class="image-container">
+  <div class="image-container" style="text-align: center;">
     <div class="row">
       <div v-for="room in displayedRooms" :key="room.id" class="room-card">
-        <va-image :src="room.image" alt="Room Image" class="room-image" @click="() => goToRoomInfo()"></va-image>
-        <p class="room-name">{{ room.name }}</p>
-        <p class="room-description">{{ room.description }}</p>
+        <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
+        <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
+          <va-chip outline shadow>{{room.building}}栋</va-chip>
+          <va-chip shadow>{{room.roomNumber}}</va-chip>
+          <va-chip shadow color="#7f1f90">
+            <div v-if="room.roomType === 3">
+              三人间
+            </div>
+            <div v-else-if="room.roomType === 4">
+              四人间
+            </div>
+            <div v-else>
+              五人间
+            </div>
+          </va-chip>
+        </div>
+        <div style="text-align: center;display: grid;grid-gap: 10px">
+          <va-button round gradient>
+            <va-icon name="star"/>
+            收藏
+          </va-button>
+          <va-button round gradient>
+            <va-icon name="comment"/>
+            评论
+          </va-button>
+          <va-button round gradient>
+            <va-icon name="info"/>
+            查看详情
+          </va-button>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="page_select">
     <va-pagination
-        v-model="value"
-        :pages="Math.ceil(totalRooms / 20)"
-        :visible-pages="4"
-        class="justify-center sm:justify-start"
-        @change="applyFilters"
+        v-model="current_page"
+        :pages="Math.ceil(totalRooms / perPage)"
+        class="mb-3 justify-center sm:justify-start"
+        input
     />
   </div>
 </template>
 
-<script>
+<script setup>
 import {ref, computed, onMounted, watch} from 'vue';
 import { rooms } from '@/testData/roomData.js'; //用来测试
-import axios from 'axios'; //实际使用
-import router from "@/router/router.js";
 import { useRouter } from 'vue-router';
+import {useRoomStore} from "@/store/room.js";
+import Room1Image from "@/assets/Room1.jpg";
+const router = useRouter();
+const roomsData = ref(rooms);
+const roomStore = useRoomStore();
+const perPage = ref(8);
+const current_page = ref(1);
+const filters = ref({
+  floor: '',
+  building: '',
+  district: '',
+  roomNumber: '',
+});
 
-export default {
-  setup() {
-    const router = useRouter();
-    const roomsData = ref(rooms);
-    const value = ref(1);
-    const filters = ref({
-      floor: '',
-      building: '',
-      district: '',
-      roomNumber: '',
-    });
-
-    const options = {
-      floors: Array.from(new Set(roomsData.value.map((room) => room.floor))),
-      buildings: Array.from(new Set(roomsData.value.map((room) => room.building))),
-      districts: Array.from(new Set(roomsData.value.map((room) => room.district))),
-      roomNumbers: Array.from(new Set(roomsData.value.map((room) => room.roomNumber))),
-    };
-
-    const sortedBuildings = computed(() => options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
-    const sortedFloors = computed(() => options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
-    const sortedDistricts = computed(() => options.districts.slice());
-    const sortedRoomNumbers = computed(() =>
-        options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0))
-    );
-
-    const totalRooms = computed(() => roomsData.value.length);
-
-    const displayedRooms = ref([]); // 初始化为空数组
-
-    // 测试使用
-    const filterRooms = () => {
-      const startIdx = (value.value - 1) * 20;
-      const endIdx = startIdx + 20;
-
-      displayedRooms.value = roomsData.value
-          .filter((room) => {
-            if (filters.value.floor && room.floor !== filters.value.floor) {
-              return false;
-            }
-            if (filters.value.building && room.building !== filters.value.building) {
-              return false;
-            }
-            if (filters.value.district && room.district !== filters.value.district) {
-              return false;
-            }
-            if (filters.value.roomNumber && room.roomNumber !== filters.value.roomNumber) {
-              return false;
-            }
-
-            return true;
-          })
-          .slice(startIdx, endIdx);
-    };
-
-    // 实际使用下面这段代码获取符合条件的房间
-    // const filterRooms = async () => {
-    //   try {
-    //     const response = await axios.post('/api/getFilteredRooms', {
-    //       filters: filters.value,
-    //       page: value.value, // 将当前页传递到后端
-    //       pageSize: 20, // 假设每页包含 20 个房间
-    //     });
-    //
-    //     roomsData.value = response.data.rooms;
-    //     totalRooms.value = response.data.total;
-    //   } catch (error) {
-    //     console.error('获取符合条件的房间时发生错误：', error);
-    //   }
-    //
-    //   const startIdx = (value.value - 1) * 20;
-    //   const endIdx = startIdx + 20;
-    //
-    //   displayedRooms.value = roomsData.value.slice(startIdx, endIdx);
-    // };
-
-    const applyFilters = () => {
-      filterRooms();
-    };
-
-    onMounted(() => {
-      applyFilters();
-    });
-
-    watch(value, () => {
-      filterRooms();
-    });
-
-    const goToRoomInfo = () => {
-
-    };
-
-    // 初始化时展示全部房间
-    applyFilters();
-
-    return {
-      value,
-      filters,
-      sortedBuildings,
-      sortedFloors,
-      sortedDistricts,
-      sortedRoomNumbers,
-      totalRooms,
-      displayedRooms,
-      applyFilters,
-      filterRooms,
-      goToRoomInfo,
-    };
-  },
+const options = {
+  floors: Array.from(new Set(roomStore.roomData.map((room) => room.floor))),
+  buildings: Array.from(new Set(roomStore.roomData.map((room) => room.building))),
+  districts: Array.from(new Set(roomStore.roomData.map((room) => room.district))),
+  roomNumbers: Array.from(new Set(roomStore.roomData.map((room) => room.roomNumber))),
 };
+
+const sortedBuildings = computed(() => options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
+const sortedFloors = computed(() => options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
+const sortedDistricts = computed(() => options.districts.slice());
+const sortedRoomNumbers = computed(() =>
+    options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0))
+);
+
+const totalRooms = computed(() => roomStore.roomData.length)
+
+const displayedRooms = computed(() => {
+  const startIdx = (current_page.value - 1) * perPage.value;
+  const endIdx = startIdx + perPage.value;
+  return roomStore.roomData
+      .filter((room) => {
+        if (filters.value.floor && room.floor !== filters.value.floor) {
+          return false;
+        }
+        if (filters.value.building && room.building !== filters.value.building) {
+          return false;
+        }
+        if (filters.value.district && room.district !== filters.value.district) {
+          return false;
+        }
+        if (filters.value.roomNumber && room.roomNumber !== filters.value.roomNumber) {
+          return false;
+        }
+
+        return true;
+      })
+      .slice(startIdx, endIdx)
+})
+
+onMounted(async () => {
+  await roomStore.findAllRoom()
+});
+
+const goToRoomInfo = () => {
+
+};
+
+// 初始化时展示全部房间
+
 </script>
 
 <style scoped>
@@ -236,6 +211,7 @@ export default {
 .room-image {
   width: 100%;
   height: auto;
+  margin: 20px;
   max-height: 200px;
 }
 
