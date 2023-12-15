@@ -1,8 +1,17 @@
 <script setup>
+import Notification from "@/components/student/message/Notification.vue";
+import SChatPage from "@/view/StudentSquare/SChatPage.vue";
+import SDomSelectPage from "@/view/StudentSquare/SDomSelectPage.vue";
+import SCommentNotifPage from "@/view/StudentNotif/SCommentNotifPage.vue";
+import
 </script>
 
 <template>
-  <router-view/>
+  <Notification/>
+<!--  <SCommentNotifPage/>-->
+<!--  <SChatPage/>-->
+<!--  <SDomSelectPage/>-->
+<!--  <router-view/>-->
 </template>
 
 <style>

@@ -17,6 +17,7 @@ import SEditInfoPage from "@/view/StudentCenter/SEditInfoPage.vue";
 import SCommentNotifPage from "@/view/StudentNotif/SCommentNotifPage.vue";
 import SInvitationNotifPage from "@/view/StudentNotif/SInvitationNotifPage.vue";
 import STeamInvitationPage from "@/view/StudentTeam/STeamInvitationPage.vue";
+import SChatPage from "@/view/StudentSquare/SChatPage.vue";
 
 const routes = [
     {
@@ -81,6 +82,11 @@ const routes = [
         path: '/student/square/dormitory',
         name: 'SDomSelect',
         component: SDomSelectPage
+    },
+    {
+        path: '/student/square/chat',
+        name: 'SChat',
+        component: SChatPage
     },
     {
         path: '/student/square/schoolmate',
