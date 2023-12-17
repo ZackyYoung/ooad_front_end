@@ -1,7 +1,6 @@
 <script setup>
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
-import CommentNotif from "@/components/student/message/CommentNotif.vue";
 import Notification from "@/components/student/message/Notification.vue";
 
 import {s_notif_sidebar_items} from "@/utils/SBarItems.js";
@@ -19,7 +18,6 @@ const accountStore = useAccountStore()
     <div class="page-container">
       <SideBar :sidebar-items="s_notif_sidebar_items" :active_id=0 class="sidebar"/>
       <div class="page-content">
-<!--        <CommentNotif/>-->
         <Notification/>
       </div>
     </div>

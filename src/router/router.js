@@ -20,6 +20,7 @@ import STeamInvitationPage from "@/view/StudentTeam/STeamInvitationPage.vue";
 import STeamSelect from "@/view/StudentSquare/STeamSelect.vue";
 import SDomInfoPage from "@/view/StudentSquare/SDomInfoPage.vue";
 import TDomInfo from "@/view/TeacherDoms/TDomInfo.vue";
+import SChatPage from "@/view/StudentSquare/SChatPage.vue";
 
 const routes = [
     {
@@ -110,9 +111,14 @@ const routes = [
     },
 
     {
-        path: '/student/notification/comment',
+        path: '/student/notification/message',
         name: 'SCommentNotif',
         component: SCommentNotifPage
+    },
+    {
+        path: '/student/notification/chat',
+        name: 'SChatPage',
+        component: SChatPage
     },
     {
         path: '/student/notification/invitation',

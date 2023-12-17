@@ -15,11 +15,12 @@ export const s_square_sidebar_items = [
     {title: "房子查看", icon: "king_bed", router_path: '/student/square/dormitory'},
     {title: "选择舍友", icon: "group_add", router_path: '/student/square/schoolmate'},
     {title: "选择队伍", icon: "flag", router_path: '/student/square/teamSelect'}
+
 ];
 
 export const s_notif_sidebar_items = [
-    {title: "评论通知", icon: "forum", router_path: '/student/notification/comment'},
-    {title: "组队通知", icon: "handshake", router_path: '/student/notification/invitation'}
+    {title: "消息通知", icon: "forum", router_path: '/student/notification/message'},
+    {title: "在线聊天", icon: "chat", router_path: '/student/notification/chat'}
 ];
 
 export const s_head_bar_items = [

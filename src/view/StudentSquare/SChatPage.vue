@@ -3,7 +3,7 @@
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
 
-import {s_square_sidebar_items} from "@/utils/SBarItems.js";
+import {s_notif_sidebar_items, s_square_sidebar_items} from "@/utils/SBarItems.js";
 import Chat from "@/components/student/square/Chat.vue";
 
 </script>
@@ -12,7 +12,7 @@ import Chat from "@/components/student/square/Chat.vue";
   <div class="page-wrapper">
     <StudentHeader class="header"/>
     <div class="page-container">
-      <SideBar :sidebar-items="s_square_sidebar_items" :active_id=0 class="sidebar"/>
+      <SideBar :sidebar-items="s_notif_sidebar_items" :active_id=1 class="sidebar"/>
       <div class="page-content">
         <Chat/>
       </div>
