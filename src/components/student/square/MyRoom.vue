@@ -15,7 +15,7 @@
       <p>现在可以开始抢房间了，快去您收藏的房间中抢房间吧！</p>
     </div>
   </div>
-  <div v-if="step===1" class="show-room" >
+  <div v-if="isshow===1" class="show-room" >
     <div class="images">
       <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9" />
     </div>
@@ -36,10 +36,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import Room1Image from "@/assets/Room1.jpg";
 import Room2Image from "@/assets/Room2.png";
 
+const isshow = ref(0)
 const step = ref(0)
 const imagePage = ref(0);
 const items = [
@@ -66,6 +67,18 @@ const steps = [
 const viewRoomInfo = () => {
 
 };
+
+onMounted(() => {
+  // 设置定时器，每秒检查一次是否需要切换到下一个步骤
+  setInterval(() => {
+    const currentTime = new Date();
+    const targetTime = new Date('2023-12-28T10:00:00');
+
+    if (currentTime >= targetTime) {
+      isshow.value = 1; // 切换到下一个步骤
+    }
+  }, 1000);
+});
 </script>
 
 <style scoped>
