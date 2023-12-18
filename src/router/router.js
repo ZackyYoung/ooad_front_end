@@ -21,6 +21,7 @@ import STeamSelect from "@/view/StudentSquare/STeamSelect.vue";
 import SDomInfoPage from "@/view/StudentSquare/SDomInfoPage.vue";
 import TDomInfo from "@/view/TeacherDoms/TDomInfo.vue";
 import SChatPage from "@/view/StudentSquare/SChatPage.vue";
+import SDomPage from "@/view/StudentCenter/SDomPage.vue";
 
 const routes = [
     {
@@ -62,6 +63,11 @@ const routes = [
         path: '/student/center/password',
         name: 'SEditPassword',
         component: SEditPasswdPage,
+    },
+    {
+        path: '/student/center/room',
+        name: 'SRoom',
+        component: SDomPage,
     },
 
 

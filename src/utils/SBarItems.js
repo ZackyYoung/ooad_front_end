@@ -2,6 +2,7 @@ export const s_center_sidebar_items = [
     {title: "我的资料", icon: "person", router_path: '/student/center/info'},
     {title: "编辑信息", icon: "manage_accounts", router_path: '/student/center/edit'},
     {title: "修改密码", icon: "password", router_path: '/student/center/password'},
+    {title: "我的寝室", icon: "home", router_path: '/student/center/room'}
 ];
 
 export const s_team_sidebar_items = [
