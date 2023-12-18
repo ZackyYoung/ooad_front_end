@@ -10,22 +10,29 @@
       <p>房间: {{ roomToView.roomNumber }}</p>
       <p>户型: {{ roomToView.roomType }}</p>
       <p>宿舍性别: {{ roomToView.gender }}</p>
-      <div v-if="!isFavorite">
-        <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
-          <va-icon name="star"></va-icon>
-            收藏
+      <p>抢到房间的队伍: {{roomToView.teamName}}</p>
+      <div class="button-container">
+        <div v-if="!isFavorite">
+          <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
+            <va-icon name="star"></va-icon>
+              收藏
+          </va-button>
+        </div>
+        <div v-else>
+          <va-button color="info" text-color="warning" gradient class="favorite-button" @click="cancelFavorite">
+            <va-icon name="star"></va-icon>
+            取消收藏
+          </va-button>
+        </div>
+        <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
+          <va-icon name="logout"></va-icon>
+            返回
+        </va-button>
+        <va-button color="success" gradient class="change-button" @click="changeOwner">
+          <va-icon name="sync"></va-icon>
+          申请交换
         </va-button>
       </div>
-      <div v-else>
-        <va-button color="info" text-color="warning" gradient class="favorite-button" @click="cancelFavorite">
-          <va-icon name="star"></va-icon>
-          取消收藏
-        </va-button>
-      </div>
-      <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
-        <va-icon name="logout"></va-icon>
-          返回
-      </va-button>
     </div>
     <div class="room-info" >
       <p class="description">简介</p>
@@ -134,6 +141,10 @@ const cancelFavorite = async () => {
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 }
 
+const changeOwner = async () => {
+  //发送换房申请
+}
+
 const imagePage = ref(0);
 const items = [
   Room1Image,
@@ -194,12 +205,14 @@ const addReply = async (commentIndex) => {
 .room-container {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .images {
   flex: 1;
   margin-left: 100px;
   margin-top: 100px;
+  width: 300px;
 }
 
 .room-intro {
@@ -216,10 +229,12 @@ const addReply = async (commentIndex) => {
   flex: 1;
   margin-top: 100px;
   margin-left: 0;
-  margin-right: 100px;
+  margin-right: 10px;
   font-size: 25px;
   align-self: flex-start;
   line-height: 2.0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .description {
@@ -231,6 +246,11 @@ const addReply = async (commentIndex) => {
   text-indent: 2em;
 }
 
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .favorite-button {
   margin-top: 20px;
   margin-left: 10px;
@@ -240,6 +260,7 @@ const addReply = async (commentIndex) => {
   font-size: 50px;
 }
 .back-button {
+  flex: 1;
   margin-top: 20px;
   margin-left: 10px;
   margin-right: 10px;
@@ -247,7 +268,14 @@ const addReply = async (commentIndex) => {
   height: 50px;
   font-size: 50px;
 }
-
+.change-button {
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 120px;
+  height: 50px;
+  font-size: 50px;
+}
 
 .comment-card {
   margin-left: 100px;

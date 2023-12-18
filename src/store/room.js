@@ -13,7 +13,8 @@ export const useRoomStore = defineStore('room', () => {
         floor: '',
         roomType: '',
         gender: '',
-        description: ''
+        description: '',
+        teamName: '',
     })
     const msg = ref("")
     async function findAllRoom(){

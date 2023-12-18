@@ -22,8 +22,12 @@
               <VaIcon name="groups" class="notification-icon" size="32px"/>
             </VaListItemSection>
 
-            <VaListItemSection v-else>
+            <VaListItemSection v-else-if="notification.type === 'system'">
               <VaIcon name="notifications" class="notification-icon" size="32px"/>
+            </VaListItemSection>
+
+            <VaListItemSection v-else-if="notification.type === 'roomExchange'">
+              <VaIcon name="sync" class="notification-icon" size="32px"/>
             </VaListItemSection>
 
             <VaListItemSection class="notification-name">
@@ -63,6 +67,11 @@
               {{ selectedNotification.text.content }}
             </div>
           </div>
+          <div v-else-if="selectedNotification.type === 'roomExchange'">
+            <div class="comment-sender">
+              {{ selectedNotification.text.teamName + "队伍申请和您的队伍交换房间"}}
+            </div>
+          </div>
           <div v-else>
             <div class="comment-sender">
               {{ selectedNotification.text.subject }}
@@ -85,6 +94,11 @@
             <va-button color="info" @click="viewTeamInfo()" class="check-info-button">查看队伍信息</va-button>
             <va-button color="danger" @click="rejectInvitation()" class="reject-button">拒绝</va-button>
           </div>
+          <div v-if="selectedNotification.type === 'roomExchange'" class="exchange-buttons">
+            <va-button color="success" @click="acceptExchange()" class="agree-button">同意</va-button>
+            <va-button color="info" @click="viewRoomInfo()" class="check-info-button">查看房间信息</va-button>
+            <va-button color="danger" @click="rejectExchange()" class="reject-button">拒绝</va-button>
+          </div>
         </div>
       </div>
       <div v-else>
@@ -106,6 +120,8 @@ export default {
         let type;
         if (i % 4 === 0) {
           type = 'invitation';
+        } else if (i % 3 === 0){
+          type = 'roomExchange'
         } else {
           type = i % 2 === 0 ? 'comment' : 'system';
         }
@@ -163,6 +179,13 @@ export default {
         ];
         const randomIndex = Math.floor(Math.random() * invitationMessages.length);
         return invitationMessages[randomIndex];
+      } else if (type === 'roomExchange') {
+        const exchangeMessages = [
+          { teamName: 'TeamA'},
+          { teamName: 'TeamB'},
+        ];
+        const randomIndex = Math.floor(Math.random() * exchangeMessages.length);
+        return exchangeMessages[randomIndex];
       }
     };
 
@@ -208,6 +231,17 @@ export default {
 
     };
 
+    const acceptExchange = () => {
+
+    };
+
+    const viewRoomInfo = () => {
+
+    };
+
+    const rejectExchange = () => {
+
+    };
 
     return {
       notifications,
@@ -222,6 +256,9 @@ export default {
       acceptInvitation,
       rejectInvitation,
       viewTeamInfo,
+      acceptExchange,
+      viewRoomInfo,
+      rejectExchange,
     };
   },
 };
