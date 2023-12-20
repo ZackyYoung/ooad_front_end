@@ -108,108 +108,116 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import {onMounted, ref} from 'vue';
+import {useAccountStore} from "@/store/account.js";
 
-export default {
-  setup() {
-    //生成的消息数据中，未读消息排在已读消息上面，未读消息和已读消息均按时间先后排序
-    const generateNotifications = (count, currentUser) => {
-      const messages = [];
-      for (let i = 1; i <= count; i++) {
-        let type;
-        if (i % 4 === 0) {
-          type = 'invitation';
-        } else if (i % 3 === 0){
-          type = 'roomExchange'
-        } else {
-          type = i % 2 === 0 ? 'comment' : 'system';
-        }
-        const hasUnread = Math.random() < 0.5;
-        const timestamp = generateRandomTimestamp();
-        const notification = {
-          id: i,
-          type,
-          name: `Notification ${i}`,
-          unread: hasUnread,
-          text: generateRandomNotifications(type, currentUser),
-          timestamp,
-        };
-        messages.push(notification);
-      }
-      messages.sort((a, b) => {
-        if (a.unread !== b.unread) {
-          return a.unread ? -1 : 1;
-        }
-        return new Date(b.timestamp) - new Date(a.timestamp);
-      });
-      return messages;
-    };
+const accountStore = useAccountStore();
 
-    const generateRandomTimestamp = () => {
-      const start = new Date('2023-01-01');
-      const end = new Date();
-      const randomTimestamp = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-      return randomTimestamp.toISOString();
-    };
 
-    const generateRandomNotifications = (type, currentUser) => {
-      if (type === 'comment') {
-        const commentMessages = [
-          { sender: 'Alice', content: 'Great post!'},
-          { sender: 'Bob', content: 'I have a question.'},
-          { sender: currentUser.name, content: 'This is my comment.' },
-          // Add more comment examples as needed
-        ];
-        const randomIndex = Math.floor(Math.random() * commentMessages.length);
-        return commentMessages[randomIndex];
-      } else if (type === 'system') {
-        const systemMessages = [
-          { subject: 'Important Update', content: 'There is an important update for all users.'},
-          { subject: 'New Feature', content: 'Explore the new features in our latest release!'},
-          // Add more system message examples as needed
-        ];
-        const randomIndex = Math.floor(Math.random() * systemMessages.length);
-        return systemMessages[randomIndex];
-      } else if (type === 'invitation') {
-        const invitationMessages = [
-          { inviter: 'John', teamName: 'Team A', content: '加入我们的队伍吧！', timestamp: generateRandomTimestamp() },
-          { inviter: 'Jane', teamName: 'Team B', content: '一起组队吗？', timestamp: generateRandomTimestamp() },
-          // 添加更多邀请消息的例子
-        ];
-        const randomIndex = Math.floor(Math.random() * invitationMessages.length);
-        return invitationMessages[randomIndex];
-      } else if (type === 'roomExchange') {
-        const exchangeMessages = [
-          { teamName: 'TeamA'},
-          { teamName: 'TeamB'},
-        ];
-        const randomIndex = Math.floor(Math.random() * exchangeMessages.length);
-        return exchangeMessages[randomIndex];
-      }
-    };
 
-    const currentUser = {
-      name: 'Yujian',
-      ID: '12111506'
+
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
+
+//生成的消息数据中，未读消息排在已读消息上面，未读消息和已读消息均按时间先后排序
+const generateNotifications = (count, currentUser) => {
+  const messages = [];
+  for (let i = 1; i <= count; i++) {
+    let type;
+    if (i % 4 === 0) {
+      type = 'invitation';
+    } else if (i % 3 === 0){
+      type = 'roomExchange'
+    } else {
+      type = i % 2 === 0 ? 'comment' : 'system';
+    }
+    const hasUnread = Math.random() < 0.5;
+    const timestamp = generateRandomTimestamp();
+    const notification = {
+      id: i,
+      type,
+      name: `Notification ${i}`,
+      unread: hasUnread,
+      text: generateRandomNotifications(type, currentUser),
+      timestamp,
     };
-    const notifications = ref(generateNotifications(15, currentUser));
-    const selectedNotification = ref(null);
-    const searchInput = ref('');
-    const filteredNotification = ref(notifications.value);
-    const searchNotification = () => {
-      if (searchInput.value.trim() === '') {
-        filteredNotification.value = notifications.value;
-      } else {
-        filteredNotification.value = notifications.value.filter(notifications =>
-            notifications.name.toLowerCase().includes(searchInput.value.toLowerCase())
-        );
-      }
-    };
-    const selectNotification = (notification) => {
-      notification.unread = 0;
-      selectedNotification.value = notification;
-    };
+    messages.push(notification);
+  }
+  messages.sort((a, b) => {
+    if (a.unread !== b.unread) {
+      return a.unread ? -1 : 1;
+    }
+    return new Date(b.timestamp) - new Date(a.timestamp);
+  });
+  return messages;
+};
+
+const generateRandomTimestamp = () => {
+  const start = new Date('2023-01-01');
+  const end = new Date();
+  const randomTimestamp = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return randomTimestamp.toISOString();
+};
+
+const generateRandomNotifications = (type, currentUser) => {
+  if (type === 'comment') {
+    const commentMessages = [
+      { sender: 'Alice', content: 'Great post!'},
+      { sender: 'Bob', content: 'I have a question.'},
+      { sender: currentUser.name, content: 'This is my comment.' },
+      // Add more comment examples as needed
+    ];
+    const randomIndex = Math.floor(Math.random() * commentMessages.length);
+    return commentMessages[randomIndex];
+  } else if (type === 'system') {
+    const systemMessages = [
+      { subject: 'Important Update', content: 'There is an important update for all users.'},
+      { subject: 'New Feature', content: 'Explore the new features in our latest release!'},
+      // Add more system message examples as needed
+    ];
+    const randomIndex = Math.floor(Math.random() * systemMessages.length);
+    return systemMessages[randomIndex];
+  } else if (type === 'invitation') {
+    const invitationMessages = [
+      { inviter: 'John', teamName: 'Team A', content: '加入我们的队伍吧！', timestamp: generateRandomTimestamp() },
+      { inviter: 'Jane', teamName: 'Team B', content: '一起组队吗？', timestamp: generateRandomTimestamp() },
+      // 添加更多邀请消息的例子
+    ];
+    const randomIndex = Math.floor(Math.random() * invitationMessages.length);
+    return invitationMessages[randomIndex];
+  }else if (type === 'roomExchange') {
+    const exchangeMessages = [
+      { teamName: 'TeamA'},
+      { teamName: 'TeamB'},
+    ];
+    const randomIndex = Math.floor(Math.random() * exchangeMessages.length);
+    return exchangeMessages[randomIndex];
+  }
+};
+const currentUser = {
+  name: accountStore.studentInformationForm.name,
+  ID: accountStore.accountCampusId
+};
+const notifications = ref(generateNotifications(15, currentUser));
+const selectedNotification = ref(null);
+const searchInput = ref('');
+const filteredNotification = ref(notifications.value);
+const searchNotification = () => {
+  if (searchInput.value.trim() === '') {
+    filteredNotification.value = notifications.value;
+  } else {
+    filteredNotification.value = notifications.value.filter(notifications =>
+        notifications.name.toLowerCase().includes(searchInput.value.toLowerCase())
+    );
+  }
+};
+const selectNotification = (notification) => {
+  notification.unread = 0;
+  selectedNotification.value = notification;
+};
 
     const viewComment = () => {
 
@@ -243,25 +251,7 @@ export default {
 
     };
 
-    return {
-      notifications,
-      selectedNotification,
-      selectNotification,
-      currentUser,
-      searchInput,
-      searchNotification,
-      filteredNotification,
-      viewComment,
-      deleteComment,
-      acceptInvitation,
-      rejectInvitation,
-      viewTeamInfo,
-      acceptExchange,
-      viewRoomInfo,
-      rejectExchange,
-    };
-  },
-};
+
 </script>
 
 <style scoped>

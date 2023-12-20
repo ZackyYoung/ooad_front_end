@@ -10,23 +10,23 @@
       <VaScrollContainer class="max-h-52" vertical>
         <VaList>
           <VaListItem
-              v-for="message in filteredMessages" :key="message.id" @click="selectChat(message)"
+              v-for="(chat, index) in filteredChats" :key="index" @click="selectChat(chat)"
               class="list__item"
-              :class="{ 'selected': selectedChat === message }"
+              :class="{ 'selected': selectedChat === chat }"
           >
             <VaListItemSection avatar style="padding: 6px">
               <VaAvatar>
-                <img src="@/assets/avatar1.png" alt="User Avatar" >
+                <img src="../../../assets/avatar1.png" alt="User Avatar" >
               </VaAvatar>
             </VaListItemSection>
 
             <VaListItemSection>
               <VaListItemLabel>
-                {{ message.name }}
+                {{ chat.slaveName }}
               </VaListItemLabel>
             </VaListItemSection>
 
-            <div v-if="message.unread > 0" class="unread">{{ message.unread }}</div>
+            <div v-if="unReadNum(chat)" class="unread">{{ unReadNum(chat) }}</div>
           </VaListItem>
         </VaList>
       </VaScrollContainer>
@@ -34,33 +34,33 @@
     <div class="chat-window">
       <div v-if="selectedChat">
         <div class="chat-header">
-          <h2 style="margin-left: 30px;">{{ selectedChat.name }}</h2>
+          <h2 style="margin-left: 30px;">{{ selectedChat.slaveName }}</h2>
         </div>
 
         <VaScrollContainer class="max-h-52" vertical>
           <VaList class="chat-list">
-            <VaListItem v-for="chatMessage in selectedChat.messages" :key="chatMessage.id">
-              <VaListItemSection v-if="chatMessage.sender !== 'You'" avatar style="padding: 6px" class="sent-message">
+            <VaListItem v-for="(chatMessage, index) in selectedChat.messages" :key="index">
+              <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" avatar style="padding: 6px" class="sent-message">
                 <VaAvatar>
-                  <img src="@/assets/avatar1.png" alt="Your Avatar">
+                  <img src="../../../assets/avatar1.png" alt="Your Avatar">
                 </VaAvatar>
               </VaListItemSection>
 
-              <VaListItemSection v-if="chatMessage.sender !== 'You'" class="text-left">
+              <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" class="text-left">
                 <VaListItemLabel >
-                  {{ chatMessage.text }}
+                  {{ chatMessage.content }}
                 </VaListItemLabel>
               </VaListItemSection>
 
-              <VaListItemSection v-if="chatMessage.sender === 'You'" class="text-right">
+              <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" class="text-right">
                 <VaListItemLabel >
-                  {{ chatMessage.text }}
+                  {{ chatMessage.content }}
                 </VaListItemLabel>
               </VaListItemSection>
 
-              <VaListItemSection v-if="chatMessage.sender === 'You'" avatar style="padding: 6px" class="received-message">
+              <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" avatar style="padding: 6px" class="received-message">
                 <VaAvatar>
-                  <img src="@/assets/avatar2.png" alt="User Avatar">
+                  <img src="../../../assets/avatar2.png" alt="User Avatar">
                 </VaAvatar>
               </VaListItemSection>
             </VaListItem>
@@ -81,96 +81,59 @@
   </div>
 </template>
 
-<script>
-import {ref} from 'vue';
+<script setup>
+import {computed, onMounted, ref, toRef} from 'vue';
+import {useAccountStore} from "@/store/account.js";
+import {useMessageStore} from "@/store/message.js";
 
-export default {
-  setup() {
-    const generateMessages = (count) => {
-      const Messages = [];
-      for (let i = 1; i <= count; i++) {
-        const friend = {
-          id: i,
-          name: `Friend ${i}`,
-          unread: Math.floor(Math.random() * 10), // 随机生成未读消息数量
-          messages: [
-            { id: 1, sender: `Friend ${i}`, text: generateRandomMessage() },
-            { id: 2, sender: "You", text: generateRandomMessage() }
-          ]
-        };
-        Messages.push(friend);
-      }
-      return Messages;
-    };
+const accountStore = useAccountStore()
+const messageStore = useMessageStore()
 
-    const generateRandomMessage = () => {
-      const messages = [
-        "Hi there!",
-        "Hello!",
-        "Hey, how's it going?",
-        "Hi, long time no see!",
-        "What's up?",
-        "How are you?",
-        "I'm good, thanks!",
-        "Not bad, thanks for asking!",
-        "Yeah, it has been a while!",
-        "Nice to see you!",
-        "How have you been?",
-        "Good to hear from you!",
-        "What's new?",
-        "How's everything?",
-        "Missed talking to you!"
-      ];
-      const randomIndex = Math.floor(Math.random() * messages.length);
-      return messages[randomIndex];
-    };
+onMounted(async ()=>{
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
 
-    const messages = ref(generateMessages(15));
+function unReadNum(chat){
+  return chat.messages.filter(message =>
+      message.receiverId === accountStore.accountCampusId
+      && message.read === false).length
+}
 
-    const selectedChat = ref(null);
-    const newMessage = ref('');
+const selectedChat = ref(null);
+const newMessage = ref('');
 
-    const searchInput = ref('');
-    const filteredMessages = ref(messages.value);
-    const searchUsers = () => {
-      if (searchInput.value.trim() === '') {
-        filteredMessages.value = messages.value;
-      } else {
-        filteredMessages.value = messages.value.filter(message =>
-            message.name.toLowerCase().includes(searchInput.value.toLowerCase())
-        );
-      }
-    };
-
-    const selectChat = (chat) => {
-      chat.unread = 0;
-      selectedChat.value = chat;
-    };
-
-    const sendMessage = () => {
-      if (selectedChat.value && newMessage.value.trim() !== '') {
-        const message = {
-          id: selectedChat.value.messages.length + 1,
-          sender: 'You',
-          text: newMessage.value,
-        };
-        selectedChat.value.messages.push(message);
-        newMessage.value = '';
-      }
-    };
-
-    return {
-      messages,
-      selectedChat,
-      searchUsers,
-      newMessage,
-      selectChat,
-      sendMessage,
-      searchInput,
-      filteredMessages,
-    };
-  },
+const searchInput = ref('');
+const filteredChats = toRef(messageStore.chatData);
+const searchUsers = () => {
+  if (searchInput.value.trim() === '') {
+    filteredChats.value = messageStore.chatData;
+  } else {
+    filteredChats.value = messageStore.chatData.filter(chat =>
+        chat.slaveName.toLowerCase().includes(searchInput.value.toLowerCase())
+    );
+  }
 };
+
+const selectChat = (chat) => {
+  messageStore.readMessage(chat)
+  selectedChat.value = chat;
+}
+
+const sendMessage = async () => {
+  if (selectedChat.value && newMessage.value.trim() !== '') {
+    const message = {
+      senderId: accountStore.accountCampusId,
+      senderName: accountStore.studentInformationForm.name,
+      receiverId: selectedChat.value.slaveId,
+      content: newMessage.value
+    };
+    selectedChat.value.messages.push(message);
+    newMessage.value = '';
+    await messageStore.sendMessage(message)
+  }
+};
+
 </script>
 
 <style scoped>

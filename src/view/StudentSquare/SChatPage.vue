@@ -4,7 +4,7 @@ import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
 
 import {s_notif_sidebar_items, s_square_sidebar_items} from "@/utils/SBarItems.js";
-import Chat from "@/components/student/square/Chat.vue";
+import Chat from "@/components/student/message/Chat.vue";
 
 </script>
 

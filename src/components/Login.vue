@@ -56,8 +56,12 @@
 import {useAccountStore} from "@/store/account.js";
 import {nextTick, ref, watch} from "vue";
 import {useRouter} from "vue-router";
+import {useNotificationStore} from "@/store/notification.js";
+import {useMessageStore} from "@/store/message.js";
 
 const accountStore = useAccountStore()
+const notificationStore = useNotificationStore()
+const messageStore = useMessageStore()
 const props = defineProps(['form'])
 const loginForm = ref(null)
 const router = useRouter()
@@ -82,9 +86,17 @@ async function loginCheck() {
 
 function loginRoute () {
   if (accountStore.accountRole === 'teacher')
+  {
     router.push('/teacher')
+    notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
+    messageStore.messageWebsocketInit(accountStore.accountCampusId)
+  }
   else if (accountStore.accountRole === 'student')
+  {
     router.push('/student')
+    notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
+    messageStore.messageWebsocketInit(accountStore.accountCampusId)
+  }
 }
 </script>
 

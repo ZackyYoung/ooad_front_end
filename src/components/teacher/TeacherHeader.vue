@@ -38,14 +38,26 @@ import logoName from '@/assets/images/logo_name.png'
 import {useAccountStore} from "@/store/account.js"
 import {useRouter} from "vue-router"
 import {t_head_bar_items} from "@/utils/TBarItems.js";
+import {useNotificationStore} from "@/store/notification.js";
+import {useMessageStore} from "@/store/message.js";
 
 const accountStore = useAccountStore()
+const notificationStore = useNotificationStore()
+const messageStore = useMessageStore()
 const router = useRouter()
+
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
+
 function toMain(){
   router.push('/teacher')
 }
 
 function logout () {
+  notificationStore.notificationWebsocketClose()
+  messageStore.messageWebsocketClose()
   router.push('/')
   window.sessionStorage.clear()
 }

@@ -259,6 +259,26 @@ function cancelFavorite(param, callback) {
             console.log(errResp)
         })
 }
+
+function sendMessage(param, callback) {
+    const url = `${dataServerUrl}/message/addOne`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function readMessage(messageId, callback) {
+    const url = `${dataServerUrl}/message/read/${messageId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -284,5 +304,7 @@ export default{
     fetchRoomInfo,
     deleteRoom,
     favoriteRoom,
-    cancelFavorite
+    cancelFavorite,
+    sendMessage,
+    readMessage
 }

@@ -33,20 +33,31 @@
 </template>
 
 <script setup>
-import {computed, reactive, ref} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import logoName from '@/assets/images/logo_name.png'
 import {useAccountStore} from "@/store/account";
 import {useRouter} from "vue-router";
 import {s_head_bar_items} from "@/utils/SBarItems.js";
+import {useNotificationStore} from "@/store/notification.js";
+import {useMessageStore} from "@/store/message.js";
 
 const accountStore = useAccountStore()
+const notificationStore = useNotificationStore()
+const messageStore = useMessageStore()
 const router = useRouter()
+
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
 
 function toMain() {
   router.push('/student')
 }
 
 function logout() {
+  notificationStore.notificationWebsocketClose()
+  messageStore.messageWebsocketClose()
   router.push('/')
   window.sessionStorage.clear()
 }

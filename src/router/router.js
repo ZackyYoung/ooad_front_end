@@ -15,7 +15,7 @@ import TUserEditPage from "@/view/TeacherUsers/TUserEditPage.vue";
 import TEditPasswdPage from "@/view/TeacherCenter/TEditPasswdPage.vue";
 import SEditInfoPage from "@/view/StudentCenter/SEditInfoPage.vue";
 import SCommentNotifPage from "@/view/StudentNotif/SCommentNotifPage.vue";
-import SInvitationNotifPage from "@/view/StudentNotif/SInvitationNotifPage.vue";
+import SInvitationNotifPage from "@/unused/SInvitationNotifPage.vue";
 import STeamInvitationPage from "@/view/StudentTeam/STeamInvitationPage.vue";
 import STeamSelect from "@/view/StudentSquare/STeamSelect.vue";
 import SDomInfoPage from "@/view/StudentSquare/SDomInfoPage.vue";

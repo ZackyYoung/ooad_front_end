@@ -1,7 +1,7 @@
 <script setup>
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
-import InvitationNotif from "@/components/student/message/InvitationNotif.vue";
+import InvitationNotif from "@/unused/InvitationNotif.vue";
 
 import {s_notif_sidebar_items} from "@/utils/SBarItems.js";
 

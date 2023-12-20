@@ -16,7 +16,7 @@ const accountStore = useAccountStore()
   <div class="page-wrapper">
     <StudentHeader class="header"/>
     <div class="page-container">
-      <SideBar :sidebar-items="s_center_sidebar_items" :active_id=1 class="sidebar"/>
+      <SideBar :sidebar-items="s_center_sidebar_items" :active_id=3 class="sidebar"/>
       <div class="page-content">
         <MyRoom/>
       </div>

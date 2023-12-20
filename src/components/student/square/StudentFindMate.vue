@@ -50,6 +50,14 @@
               name="visibility"
           />
         </va-button>
+        <va-button
+            round
+            color="warning"
+            @click="startChat(rowData)"
+        >
+          <va-icon name="chat"/>
+          发起聊天
+        </va-button>
       </template>
       <template #cell(gender)="{ rowData }">
         {{ rowData.gender}}
@@ -93,13 +101,17 @@ import StudentInfo from "@/components/student/center/StudentInfo.vue";
 import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
 import {useTeamStore} from "@/store/team.js";
+import {useMessageStore} from "@/store/message.js";
+import {useRouter} from "vue-router";
 
 const {isValid, validate} = useForm('formRef')
 
 
 const accountStore = useAccountStore()
 const studentStore = useStudentStore()
+const messageStore = useMessageStore()
 const teamStore = useTeamStore()
+const router = useRouter()
 const perPage = ref(5);
 const show_detail = ref(false);
 const current_page = ref(1)
@@ -120,6 +132,16 @@ const infoForm = reactive({
   info: '',
 })
 
+
+function startChat(student){
+  messageStore.chatData.push({
+    slaveId: student.studentId,
+    slaveName: student.name,
+    masterId: accountStore.accountCampusId,
+    messages: []
+  })
+  router.push('/student/notification/chat')
+}
 
 function updateAndShowInfo(student) {
   infoForm.studentId = student.studentId;
