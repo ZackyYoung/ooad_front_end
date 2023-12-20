@@ -57,9 +57,9 @@ function toMain(){
 
 function logout () {
   notificationStore.notificationWebsocketClose()
-  messageStore.messageWebsocketClose()
-  router.push('/')
+  messageStore.messageStoreClose()
   window.sessionStorage.clear()
+  router.push('/')
 }
 
 onMounted(async ()=>{

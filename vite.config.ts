@@ -10,6 +10,9 @@ export default defineConfig({
       '@': resolve(__dirname, './src')
     },
     extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"]
+  },
+  server: {
+    host: '0.0.0.0'
   }
 })
 

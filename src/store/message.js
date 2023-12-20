@@ -23,7 +23,7 @@ export const useMessageStore = defineStore("message", () => {
             console.log(msg)
             let flag = false
             chatData.forEach((chat) => {
-                if(chat.slaveId === msg.senderId || chat.masterId === msg.senderId)
+                if(chat.slaveId === msg.senderId || (chat.masterId === msg.senderId && chat.slaveId === msg.receiverId))
                 {
                     chat.messages.push(msg)
                     flag = true
@@ -62,8 +62,9 @@ export const useMessageStore = defineStore("message", () => {
         }
     }
 
-    function messageWebsocketClose(){
+    function messageStoreClose(){
         socket.value.close()
+        chatData.length = 0
     }
 
     async function sendMessage(message){
@@ -84,10 +85,11 @@ export const useMessageStore = defineStore("message", () => {
             resolve()
         })
     }
+
     return {
         chatData,
         messageWebsocketInit,
-        messageWebsocketClose,
+        messageStoreClose,
         sendMessage,
         readMessage
     }
