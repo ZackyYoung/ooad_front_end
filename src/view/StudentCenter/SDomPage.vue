@@ -1,7 +1,7 @@
 <script setup>
 import StudentHeader from "@/components/student/StudentHeader.vue";
 import SideBar from "@/components/SideBar.vue";
-import MyRoom from "@/components/student/square/MyRoom.vue";
+import MyRoom from "@/components/student/center/MyRoom.vue";
 
 import {s_center_sidebar_items} from "@/utils/SBarItems.js";
 

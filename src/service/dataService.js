@@ -279,6 +279,35 @@ function readMessage(messageId, callback) {
             console.log(errResp)
         })
 }
+function getCommentsByRoomId(roomId, callback) {
+    const url = `${dataServerUrl}/comment/findCommentsByRoomId/${roomId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function addComment(param, callback){
+    const url = `${dataServerUrl}/comment/addComment`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function addReply(param, callback) {
+    const url = `${dataServerUrl}/comment/addSecondComment`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -306,5 +335,8 @@ export default{
     favoriteRoom,
     cancelFavorite,
     sendMessage,
-    readMessage
+    readMessage,
+    getCommentsByRoomId,
+    addComment,
+    addReply
 }

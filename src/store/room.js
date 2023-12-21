@@ -17,6 +17,7 @@ export const useRoomStore = defineStore('room', () => {
         teamName: '',
     })
     const msg = ref("")
+    const comments = reactive([])
     async function findAllRoom(){
         roomData.length = 0
         return new Promise((resolve) => {
@@ -137,10 +138,45 @@ export const useRoomStore = defineStore('room', () => {
             })
         })
     }
+    async function getComments() {
+        comments.length = 0
+        return new Promise((resolve) => {
+            dataService.getCommentsByRoomId(roomToView.roomId, resp =>{
+                resp.data.data.forEach((comment) => {
+                    comments.push({
+                        commentId: comment.commentId,
+                        author: comment.authorName,
+                        content: comment.content,
+                        time: comment.time,
+                        replies: comment.secondComments,
+                        showReplies: false
+                    })
+                })
+            })
+            resolve()
+        })
+    }
+
+    async function addComment(form) {
+        return new Promise((resolve) => {
+            dataService.addComment(form, resp =>{
+                resolve()
+            })
+        })
+    }
+
+    async function addReply(form) {
+        return new Promise((resolve) => {
+            dataService.addReply(form, resp => {})
+
+            resolve()
+        })
+    }
     return{
         msg,
         roomData,
         roomToView,
+        comments,
         findAllRoom,
         findAllRoomByGender,
         addRoom,
@@ -148,6 +184,9 @@ export const useRoomStore = defineStore('room', () => {
         updateRoomToView,
         deleteRoom,
         favoriteRoom,
-        cancelFavorite
+        cancelFavorite,
+        getComments,
+        addComment,
+        addReply
     }
 })

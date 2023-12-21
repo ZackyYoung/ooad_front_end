@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <VaStepper
+        next-disabled
         v-model="step"
         :steps="steps"
         controls-hidden

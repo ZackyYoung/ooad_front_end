@@ -67,6 +67,16 @@
               <va-icon name="info"/>
               查看详情
             </va-button>
+            <va-button
+                v-if="accountStore.accountCampusId === teamStore.current_team.creatorId"
+                round
+                gradient
+                color="#228B22"
+                @click=""
+            >
+              <va-icon name="check"/>
+              选择宿舍
+            </va-button>
           </div>
         </div>
       </div>

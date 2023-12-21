@@ -13,8 +13,6 @@ export const useMessageStore = defineStore("message", () => {
         console.log('websocket连接状态:' + socket.value.readyState)
 
         socket.value.onopen = () =>{
-            socket.value.send("connection established")
-            socket.value.send(`campusId: ${campusId}`)
             console.log("connection established")
         }
         socket.value.onmessage = (message) =>{
@@ -53,7 +51,6 @@ export const useMessageStore = defineStore("message", () => {
         }
 
         socket.value.onclose = () =>{
-            socket.value.send("connection closed")
             console.log("connection closed")
         }
 

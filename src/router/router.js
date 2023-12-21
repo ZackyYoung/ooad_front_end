@@ -178,12 +178,12 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next)=>{
-    if(to.path === '/')  return next()
-    const tokenStr = window.sessionStorage.getItem("campusId")
-    if(!tokenStr) return next('/')
-    next()
-})
+// router.beforeEach((to, from, next)=>{
+//     if(to.path === '/')  return next()
+//     const tokenStr = window.sessionStorage.getItem("campusId")
+//     if(!tokenStr) return next('/')
+//     next()
+// })
 
 
 export default router;

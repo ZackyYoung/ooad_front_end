@@ -188,13 +188,14 @@ const addComment = async () => {
 };
 
 const addReply = async (commentIndex) => {
-  await roomStore.addReply({
+  let reply = {
     authorId: accountStore.accountCampusId,
     authorName: accountStore.studentInformationForm.name,
     parentId: roomStore.comments[commentIndex].commentId,
     content: newReply.value[commentIndex]
-  })
-  await roomStore.getComments()
+  }
+  await roomStore.addReply(reply)
+  roomStore.comments[commentIndex].replies.push(reply)
   roomStore.comments[commentIndex].showReplies = true
   newReply.value[commentIndex] = '';
 };

@@ -46,9 +46,8 @@
             color="primary"
             @click="updateAndShowInfo(rowData)"
         >
-          <va-icon
-              name="visibility"
-          />
+          <va-icon name="visibility"/>
+          查看信息
         </va-button>
         <va-button
             round

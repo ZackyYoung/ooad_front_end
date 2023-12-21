@@ -5,30 +5,26 @@ import {reactive, ref} from "vue";
 
 export const useNotificationStore = defineStore("notification", () =>{
     const notificationData = reactive([])
-    const serverUrl = '127.0.0.1:1234'
+    const serverUrl = 'ws://10.26.80.100:8082/api/websocket/notification/'
     const socket = ref(null)
     function notificationWebsocketInit(campusId){
-        socket.value = new WebSocket(`ws://${serverUrl}`)
-        console.log('websocket连接状态:' + socket.readyState)
-        socket.onopen = () =>{
-            socket.value.send("connection established")
-            socket.value.send(`campusId: ${campusId}`)
+        socket.value = new WebSocket(`${serverUrl}${campusId}`)
+        console.log('websocket连接状态:' + socket.value.readyState)
+        socket.value.onopen = () =>{
             console.log("connection established")
         }
 
-        socket.onmessage = (message) =>{
+        socket.value.onmessage = (message) =>{
             //TODO: handle received data
-            socket.value.send("message received")
-            console.log("message received")
+            console.log("notification received")
             console.log(message)
         }
 
-        socket.onclose = () =>{
-            socket.value.send("connection closed")
+        socket.value.onclose = () =>{
             console.log("connection closed")
         }
 
-        socket.onerror = (error) => {
+        socket.value.onerror = (error) => {
             console.log(error)
         }
     }
