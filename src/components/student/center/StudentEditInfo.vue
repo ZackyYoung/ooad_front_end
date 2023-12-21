@@ -13,12 +13,21 @@
       <div>
         <span class="va-title">Gender</span>
         <va-option-list
+            disabled
             v-model="form.gender"
             value-by="value"
             :options="gender_options"
             type="radio"
         />
       </div>
+      <va-select
+          disabled
+          v-model="form.degree"
+          class="mb-6"
+          label="Major"
+          placeholder="选择在读学历"
+          :options="degree_options"
+      />
       <va-select
           v-model="form.major"
           class="mb-6"
