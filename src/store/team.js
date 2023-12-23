@@ -30,7 +30,8 @@ export const useTeamStore = defineStore('team', () => {
     const createTeamForm = reactive({
         teamName: '',
         creatorId: '',
-        gender: ''
+        gender: '',
+        teamInfo: ''
     })
     const hasFavoriteRoom = computed(()=>{
         return current_team.favoriteRooms.length !== 0
@@ -92,10 +93,12 @@ export const useTeamStore = defineStore('team', () => {
                         current_team.creatorId = resp.data.data.creatorId
                         current_team.teamMembers = resp.data.data.teamMembers
                         current_team.favoriteRooms = tempRooms
+                        await getSelectedRoom(current_team.teamId)
                     } else {
                         joined.value = false
                     }
-                    await getSelectedRoom(current_team.teamId)
+                    console.log(current_team)
+
                     resolve()
                 } else {
                     reject()
@@ -289,7 +292,22 @@ async function unselectRoom(roomId, teamId)
     })
 }
 
+async function applySwap(applyCreatorId, applyReceiverId){
+        return new Promise((resolve) => {
+            dataService.applySwap(applyCreatorId, applyReceiverId, resp =>{
+                resolve()
+            })
+        })
+}
 
+async function swapRoom(applyRoomId, acceptRoomId)
+{
+    return new Promise((resolve) => {
+        dataService.swapRoom(applyRoomId, acceptRoomId, resp =>{
+            resolve()
+        })
+    })
+}
     return {
         teamData,
         selectedRoom,
@@ -310,6 +328,8 @@ async function unselectRoom(roomId, teamId)
         inviteToJoinTeam,
         selectRoom,
         getSelectedRoom,
-        unselectRoom
+        unselectRoom,
+        applySwap,
+        swapRoom
     }
 })

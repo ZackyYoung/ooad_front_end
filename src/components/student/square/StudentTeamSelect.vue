@@ -90,6 +90,12 @@
           label="队伍名称"
           placeholder="请输入队伍名称"
       />
+      <va-input
+          style="width: 80%;"
+          v-model="teamStore.createTeamForm.teamInfo"
+          label="队伍简介"
+          placeholder="请输入队伍简介"
+      />
     </va-form>
     <template #footer>
       <va-button class="save-button" @click="createTeam">
@@ -167,7 +173,7 @@ async function submitApplication() {
   if(teamStore.joined){
     init("你已经加入了一个队伍")
   }
-  else if(infoForm.teamMembers.length === 4) {
+  else if(infoForm.teamMembers.length === 3) {
     init("你申请的队伍人数已满")
   }
   else{

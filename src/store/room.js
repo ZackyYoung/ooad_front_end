@@ -18,8 +18,6 @@ export const useRoomStore = defineStore('room', () => {
     })
     const msg = ref("")
     const comments = reactive([])
-
-
     async function findAllRoom(){
         roomData.length = 0
         return new Promise((resolve) => {

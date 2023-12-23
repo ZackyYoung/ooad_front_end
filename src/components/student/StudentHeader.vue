@@ -56,7 +56,7 @@ function toMain() {
 }
 
 function logout() {
-  notificationStore.notificationWebsocketClose()
+  notificationStore.notificationStoreClose()
   messageStore.messageStoreClose()
   window.sessionStorage.clear()
   router.push('/')

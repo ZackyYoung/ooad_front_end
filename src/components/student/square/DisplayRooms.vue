@@ -50,14 +50,17 @@
           <va-chip outline shadow>{{room.building}}栋</va-chip>
           <va-chip shadow>{{room.roomNumber}}</va-chip>
           <va-chip shadow color="#7f1f90">
-            <div v-if="room.roomType === 3">
+            <div v-if="room.roomType === 1">
+              单人间
+            </div>
+            <div v-else-if="room.roomType === 2">
+              双人间
+            </div>
+            <div v-else-if="room.roomType === 3">
               三人间
             </div>
-            <div v-else-if="room.roomType === 4">
-              四人间
-            </div>
             <div v-else>
-              五人间
+              四人间
             </div>
           </va-chip>
         </div>

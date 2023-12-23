@@ -46,17 +46,12 @@ const notificationStore = useNotificationStore()
 const messageStore = useMessageStore()
 const router = useRouter()
 
-onMounted(async () => {
-  await accountStore.refreshSession()
-  await accountStore.fetchInformation()
-})
-
 function toMain(){
   router.push('/teacher')
 }
 
 function logout () {
-  notificationStore.notificationWebsocketClose()
+  notificationStore.notificationStoreClose()
   messageStore.messageStoreClose()
   window.sessionStorage.clear()
   router.push('/')

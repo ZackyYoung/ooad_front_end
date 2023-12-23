@@ -14,10 +14,44 @@ export const useNotificationStore = defineStore("notification", () =>{
             console.log("connection established")
         }
 
-        socket.value.onmessage = (message) =>{
+        socket.value.onmessage = (notification) =>{
             //TODO: handle received data
+            let ntf = JSON.parse(notification.data)
+            console.log(ntf)
+            let name = '';
+            switch (ntf.type)
+            {
+                case 'comment':
+                    name = '评论消息'
+                    break;
+                case 'invitation':
+                    name = '队伍消息'
+                    break;
+                case 'application':
+                    name = '队伍消息'
+                    break;
+                case 'system':
+                    name = '系统消息'
+                    break;
+                case 'roomExchange':
+                    name = '换房消息'
+                    break;
+            }
+            notificationData.push({
+                notificationId: ntf.notificationId,
+                type: ntf.type,
+                name: name,
+                time: ntf.time,
+                read: ntf.read,
+                text: (ntf.type === 'system')?ntf.content:JSON.parse(ntf.content)
+            })
             console.log("notification received")
-            console.log(message)
+            notificationData.sort((a, b) => {
+                if (a.unread !== b.unread) {
+                    return a.unread ? -1 : 1;
+                }
+                return new Date(b.time) - new Date(a.time);
+            })
         }
 
         socket.value.onclose = () =>{
@@ -29,15 +63,27 @@ export const useNotificationStore = defineStore("notification", () =>{
         }
     }
 
-    function notificationWebsocketClose(){
-        if(socket.value)
-            socket.value.close()
+    function notificationStoreClose()
+    {
+        socket.value.close()
+        notificationData.length = 0
+    }
 
+    async function readNotification(notification)
+    {
+        return new Promise((resolve) =>{
+            let index = notificationData.indexOf(notification)
+            notificationData[index].read = true
+            dataService.readNotification(notification.notificationId, resp =>{
+                resolve()
+            })
+        })
     }
 
     return {
         notificationData,
         notificationWebsocketInit,
-        notificationWebsocketClose
+        notificationStoreClose,
+        readNotification
     }
 })

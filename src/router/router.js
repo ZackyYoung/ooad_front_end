@@ -186,7 +186,9 @@ router.beforeEach((to, from, next)=>{
     if(from.path === '/student/square/dormitory/roomInfo' &&
         to.path === '/student/square/dormitory' &&
         (previousRoute.path === '/student/center/room' ||
-            previousRoute.path === '/student/team/favor'))
+            previousRoute.path === '/student/team/favor' ||
+            previousRoute.path === '/student/notification/message'
+        ))
             return next(previousRoute.path)
     previousRoute = from
     next()

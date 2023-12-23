@@ -155,7 +155,7 @@ const {init} = useToast()
 const dialogVisible = ref(false)
 async function submitInvite() {
   show_detail.value = false;
-  if (teamStore.current_team.teamMembers.length === 5) {
+  if (teamStore.current_team.teamMembers.length === 4) {
     init("你的队伍人数已满")
   } else
   {

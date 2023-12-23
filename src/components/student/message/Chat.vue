@@ -115,8 +115,8 @@ const searchUsers = () => {
   }
 };
 
-const selectChat = (chat) => {
-  messageStore.readMessage(chat)
+async function selectChat(chat){
+  await messageStore.readMessage(chat)
   selectedChat.value = chat;
 }
 

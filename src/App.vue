@@ -9,17 +9,17 @@ const notificationStore = useNotificationStore()
 
 onMounted(async () =>{
   await accountStore.refreshSession()
-  if(accountStore.accountCampusId !== "")
+  if(accountStore.accountCampusId !== null)
   {
     messageStore.messageWebsocketInit(accountStore.accountCampusId)
-    notificationStore.notificationWebsocketClose(accountStore.accountCampusId)
+    notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
   }
 })
 onBeforeUnmount(async () =>{
-  if(accountStore.accountCampusId !== "")
+  if(accountStore.accountCampusId !== null)
   {
     messageStore.messageStoreClose()
-    notificationStore.notificationWebsocketClose()
+    notificationStore.notificationStoreClose()
   }
 })
 </script>

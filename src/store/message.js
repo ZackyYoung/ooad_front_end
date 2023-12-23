@@ -18,7 +18,7 @@ export const useMessageStore = defineStore("message", () => {
         socket.value.onmessage = (message) =>{
             //TODO: handle received data
             let msg = JSON.parse(message.data)
-            console.log(msg)
+
             let flag = false
             chatData.forEach((chat) => {
                 if(chat.slaveId === msg.senderId || (chat.masterId === msg.senderId && chat.slaveId === msg.receiverId))
@@ -47,7 +47,8 @@ export const useMessageStore = defineStore("message", () => {
                     })
                 }
             }
-            console.log("message received")
+            // console.log(msg)
+            // console.log("message received")
         }
 
         socket.value.onclose = () =>{

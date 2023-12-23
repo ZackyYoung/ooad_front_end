@@ -358,6 +358,36 @@ function updatePeriod(param, callback){
             console.log(errResp)
         })
 }
+
+function readNotification(notificationId, callback) {
+    const url = `${dataServerUrl}/notification/read/${notificationId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function applySwap(applyCreatorId, applyReceiverId, callback){
+    const url = `${dataServerUrl}/team/applySwap?applyCreatorId=${applyCreatorId}&applyReceiverId=${applyReceiverId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function swapRoom(applyRoomId, acceptRoomId, callback) {
+    const url = `${dataServerUrl}/team/swapRoom?applyRoomId=${applyRoomId}&acceptRoomId=${acceptRoomId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -393,5 +423,8 @@ export default{
     getSelectedRoom,
     unselectRoom,
     getPeriod,
-    updatePeriod
+    updatePeriod,
+    readNotification,
+    applySwap,
+    swapRoom
 }

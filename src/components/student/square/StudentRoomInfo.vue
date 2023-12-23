@@ -10,7 +10,7 @@
       <p>房间: {{ roomToView.roomNumber }}</p>
       <p>户型: {{ roomToView.roomType }}</p>
       <p>宿舍性别: {{ roomToView.gender }}</p>
-      <p>抢到房间的队伍: {{roomToView.selectedTeamCreatorId}}</p>
+      <p>选中当前房间队伍的队长学号: {{roomToView.selectedTeamCreatorId}}</p>
       <div class="button-container">
         <div v-if="!isFavorite">
           <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
@@ -28,7 +28,7 @@
           <va-icon name="logout"></va-icon>
             返回
         </va-button>
-        <va-button color="success" gradient class="change-button" @click="changeOwner">
+        <va-button v-if="isCreator" color="success" gradient class="change-button" @click="changeOwner">
           <va-icon name="sync"></va-icon>
           申请交换
         </va-button>
@@ -106,11 +106,13 @@ import {useRoomStore} from "@/store/room.js";
 import {useRouter} from "vue-router";
 import {useTeamStore} from "@/store/team.js";
 import {useAccountStore} from "@/store/account.js";
+import {useToast} from "vuestic-ui";
 
 const router = useRouter()
 const roomStore = useRoomStore()
 const teamStore = useTeamStore()
 const accountStore = useAccountStore()
+const {init} = useToast()
 const roomToView = computed(() => {
   return roomStore.roomToView
 })
@@ -119,9 +121,10 @@ onMounted(async ()=>{
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   await roomStore.getComments()
-  if(!roomStore)
-    roomStore.roomToView = window.sessionStorage.getItem("room")
+})
 
+const isCreator = computed(()=>{
+  return accountStore.accountCampusId === teamStore.current_team.creatorId
 })
 
 const isFavorite = computed(() => {
@@ -144,7 +147,13 @@ const cancelFavorite = async () => {
 }
 
 const changeOwner = async () => {
-  //发送换房申请
+  // if(teamStore.current_team.teamMembers.length !== roomStore.roomToView.roomType)
+  //   init('你的队伍人数与该房型不符')
+  // else
+  {
+    await teamStore.applySwap(accountStore.accountCampusId, roomStore.roomToView.selectedTeamCreatorId)
+    init('申请交换已发送')
+  }
 }
 
 const imagePage = ref(0);
