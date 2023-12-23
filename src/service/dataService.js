@@ -338,6 +338,26 @@ function unselectRoom(param, callback){
             console.log(errResp)
         })
 }
+
+function getPeriod(periodId, callback){
+    const url = `${dataServerUrl}/selectionPeriod/findById/${periodId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        },errResp =>{
+            console.log(errResp)
+        })
+}
+
+function updatePeriod(param, callback){
+    const url = `${dataServerUrl}/selectionPeriod/update`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -371,5 +391,7 @@ export default{
     addReply,
     selectRoom,
     getSelectedRoom,
-    unselectRoom
+    unselectRoom,
+    getPeriod,
+    updatePeriod
 }

@@ -20,6 +20,7 @@ export const useTeamStore = defineStore('team', () => {
     const current_team = reactive({
         teamId: '',
         teamName: '',
+        degree: '',
         creatorId: '',
         teamMembers: [],
         favoriteRooms: []
@@ -34,13 +35,13 @@ export const useTeamStore = defineStore('team', () => {
     const hasFavoriteRoom = computed(()=>{
         return current_team.favoriteRooms.length !== 0
     })
-    async function findAllTeam(gender){
+    async function findAllTeam(gender, degree, teacher){
         teamData.length = 0
         return new Promise((resolve, reject) => {
             dataService.findAllTeam(resp => {
                 if (resp.status === 200) {
                     resp.data.data.forEach((team)=>{
-                        if(team.gender === gender) {
+                        if((team.gender === gender && team.teamMembers[0].degree === degree) || teacher === true) {
                             let teamMemberNames = []
                             let creatorName
                             team.teamMembers.forEach((member) => {
@@ -94,7 +95,7 @@ export const useTeamStore = defineStore('team', () => {
                     } else {
                         joined.value = false
                     }
-                    await getSelectedRoom()
+                    await getSelectedRoom(current_team.teamId)
                     resolve()
                 } else {
                     reject()
@@ -234,18 +235,17 @@ export const useTeamStore = defineStore('team', () => {
                 teamId: teamId
             }, resp => {
                 msg.value = resp.data.msg
-
+                resolve()
             })
-            resolve()
+
         })
     }
 
-async function getSelectedRoom()
+async function getSelectedRoom(teamId)
 {
-    return new Promise((resolve) =>{
-        dataService.getSelectedRoom(current_team.teamId, resp => {
-            if(resp.data.code === 0)
-            {
+    return new Promise((resolve) => {
+        dataService.getSelectedRoom(teamId, resp => {
+            if (resp.data.code === 0) {
                 let room = resp.data.data
                 selectedRoom.roomId = room.roomId
                 selectedRoom.district = room.building.zone
@@ -257,9 +257,7 @@ async function getSelectedRoom()
                 selectedRoom.description = room.description
                 selectedRoom.selectedTeamCreatorId = room.selectedTeamCreatorId
                 roomSelected.value = true
-            }
-            else
-            {
+            } else {
                 selectedRoom.roomId = ''
                 selectedRoom.district = ''
                 selectedRoom.building = ''
@@ -271,8 +269,9 @@ async function getSelectedRoom()
                 selectedRoom.selectedTeamCreatorId = ''
                 roomSelected.value = false
             }
+            resolve()
         })
-        resolve()
+
     })
 }
 
@@ -284,8 +283,9 @@ async function unselectRoom(roomId, teamId)
             teamId: teamId
         }, resp => {
             msg.value = resp.data.msg
+            resolve()
         })
-        resolve()
+
     })
 }
 

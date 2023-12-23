@@ -1,5 +1,8 @@
 <template>
   <div v-if="teamStore.joined && teamStore.hasFavoriteRoom">
+    <h2 style="font-size: 2rem;font-family: Microsoft YaHei, serif; text-align: center">
+      选择房间时段:{{periodStore.periodData.startTime + '~' + periodStore.periodData.endTime}}
+    </h2>
     <div class="filter-container">
       <label>区划：</label>
       <va-select
@@ -70,6 +73,7 @@
 
             <va-button
                 v-if="!teamStore.roomSelected && isCreator"
+                :disabled="!isInSelectTime"
                 round
                 gradient
                 color="#228B22"
@@ -80,6 +84,7 @@
             </va-button>
             <va-button
               v-if="(teamStore.selectedRoom.roomId === room.roomId) && isCreator"
+              :disabled="!isInSelectTime"
               round
               gradient
               color="#danger"
@@ -149,28 +154,50 @@ import {useModal, useToast} from 'vuestic-ui'
 import Room1Image from "@/assets/Room1.jpg";
 import {useRoomStore} from "@/store/room.js";
 import {useRouter} from "vue-router";
+import {usePeriodStore} from "@/store/period.js";
 
 const accountStore = useAccountStore()
 const teamStore = useTeamStore();
 const roomStore = useRoomStore();
+const periodStore = usePeriodStore()
+
 
 const dialogVisible = ref(false);
 const perPage = ref(8);
 const current_page = ref(1);
+const isInSelectTime = ref(false);
 const {init} = useToast()
+const router = useRouter()
+
+onMounted(async () => {
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+ // await teamStore.getSelectedRoom(teamStore.current_team.teamId)
+  await periodStore.getPeriod(accountStore.studentInformationForm.degree, accountStore.studentInformationForm.gender)
+  const initTime = new Date();
+  const startTime = new Date(periodStore.periodData.startTime);
+  const endTime = new Date(periodStore.periodData.endTime);
+  if (initTime >= startTime && initTime <= endTime) {
+    isInSelectTime.value = true
+  }
+  setInterval(() => {
+    const currentTime = new Date();
+    if (currentTime >= startTime && currentTime <= endTime) {
+        isInSelectTime.value = true
+    }
+  }, 1000);
+})
 
 const isCreator = computed(() =>{
   return accountStore.accountCampusId === teamStore.current_team.creatorId
 })
 
 
-onMounted(async () => {
-  await accountStore.refreshSession()
-  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
-  await teamStore.getSelectedRoom()
-})
 
-const router = useRouter()
+
+
+
 const filters = ref({
   floor: '',
   building: '',
@@ -184,6 +211,8 @@ const options = {
   districts: Array.from(new Set(teamStore.current_team.favoriteRooms.map((room) => room.district))),
   roomNumbers: Array.from(new Set(teamStore.current_team.favoriteRooms.map((room) => room.roomNumber))),
 };
+
+
 
 const sortedBuildings = computed(() => options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
 const sortedFloors = computed(() => options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));

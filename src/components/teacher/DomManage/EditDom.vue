@@ -83,7 +83,6 @@
 
 <script setup>
 import {ref, computed, onMounted, watch, reactive} from 'vue';
-import { rooms } from '@/testData/roomData.js'; //用来测试
 import { useRouter } from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";

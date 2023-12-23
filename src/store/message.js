@@ -77,9 +77,11 @@ export const useMessageStore = defineStore("message", () => {
             let index = chatData.indexOf(chat)
             chatData[index].messages.forEach((message)=>{
                 message.read = true
-                dataService.readMessage(message.messageId, resp =>{})
+                dataService.readMessage(message.messageId, resp =>{
+                    resolve()
+                })
             })
-            resolve()
+
         })
     }
 

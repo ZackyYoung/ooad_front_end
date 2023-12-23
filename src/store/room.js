@@ -37,8 +37,9 @@ export const useRoomStore = defineStore('room', () => {
                         selectedTeamCreatorId: room.selectedTeamCreatorId
                     })
                 })
+                resolve()
             })
-            resolve()
+
         })
     }
 
@@ -61,8 +62,9 @@ export const useRoomStore = defineStore('room', () => {
                         })
                     }
                 })
+                resolve()
             })
-            resolve()
+
         })
     }
     async function addRoom(form){
@@ -105,8 +107,9 @@ export const useRoomStore = defineStore('room', () => {
                 roomToView.roomType = resp.data.data.roomType
                 roomToView.gender = resp.data.data.gender
                 roomToView.description = resp.data.data.description
+                resolve()
             })
-            resolve()
+
         })
     }
 
@@ -114,8 +117,9 @@ export const useRoomStore = defineStore('room', () => {
         return new Promise((resolve) => {
             dataService.deleteRoom(roomToView.building, roomToView.roomNumber, resp => {
                 msg.value = resp.data.msg
+                resolve()
             })
-            resolve()
+
         })
     }
 
@@ -156,8 +160,9 @@ export const useRoomStore = defineStore('room', () => {
                         showReplies: false
                     })
                 })
+                resolve()
             })
-            resolve()
+
         })
     }
 
@@ -171,9 +176,10 @@ export const useRoomStore = defineStore('room', () => {
 
     async function addReply(form) {
         return new Promise((resolve) => {
-            dataService.addReply(form, resp => {})
+            dataService.addReply(form, resp => {
+                resolve()
+            })
 
-            resolve()
         })
     }
     return{

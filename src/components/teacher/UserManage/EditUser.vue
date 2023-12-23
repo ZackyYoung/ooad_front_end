@@ -142,7 +142,6 @@ const {isValid, validate} = useForm('formRef')
 const current_page = ref(1);
 const perPage = ref(5);
 
-
 const form = reactive({
   studentId: 0,
   name: 'name',
@@ -174,14 +173,14 @@ async function submitEdit(form) {
   await accountStore.updateStudent(form)
   showEdit.value = false
   dialogVisible.value = true
-  await studentStore.findAllStudent(null, true)
+  await studentStore.findAllStudent(null, null, true)
 }
 
 const gender_option = readonly(['男', '女'])
 
 
-onMounted(() => {
-  studentStore.findAllStudent(null, true)
+onMounted(async () => {
+  await studentStore.findAllStudent(null, null, true)
 })
 
 const filter = ref("")
@@ -200,7 +199,7 @@ async function deleteAndConfirm(delete_id) {
   if (result) {
     await accountStore.deleteUser(delete_id)
     dialogVisible.value = true
-    await studentStore.findAllStudent(null, true)
+    await studentStore.findAllStudent(null, null, true)
   }
 }
 

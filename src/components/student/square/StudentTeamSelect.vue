@@ -130,7 +130,7 @@ const current_page = ref(1)
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
-  await teamStore.findAllTeam(accountStore.studentInformationForm.gender)
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
@@ -158,7 +158,7 @@ async function createTeam(){
   teamStore.createTeamForm.creatorId = accountStore.accountCampusId
   teamStore.createTeamForm.gender = accountStore.studentInformationForm.gender
   await teamStore.createTeam()
-  await teamStore.findAllTeam(accountStore.studentInformationForm.gender)
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree, false)
   dialogVisible.value = true
 }
 

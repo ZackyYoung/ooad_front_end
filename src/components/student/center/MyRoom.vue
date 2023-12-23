@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <h2 style="font-size: 2rem;font-family: Microsoft YaHei, serif;">
+      选择房间时段:{{periodStore.periodData.startTime + '~' + periodStore.periodData.endTime}}
+    </h2>
     <VaStepper
         next-disabled
         v-model="step"
@@ -7,7 +10,6 @@
         controls-hidden
         class="step"
     />
-
     <div v-if="step === 0" class="step-info">
       <p>你还没有加入队伍，要加入队伍才能收藏和选择房间，去广场加入队伍吧！</p>
     </div>
@@ -66,10 +68,12 @@ import {useAccountStore} from "@/store/account.js";
 import {useTeamStore} from "@/store/team.js";
 import {useRoomStore} from "@/store/room.js";
 import {useRouter} from "vue-router";
+import {usePeriodStore} from "@/store/period.js";
 
 const accountStore = useAccountStore()
 const teamStore = useTeamStore()
 const roomStore = useRoomStore()
+const periodStore = usePeriodStore()
 const router = useRouter()
 const step = ref(0)
 const imagePage = ref(0);
@@ -86,23 +90,25 @@ const selectedRoom = toRef(teamStore.selectedRoom)
 const steps = [
   { label: '在广场中选择一个队伍加入' },
   { label: '在广场浏览、收藏房间' },
-  { label: '在收藏的房间中抢房间' }
+  { label: '在收藏的房间中抢房间' },
+  { label: '候补选房和交换房间'}
 ]
 
 onMounted(async () => {
-  // 设置定时器，每秒检查一次是否需要切换到下一个步骤
-  setInterval(() => {
-    const currentTime = new Date();
-    const targetTime = new Date('2023-12-28T10:00:00');
-
-    if (currentTime >= targetTime) {
-      if (step.value !== 2)
-        step.value = 2; // 切换到下一个步骤
-    }
-  }, 1000);
+  const startTime = new Date(periodStore.periodData.startTime)
+  const endTime = new Date(periodStore.periodData.endTime)
+  const currentTime = new Date();
+  if (currentTime >= startTime && currentTime <= endTime) {
+    if (step.value !== 2)
+      step.value = 2; // 切换到下一个步骤
+  }
+  else if (currentTime > endTime) {
+    step.value = 3;
+  }
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  await periodStore.getPeriod(accountStore.studentInformationForm.degree, accountStore.studentInformationForm.gender)
   if(step.value === 0 && teamStore.joined)
     step.value = 1
 });
@@ -136,7 +142,7 @@ async function cancelSelectRoom (room)
 }
 
 .step {
-  width: 1000px;
+  width: 100%;
   margin: 0 auto;
 }
 

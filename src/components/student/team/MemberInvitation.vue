@@ -112,7 +112,7 @@ import {useTeamStore} from "@/store/team.js";
 import {storeToRefs} from "pinia";
 
 
-import {invitation_test1} from "@/test_data/student_test_data.js"
+
 import {useAccountStore} from "@/store/account";
 import {useInvitationStore} from "@/store/invitation.js";
 import {useToast} from "vuestic-ui";

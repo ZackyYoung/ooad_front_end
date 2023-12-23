@@ -100,7 +100,6 @@
 
 <script setup>
 import {computed, ref, reactive, onMounted, onBeforeUnmount} from 'vue';
-import { rooms } from '@/testData/roomData.js';
 import Room1Image from '@/assets/Room1.jpg';
 import Room2Image from '@/assets/Room2.png';
 import {useRoomStore} from "@/store/room.js";
