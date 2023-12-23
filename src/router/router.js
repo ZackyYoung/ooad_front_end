@@ -178,12 +178,19 @@ const router = createRouter({
     routes
 });
 
-// router.beforeEach((to, from, next)=>{
-//     if(to.path === '/')  return next()
-//     const tokenStr = window.sessionStorage.getItem("campusId")
-//     if(!tokenStr) return next('/')
-//     next()
-// })
+let previousRoute;
+router.beforeEach((to, from, next)=>{
+    if(to.path === '/')  return next()
+    const tokenStr = window.sessionStorage.getItem("campusId")
+    if(!tokenStr) return next('/')
+    if(from.path === '/student/square/dormitory/roomInfo' &&
+        to.path === '/student/square/dormitory' &&
+        (previousRoute.path === '/student/center/room' ||
+            previousRoute.path === '/student/team/favor'))
+            return next(previousRoute.path)
+    previousRoute = from
+    next()
+})
 
 
 export default router;

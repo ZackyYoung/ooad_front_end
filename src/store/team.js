@@ -5,6 +5,18 @@ import dataService from "@/service/dataService.js";
 
 export const useTeamStore = defineStore('team', () => {
     const teamData = reactive([])
+    const roomSelected = ref(false)
+    const selectedRoom = reactive({
+        roomId: '',
+        district: '',
+        building: '',
+        roomNumber: '',
+        floor: '',
+        roomType: '',
+        gender: '',
+        description: '',
+        selectedTeamCreatorId: ''
+    })
     const current_team = reactive({
         teamId: '',
         teamName: '',
@@ -56,12 +68,12 @@ export const useTeamStore = defineStore('team', () => {
 
     async function fetchTeamInformation(studentId) {
         return new Promise((resolve, reject) => {
-            dataService.findTeam(studentId, resp => {
+            dataService.findTeam(studentId, async resp => {
                 if (resp.status === 200) {
-                    if(resp.data.code === 0) {
+                    if (resp.data.code === 0) {
                         joined.value = true
                         let tempRooms = reactive([])
-                        resp.data.data.favoriteRooms.forEach((room) =>{
+                        resp.data.data.favoriteRooms.forEach((room) => {
                             tempRooms.push({
                                 roomId: room.roomId,
                                 district: room.building.zone,
@@ -70,7 +82,8 @@ export const useTeamStore = defineStore('team', () => {
                                 floor: room.floor,
                                 roomType: room.roomType,
                                 gender: room.gender,
-                                description: room.description
+                                description: room.description,
+                                selectedTeamCreatorId: room.selectedTeamCreatorId
                             })
                         })
                         current_team.teamId = resp.data.data.teamId
@@ -78,10 +91,10 @@ export const useTeamStore = defineStore('team', () => {
                         current_team.creatorId = resp.data.data.creatorId
                         current_team.teamMembers = resp.data.data.teamMembers
                         current_team.favoriteRooms = tempRooms
-                    }
-                    else{
+                    } else {
                         joined.value = false
                     }
+                    await getSelectedRoom()
                     resolve()
                 } else {
                     reject()
@@ -213,8 +226,74 @@ export const useTeamStore = defineStore('team', () => {
             })
         })
     }
+
+    async function selectRoom(roomId, teamId){
+        return new Promise((resolve) => {
+            dataService.selectRoom({
+                roomId: roomId,
+                teamId: teamId
+            }, resp => {
+                msg.value = resp.data.msg
+
+            })
+            resolve()
+        })
+    }
+
+async function getSelectedRoom()
+{
+    return new Promise((resolve) =>{
+        dataService.getSelectedRoom(current_team.teamId, resp => {
+            if(resp.data.code === 0)
+            {
+                let room = resp.data.data
+                selectedRoom.roomId = room.roomId
+                selectedRoom.district = room.building.zone
+                selectedRoom.building = room.building.buildingId
+                selectedRoom.roomNumber = room.roomNumber
+                selectedRoom.floor = room.floor
+                selectedRoom.roomType = room.roomType
+                selectedRoom.gender = room.gender
+                selectedRoom.description = room.description
+                selectedRoom.selectedTeamCreatorId = room.selectedTeamCreatorId
+                roomSelected.value = true
+            }
+            else
+            {
+                selectedRoom.roomId = ''
+                selectedRoom.district = ''
+                selectedRoom.building = ''
+                selectedRoom.roomNumber = ''
+                selectedRoom.floor = ''
+                selectedRoom.roomType = ''
+                selectedRoom.gender = ''
+                selectedRoom.description = ''
+                selectedRoom.selectedTeamCreatorId = ''
+                roomSelected.value = false
+            }
+        })
+        resolve()
+    })
+}
+
+async function unselectRoom(roomId, teamId)
+{
+    return new Promise((resolve) => {
+        dataService.unselectRoom({
+            roomId: roomId,
+            teamId: teamId
+        }, resp => {
+            msg.value = resp.data.msg
+        })
+        resolve()
+    })
+}
+
+
     return {
         teamData,
+        selectedRoom,
+        roomSelected,
         findAllTeam,
         current_team,
         createTeamForm,
@@ -228,6 +307,9 @@ export const useTeamStore = defineStore('team', () => {
         alterLeader,
         applyToJoinTeam,
         addMember,
-        inviteToJoinTeam
+        inviteToJoinTeam,
+        selectRoom,
+        getSelectedRoom,
+        unselectRoom
     }
 })

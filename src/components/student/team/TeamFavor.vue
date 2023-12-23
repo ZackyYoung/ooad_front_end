@@ -45,7 +45,7 @@
 
     <div class="image-container" style="text-align: center;">
       <div class="row">
-        <div v-for="room in displayedRooms" :key="room.id" class="room-card">
+        <div v-for="(room, index) in displayedRooms" :key="index" class="room-card">
           <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
           <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
             <va-chip outline shadow>{{room.building}}栋</va-chip>
@@ -67,19 +67,31 @@
               <va-icon name="info"/>
               查看详情
             </va-button>
+
             <va-button
-                v-if="accountStore.accountCampusId === teamStore.current_team.creatorId"
+                v-if="!teamStore.roomSelected && isCreator"
                 round
                 gradient
                 color="#228B22"
-                @click=""
+                @click="selectRoom(room)"
             >
               <va-icon name="check"/>
               选择宿舍
             </va-button>
+            <va-button
+              v-if="(teamStore.selectedRoom.roomId === room.roomId) && isCreator"
+              round
+              gradient
+              color="#danger"
+              @click="cancelSelectRoom(room)"
+            >
+              <va-icon name="cancel"/>
+              取消选择
+            </va-button>
           </div>
         </div>
       </div>
+
     </div>
   </div>
   <div v-else-if="teamStore.joined">
@@ -116,6 +128,12 @@
       </va-button>
     </va-card>
   </div>
+  <va-modal
+      v-model="dialogVisible"
+      :message="teamStore.msg"
+      ok-text="Confirm"
+      size="small"
+  />
 </template>
 
 
@@ -134,13 +152,22 @@ import {useRouter} from "vue-router";
 
 const accountStore = useAccountStore()
 const teamStore = useTeamStore();
-
 const roomStore = useRoomStore();
+
+const dialogVisible = ref(false);
 const perPage = ref(8);
 const current_page = ref(1);
+const {init} = useToast()
+
+const isCreator = computed(() =>{
+  return accountStore.accountCampusId === teamStore.current_team.creatorId
+})
+
+
 onMounted(async () => {
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  await teamStore.getSelectedRoom()
 })
 
 const router = useRouter()
@@ -193,7 +220,8 @@ const displayedRooms = computed(() => {
 })
 
 
-const viewDetail = (room) =>{
+function viewDetail (room)
+{
   roomStore.roomToView.roomId = room.roomId
   roomStore.roomToView.district = room.district
   roomStore.roomToView.building = room.building
@@ -202,10 +230,30 @@ const viewDetail = (room) =>{
   roomStore.roomToView.floor = room.floor
   roomStore.roomToView.gender = room.gender
   roomStore.roomToView.description = room.description
+  roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
   router.push('/student/square/dormitory/roomInfo')
 }
 
+async function selectRoom (room)
+{
+  if(teamStore.current_team.teamMembers.length !== room.roomType)
+  {
+    init('你的队伍人数不能选择这个房间')
+  }
+  else
+  {
+    await teamStore.selectRoom(room.roomId, teamStore.current_team.teamId)
+    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+    dialogVisible.value = true
+  }
+}
 
+async function cancelSelectRoom (room)
+{
+  await teamStore.unselectRoom(room.roomId, teamStore.current_team.teamId)
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  dialogVisible.value = true
+}
 
 </script>
 

@@ -14,10 +14,12 @@ export const useRoomStore = defineStore('room', () => {
         roomType: '',
         gender: '',
         description: '',
-        teamName: '',
+        selectedTeamCreatorId: ''
     })
     const msg = ref("")
     const comments = reactive([])
+
+
     async function findAllRoom(){
         roomData.length = 0
         return new Promise((resolve) => {
@@ -31,7 +33,8 @@ export const useRoomStore = defineStore('room', () => {
                         floor: room.floor,
                         roomType: room.roomType,
                         gender: room.gender,
-                        description: room.description
+                        description: room.description,
+                        selectedTeamCreatorId: room.selectedTeamCreatorId
                     })
                 })
             })
@@ -53,7 +56,8 @@ export const useRoomStore = defineStore('room', () => {
                             floor: room.floor,
                             roomType: room.roomType,
                             gender: room.gender,
-                            description: room.description
+                            description: room.description,
+                            selectedTeamCreatorId: room.selectedTeamCreatorId
                         })
                     }
                 })

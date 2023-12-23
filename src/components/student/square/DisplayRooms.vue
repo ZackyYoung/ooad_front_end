@@ -154,6 +154,7 @@ const viewDetail = (room) =>{
   roomStore.roomToView.floor = room.floor
   roomStore.roomToView.gender = room.gender
   roomStore.roomToView.description = room.description
+  roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
   router.push('/student/square/dormitory/roomInfo')
 }
 const goToRoomInfo = () => {

@@ -10,7 +10,7 @@
       <p>房间: {{ roomToView.roomNumber }}</p>
       <p>户型: {{ roomToView.roomType }}</p>
       <p>宿舍性别: {{ roomToView.gender }}</p>
-      <p>抢到房间的队伍: {{roomToView.teamName}}</p>
+      <p>抢到房间的队伍: {{roomToView.selectedTeamCreatorId}}</p>
       <div class="button-container">
         <div v-if="!isFavorite">
           <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
@@ -99,7 +99,7 @@
 </template>>
 
 <script setup>
-import {computed, ref, reactive, onMounted} from 'vue';
+import {computed, ref, reactive, onMounted, onBeforeUnmount} from 'vue';
 import { rooms } from '@/testData/roomData.js';
 import Room1Image from '@/assets/Room1.jpg';
 import Room2Image from '@/assets/Room2.png';
@@ -120,6 +120,9 @@ onMounted(async ()=>{
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   await roomStore.getComments()
+  if(!roomStore)
+    roomStore.roomToView = window.sessionStorage.getItem("room")
+
 })
 
 const isFavorite = computed(() => {

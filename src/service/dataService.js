@@ -308,6 +308,36 @@ function addReply(param, callback) {
             console.log(errResp)
         })
 }
+
+function selectRoom(param, callback){
+    const url = `${dataServerUrl}/team/selectRoom`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function getSelectedRoom(teamId, callback) {
+    const url = `${dataServerUrl}/team/findSelectedRoom/${teamId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function unselectRoom(param, callback){
+    const url = `${dataServerUrl}/team/unselectRoom`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -338,5 +368,8 @@ export default{
     readMessage,
     getCommentsByRoomId,
     addComment,
-    addReply
+    addReply,
+    selectRoom,
+    getSelectedRoom,
+    unselectRoom
 }
