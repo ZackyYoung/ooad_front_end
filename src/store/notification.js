@@ -80,10 +80,22 @@ export const useNotificationStore = defineStore("notification", () =>{
         })
     }
 
+    async function deleteNotification(notification)
+    {
+        let index = notificationData.indexOf(notification)
+        notificationData.splice(index, 1)
+        return new Promise((resolve) =>{
+            dataService.deleteNotification(notification.notificationId, resp=>{
+                resolve()
+            })
+        })
+    }
+
     return {
         notificationData,
         notificationWebsocketInit,
         notificationStoreClose,
-        readNotification
+        readNotification,
+        deleteNotification
     }
 })

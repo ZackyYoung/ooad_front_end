@@ -1,6 +1,23 @@
 <template>
   <div class="page-content-card create-dom-container">
     <va-card class="create-dom-card">
+      <div class="upload-file">
+        <p class="my-title">
+          通过文件批量导入
+        </p>
+        <va-file-upload
+            v-model="info_file"
+            style="margin:1rem;"
+            dropzone
+            file-types="xlsx"
+            dropZoneText="上传宿舍信息文件（.xlsx）"
+        />
+        <div style="text-align: center">
+          <va-button @click="file_import(info_file[0])">
+            确认提交
+          </va-button>
+        </div>
+      </div>
       <div class="input-info">
         <p class="my-title">
           新建宿舍
@@ -58,7 +75,7 @@
           />
         </va-form>
         <div class="form_b">
-          <va-button class="save-button" :disabled="!isValid" @click="validate() && submit()">
+          <va-button class="save-button" :disabled="!isValid" @click="validate() && createRoom(form)">
             提交信息
           </va-button>
         </div>
@@ -87,6 +104,7 @@ import {
   erqi_options, xinyuan_options
 } from "@/utils/DomOptions.js";
 import {useRoomStore} from "@/store/room";
+import * as XLSX from "xlsx";
 
 
 const {isValid, validate, reset, resetValidation} = useForm('formRef')
@@ -94,6 +112,10 @@ const {isValid, validate, reset, resetValidation} = useForm('formRef')
 const roomStore = useRoomStore()
 
 const dialogVisible = ref(false)
+
+const info_file = ref([])
+
+const formRef = ref(null)
 
 const form = reactive({
   district: '',
@@ -151,11 +173,46 @@ const roomNumberValidator = (value) =>{
     return '房间号必须为整数数字！'
   }
 }
-async function submit() {
-  await roomStore.addRoom(form)
+async function createRoom(item) {
+  await roomStore.addRoom(item)
   dialogVisible.value = true
+  formRef.value.reset()
 }
 
+async function file_import(file)
+{
+  const fileReader = new FileReader();
+
+  fileReader.onload = async (event) => {
+    const arrayBuffer = event.target.result;
+
+    // 将 Array Buffer 转换为工作簿对象
+    const workbook = XLSX.read(arrayBuffer, {type: 'array'});
+
+    // 获取第一个工作表
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    // 将工作表转换为 JSON 数据
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+    const headers = jsonData[0];
+
+    // 构建带属性的 JSON
+    const result = jsonData.slice(1).map((row) => {
+      const obj = {}
+      headers.forEach((header, index) => {
+        obj[header] = row[index] || null
+      })
+      return obj
+    });
+    for (const item of result) {
+      await createRoom(item)
+    }
+
+  };
+
+  fileReader.readAsArrayBuffer(file);
+}
 </script>
 
 <style lang="scss" scoped>

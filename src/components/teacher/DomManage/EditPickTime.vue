@@ -117,7 +117,7 @@ async function submitTime() {
 }
 
 async function exportResult() {
-  const results = [['teamName', 'creatorId', 'teamMembers', 'district', 'buildingId', 'roomNumber', 'roomType']]
+  const results = [['teamName', 'creatorId', 'teamMembers', 'district', 'buildingId', 'roomNumber', 'roomType', 'gender']]
   await teamStore.findAllTeam(null, null, true)
   for (const team of teamStore.teamData) {
     await teamStore.getSelectedRoom(team.teamId)

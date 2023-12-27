@@ -39,24 +39,26 @@
         no-data-filtered-html="无结果"
         noDataHtml="无结果"
     >
-      <template #cell(option)="{ rowData }">
-        <va-button
-            round
-            class="mr-2 mb-2"
-            color="primary"
-            @click="updateAndShowInfo(rowData)"
-        >
-          <va-icon name="visibility"/>
-          查看信息
-        </va-button>
-        <va-button
-            round
-            color="warning"
-            @click="startChat(rowData)"
-        >
-          <va-icon name="chat"/>
-          发起聊天
-        </va-button>
+      <template #cell(option)="{ rowData }" >
+        <div v-if="rowData.studentId !== accountStore.accountCampusId">
+          <va-button
+              round
+              class="mr-2 mb-2"
+              color="primary"
+              @click="updateAndShowInfo(rowData)"
+          >
+            <va-icon name="visibility"/>
+            查看信息
+          </va-button>
+          <va-button
+              round
+              color="warning"
+              @click="startChat(rowData)"
+          >
+            <va-icon name="chat"/>
+            发起聊天
+          </va-button>
+        </div>
       </template>
       <template #cell(gender)="{ rowData }">
         {{ rowData.gender}}
@@ -133,12 +135,14 @@ const infoForm = reactive({
 
 
 function startChat(student){
-  messageStore.chatData.push({
-    slaveId: student.studentId,
-    slaveName: student.name,
-    masterId: accountStore.accountCampusId,
-    messages: []
-  })
+  if(!(messageStore.chatData.some(item => item.slaveId === student.studentId))) {
+    messageStore.chatData.push({
+      slaveId: student.studentId,
+      slaveName: student.name,
+      masterId: accountStore.accountCampusId,
+      messages: []
+    })
+  }
   router.push('/student/notification/chat')
 }
 

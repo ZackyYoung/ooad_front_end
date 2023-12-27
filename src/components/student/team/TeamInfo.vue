@@ -47,7 +47,7 @@
             <va-button
                 round
                 class="mr-2 mb-2"
-                color="secondary"
+                color="primary"
                 @click="transferAndSubmit(infoForm.studentId, infoForm.name)"
             >
               转让队长

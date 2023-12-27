@@ -1,6 +1,6 @@
 <template>
   <va-form class="login-form" ref="registerForm">
-    <div v-if="!continue_reg">
+    <div v-if="!continue_reg" @keyup.enter="continueRegister">
       <div>
         <va-icon name="account_circle"></va-icon>
         <va-input
@@ -71,7 +71,7 @@
         <va-button style="width: 250px;margin: 15px" @click="continueRegister">Continue</va-button>
       </div>
     </div>
-    <div v-else>
+    <div v-else @keyup.enter="registerCheck">
       <div>
         <va-icon name="account_circle"></va-icon>
         <va-input
@@ -119,7 +119,8 @@
         />
       </div>
       <div>
-        <va-button style="width: 250px;margin: 15px" @click="updateInformation">Register</va-button>
+        <va-button style="width: 250px;margin: 10px" @click="continue_reg.value = false">Back</va-button>
+        <va-button style="width: 250px;margin: 10px" @click="registerCheck">Register</va-button>
       </div>
     </div>
   </va-form>
@@ -200,7 +201,7 @@ async function continueRegister() {
     }
   }
 }
-async function updateInformation() {
+async function registerCheck() {
   if(registerForm.value.validate()) {
     await accountStore.registerAccount()
     if (accountStore.accountValid) {

@@ -388,6 +388,26 @@ function swapRoom(applyRoomId, acceptRoomId, callback) {
             console.log(errResp)
         })
 }
+
+function deleteNotification(notificationId, callback){
+    const url = `${dataServerUrl}/notification/deleteById/${notificationId}`
+    axiosInstance.delete(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function findOneRoom(roomId, callback){
+    const url = `${dataServerUrl}/room/findOne/${roomId}`
+    axiosInstance.get(url)
+        .then(resp =>{
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -426,5 +446,7 @@ export default{
     updatePeriod,
     readNotification,
     applySwap,
-    swapRoom
+    swapRoom,
+    deleteNotification,
+    findOneRoom
 }

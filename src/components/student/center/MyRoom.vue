@@ -4,7 +4,7 @@
       选择房间时段:{{periodStore.periodData.startTime + '~' + periodStore.periodData.endTime}}
     </h2>
     <VaStepper
-        next-disabled
+        navigation-disabled
         v-model="step"
         :steps="steps"
         controls-hidden
@@ -95,39 +95,40 @@ const steps = [
 ]
 
 onMounted(async () => {
-  const startTime = new Date(periodStore.periodData.startTime)
-  const endTime = new Date(periodStore.periodData.endTime)
-  const currentTime = new Date();
-  if (currentTime >= startTime && currentTime <= endTime) {
-    if (step.value !== 2)
-      step.value = 2; // 切换到下一个步骤
-  }
-  else if (currentTime > endTime) {
-    step.value = 3;
-  }
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   await periodStore.getPeriod(accountStore.studentInformationForm.degree, accountStore.studentInformationForm.gender)
-  if(step.value === 0 && teamStore.joined)
+  if (teamStore.joined)
     step.value = 1
+  const startTime = new Date(periodStore.periodData.startTime)
+  const endTime = new Date(periodStore.periodData.endTime)
+  const currentTime = new Date();
+  if (currentTime >= startTime && currentTime <= endTime) {
+      step.value = 2; // 切换到下一个步骤
+  }
+  if (currentTime > endTime) {
+    step.value = 3;
+  }
 });
 const viewRoomInfo = (room) => {
-  roomStore.roomToView.roomId = room.roomId
-  roomStore.roomToView.district = room.district
-  roomStore.roomToView.building = room.building
-  roomStore.roomToView.roomNumber = room.roomNumber
-  roomStore.roomToView.roomType = room.roomType
-  roomStore.roomToView.floor = room.floor
-  roomStore.roomToView.gender = room.gender
-  roomStore.roomToView.description = room.description
-  roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  // roomStore.roomToView.roomId = room.roomId
+  // roomStore.roomToView.district = room.district
+  // roomStore.roomToView.building = room.building
+  // roomStore.roomToView.roomNumber = room.roomNumber
+  // roomStore.roomToView.roomType = room.roomType
+  // roomStore.roomToView.floor = room.floor
+  // roomStore.roomToView.gender = room.gender
+  // roomStore.roomToView.description = room.description
+  // roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 };
 async function cancelSelectRoom (room)
 {
   await teamStore.unselectRoom(room.roomId, teamStore.current_team.teamId)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  step.value = 1
   dialogVisible.value = true
 }
 

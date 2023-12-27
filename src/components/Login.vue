@@ -1,5 +1,5 @@
 <template>
-  <va-form class="login-form" ref="loginForm">
+  <va-form class="login-form" ref="loginForm"  @keyup.enter="loginCheck">
     <div>
       <va-icon name="account_circle"></va-icon>
       <va-input
@@ -58,7 +58,9 @@ import {nextTick, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {useNotificationStore} from "@/store/notification.js";
 import {useMessageStore} from "@/store/message.js";
+import {useForm} from "vuestic-ui";
 
+const {reset} = useForm('loginForm')
 const accountStore = useAccountStore()
 const notificationStore = useNotificationStore()
 const messageStore = useMessageStore()
@@ -85,6 +87,7 @@ async function loginCheck() {
 // })
 
 function loginRoute () {
+  reset()
   if (accountStore.accountRole === 'teacher')
   {
     router.push('/teacher')

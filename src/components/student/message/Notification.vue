@@ -3,14 +3,14 @@
     <div class="sidebar">
       <VaListItem class="search-box">
         <VaListItemSection class="search-text">
-          <VaInput v-model="searchInput" placeholder="搜索" @input="searchNotification" />
+          <VaInput v-model="searchInput" placeholder="搜索" />
         </VaListItemSection>
       </VaListItem>
 
       <VaScrollContainer class="max-h-52" vertical>
         <VaList>
           <VaListItem
-              v-for="notification in filteredNotification" :key="notification.id" @click="selectNotification(notification)"
+              v-for="(notification, index) in filteredNotification" :key="index" @click="readNotification(notification)"
               class="list__item"
               :class="{ 'selected': selectedNotification === notification }"
           >
@@ -18,7 +18,7 @@
               <VaIcon name="comment" class="notification-icon" size="32px"/>
             </VaListItemSection>
 
-            <VaListItemSection v-else-if="notification.type === 'invitation'">
+            <VaListItemSection v-else-if="notification.type === 'invitation' || notification.type === 'application' ">
               <VaIcon name="groups" class="notification-icon" size="32px"/>
             </VaListItemSection>
 
@@ -36,7 +36,7 @@
               </VaListItemLabel>
             </VaListItemSection>
 
-            <div v-if="notification.unread > 0" class="notification-unread"></div>
+            <div v-if="!notification.read" class="notification-unread"></div>
           </VaListItem>
         </VaList>
       </VaScrollContainer>
@@ -53,7 +53,7 @@
               {{ "评论成功!" }}
             </div>
             <div v-else class="comment-sender">
-              {{ selectedNotification.text.sender + "回复了你："}}
+              {{ selectedNotification.text.sender + " 回复了你："}}
             </div>
             <div class="comment-content">
               {{ selectedNotification.text.content }}
@@ -61,43 +61,35 @@
           </div>
           <div v-else-if="selectedNotification.type === 'invitation'">
             <div class="comment-sender">
-              {{ selectedNotification.text.inviter + "邀请你加入" + selectedNotification.text.teamName}}
+              {{ selectedNotification.text.teamName + "邀请你加入"  }}
             </div>
-            <div class="comment-content">
-              {{ selectedNotification.text.content }}
+          </div>
+          <div v-else-if="selectedNotification.type === 'application'">
+            <div class="comment-sender">
+              {{ selectedNotification.text.senderName + "申请加入你的队伍" }}
             </div>
           </div>
           <div v-else-if="selectedNotification.type === 'roomExchange'">
             <div class="comment-sender">
-              {{ selectedNotification.text.teamName + "队伍申请和您的队伍交换房间"}}
+              {{ selectedNotification.text.applyTeamName + "队伍申请和您的队伍交换房间"}}
             </div>
           </div>
           <div v-else>
-            <div class="comment-sender">
-              {{ selectedNotification.text.subject }}
-            </div>
             <div class="comment-content">
-              {{ selectedNotification.text.content }}
+              {{ selectedNotification.text }}
             </div>
           </div>
         </div >
+        <div style="text-align: center">
+          <div v-if="selectedNotification.type === 'invitation' || selectedNotification.type === 'application' " class="invitation-buttons">
+            <va-button color="info" @click="viewInvitation(selectedNotification)" class="check-info-button">前往查看</va-button>
+          </div>
+        </div>
         <div class="button-container">
-          <div v-if="selectedNotification.type === 'comment'" class="button-to-room">
-            <va-button color="info" @click="viewComment">查看</va-button>
-          </div>
-<!--          评论发送者为用户自己时才显示删除按钮-->
-          <div v-if="selectedNotification.type === 'comment'&&selectedNotification.text.sender===currentUser.name" class="delete-comment">
-            <va-button color="danger" @click="deleteComment">删除</va-button>
-          </div>
-          <div v-if="selectedNotification.type === 'invitation'" class="invitation-buttons">
-            <va-button color="success" @click="acceptInvitation()" class="agree-button">同意</va-button>
-            <va-button color="info" @click="viewTeamInfo()" class="check-info-button">查看队伍信息</va-button>
-            <va-button color="danger" @click="rejectInvitation()" class="reject-button">拒绝</va-button>
-          </div>
           <div v-if="selectedNotification.type === 'roomExchange'" class="exchange-buttons">
-            <va-button color="success" @click="acceptExchange()" class="agree-button">同意</va-button>
-            <va-button color="info" @click="viewRoomInfo()" class="check-info-button">查看房间信息</va-button>
-            <va-button color="danger" @click="rejectExchange()" class="reject-button">拒绝</va-button>
+            <va-button color="success" @click="acceptExchange(selectedNotification)" class="agree-button">同意</va-button>
+            <va-button color="info" @click="viewRoomInfo(selectedNotification.text.applyRoom)" class="check-info-button">查看房间信息</va-button>
+            <va-button color="danger" @click="rejectExchange(selectedNotification)" class="reject-button">拒绝</va-button>
           </div>
         </div>
       </div>
@@ -109,147 +101,79 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue';
+import {computed, onMounted, ref, toRef} from 'vue';
 import {useAccountStore} from "@/store/account.js";
+import {useNotificationStore} from "@/store/notification.js";
+import {useRouter} from "vue-router";
+import {useTeamStore} from "@/store/team.js";
+import {useRoomStore} from "@/store/room.js";
+import {useToast} from "vuestic-ui";
 
 const accountStore = useAccountStore();
-
-
-
+const notificationStore = useNotificationStore()
+const teamStore = useTeamStore()
+const roomStore = useRoomStore()
+const router = useRouter()
+const {init} = useToast()
 
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
+  await teamStore.fetchTeamInformation()
 })
 
 //生成的消息数据中，未读消息排在已读消息上面，未读消息和已读消息均按时间先后排序
-const generateNotifications = (count, currentUser) => {
-  const messages = [];
-  for (let i = 1; i <= count; i++) {
-    let type;
-    if (i % 4 === 0) {
-      type = 'invitation';
-    } else if (i % 3 === 0){
-      type = 'roomExchange'
-    } else {
-      type = i % 2 === 0 ? 'comment' : 'system';
-    }
-    const hasUnread = Math.random() < 0.5;
-    const timestamp = generateRandomTimestamp();
-    const notification = {
-      id: i,
-      type,
-      name: `Notification ${i}`,
-      unread: hasUnread,
-      text: generateRandomNotifications(type, currentUser),
-      timestamp,
-    };
-    messages.push(notification);
-  }
-  messages.sort((a, b) => {
-    if (a.unread !== b.unread) {
-      return a.unread ? -1 : 1;
-    }
-    return new Date(b.timestamp) - new Date(a.timestamp);
-  });
-  return messages;
-};
 
-const generateRandomTimestamp = () => {
-  const start = new Date('2023-01-01');
-  const end = new Date();
-  const randomTimestamp = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  return randomTimestamp.toISOString();
-};
 
-const generateRandomNotifications = (type, currentUser) => {
-  if (type === 'comment') {
-    const commentMessages = [
-      { sender: 'Alice', content: 'Great post!'},
-      { sender: 'Bob', content: 'I have a question.'},
-      { sender: currentUser.name, content: 'This is my comment.' },
-      // Add more comment examples as needed
-    ];
-    const randomIndex = Math.floor(Math.random() * commentMessages.length);
-    return commentMessages[randomIndex];
-  } else if (type === 'system') {
-    const systemMessages = [
-      { subject: 'Important Update', content: 'There is an important update for all users.'},
-      { subject: 'New Feature', content: 'Explore the new features in our latest release!'},
-      // Add more system message examples as needed
-    ];
-    const randomIndex = Math.floor(Math.random() * systemMessages.length);
-    return systemMessages[randomIndex];
-  } else if (type === 'invitation') {
-    const invitationMessages = [
-      { inviter: 'John', teamName: 'Team A', content: '加入我们的队伍吧！', timestamp: generateRandomTimestamp() },
-      { inviter: 'Jane', teamName: 'Team B', content: '一起组队吗？', timestamp: generateRandomTimestamp() },
-      // 添加更多邀请消息的例子
-    ];
-    const randomIndex = Math.floor(Math.random() * invitationMessages.length);
-    return invitationMessages[randomIndex];
-  }else if (type === 'roomExchange') {
-    const exchangeMessages = [
-      { teamName: 'TeamA'},
-      { teamName: 'TeamB'},
-    ];
-    const randomIndex = Math.floor(Math.random() * exchangeMessages.length);
-    return exchangeMessages[randomIndex];
-  }
-};
 const currentUser = {
   name: accountStore.studentInformationForm.name,
   ID: accountStore.accountCampusId
 };
-const notifications = ref(generateNotifications(15, currentUser));
+const notifications = toRef(notificationStore.notificationData)
 const selectedNotification = ref(null);
 const searchInput = ref('');
-const filteredNotification = ref(notifications.value);
-const searchNotification = () => {
+const filteredNotification = computed(() =>{
   if (searchInput.value.trim() === '') {
-    filteredNotification.value = notifications.value;
+    return notifications.value;
   } else {
-    filteredNotification.value = notifications.value.filter(notifications =>
+    return notifications.value.filter(notifications =>
         notifications.name.toLowerCase().includes(searchInput.value.toLowerCase())
     );
   }
-};
-const selectNotification = (notification) => {
-  notification.unread = 0;
+})
+async function readNotification(notification) {
+  await notificationStore.readNotification(notification)
   selectedNotification.value = notification;
-};
+}
 
-    const viewComment = () => {
-
+    const viewInvitation = (notification) => {
+        router.push('/student/team/invitation')
     };
 
-    const deleteComment = () => {
+    const acceptExchange = async (notification) => {
+        await teamStore.swapRoom(notification.text.applyRoomId, teamStore.selectedRoom.roomId)
+        await teamStore.getSelectedRoom(teamStore.current_team.teamId)
+        await notificationStore.deleteNotification(notification)
+        init('交换成功')
+    }
 
+    const viewRoomInfo = (room) => {
+      // roomStore.roomToView.roomId = room.roomId
+      // roomStore.roomToView.district = room.district
+      // roomStore.roomToView.building = room.building
+      // roomStore.roomToView.roomNumber = room.roomNumber
+      // roomStore.roomToView.roomType = room.roomType
+      // roomStore.roomToView.floor = room.floor
+      // roomStore.roomToView.gender = room.gender
+      // roomStore.roomToView.description = room.description
+      // roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+      roomStore.findRoomToView(room.roomId)
+      router.push('/student/square/dormitory/roomInfo')
     };
 
-    const acceptInvitation = () => {
-
-    };
-
-    const rejectInvitation = () => {
-
-    };
-
-    const viewTeamInfo = () => {
-
-    };
-
-    const acceptExchange = () => {
-
-    };
-
-    const viewRoomInfo = () => {
-
-    };
-
-    const rejectExchange = () => {
-
-    };
+    const rejectExchange = async (notification) => {
+        await notificationStore.deleteNotification(notification)
+    }
 
 
 </script>

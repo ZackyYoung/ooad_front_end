@@ -28,7 +28,16 @@
           <va-icon name="logout"></va-icon>
             返回
         </va-button>
-        <va-button v-if="isCreator" color="success" gradient class="change-button" @click="changeOwner">
+        <va-button
+            v-if="isCreator
+            && roomToView.selectedTeamCreatorId !== null
+            && roomToView.selectedTeamCreatorId !== accountStore.accountCampusId
+            && teamStore.roomSelected"
+            color="success"
+            gradient
+            class="change-button"
+            @click="changeOwner"
+        >
           <va-icon name="sync"></va-icon>
           申请交换
         </va-button>
@@ -120,6 +129,7 @@ const roomToView = computed(() => {
 onMounted(async ()=>{
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+  await roomStore.findRoomToView(window.sessionStorage.getItem("roomId"))
   await roomStore.getComments()
 })
 

@@ -100,6 +100,7 @@ import {useForm} from 'vuestic-ui'
 import {useAccountStore} from "@/store/account.js";
 import {storeToRefs} from "pinia";
 
+const {reset} = useForm('editPasswordForm')
 const accountStore = useAccountStore()
 const edited = ref(false)
 const form = accountStore.editPasswordForm
@@ -139,6 +140,7 @@ async function editPassword () {
   {
     await accountStore.editPassword()
     edited.value = true
+    reset()
   }
 }
 

@@ -60,10 +60,11 @@ export const useRoomStore = defineStore('room', () => {
                         })
                     }
                 })
+
                 resolve()
             })
-
         })
+
     }
     async function addRoom(form){
         return new Promise((resolve) => {
@@ -180,6 +181,25 @@ export const useRoomStore = defineStore('room', () => {
 
         })
     }
+
+    async function findRoomToView(roomId) {
+        window.sessionStorage.setItem("roomId", roomId)
+        return new Promise((resolve) => {
+            dataService.findOneRoom(roomId, resp => {
+                let room = resp.data.data
+                roomToView.roomId = room.roomId
+                roomToView.district = room.building.zone
+                roomToView.building = room.building.buildingId
+                roomToView.roomNumber = room.roomNumber
+                roomToView.roomType = room.roomType
+                roomToView.floor = room.floor
+                roomToView.gender = room.gender
+                roomToView.description = room.description
+                roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+                resolve()
+            })
+        })
+    }
     return{
         msg,
         roomData,
@@ -195,6 +215,7 @@ export const useRoomStore = defineStore('room', () => {
         cancelFavorite,
         getComments,
         addComment,
-        addReply
+        addReply,
+        findRoomToView
     }
 })

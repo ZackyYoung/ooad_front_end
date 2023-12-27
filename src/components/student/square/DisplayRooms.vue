@@ -137,8 +137,11 @@ const displayedRooms = computed(() => {
         }
 
         return true;
-      })
-      .slice(startIdx, endIdx)
+      }).sort((a, b) =>{
+        if(a.building === b.building)
+          return a.roomNumber - b.roomNumber
+        else return a.building - b.building
+      }).slice(startIdx, endIdx)
 })
 
 onMounted(async () => {
@@ -148,22 +151,18 @@ onMounted(async () => {
 });
 
 const viewDetail = (room) =>{
-  roomStore.roomToView.roomId = room.roomId
-  roomStore.roomToView.district = room.district
-  roomStore.roomToView.building = room.building
-  roomStore.roomToView.roomNumber = room.roomNumber
-  roomStore.roomToView.roomType = room.roomType
-  roomStore.roomToView.floor = room.floor
-  roomStore.roomToView.gender = room.gender
-  roomStore.roomToView.description = room.description
-  roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  // roomStore.roomToView.roomId = room.roomId
+  // roomStore.roomToView.district = room.district
+  // roomStore.roomToView.building = room.building
+  // roomStore.roomToView.roomNumber = room.roomNumber
+  // roomStore.roomToView.roomType = room.roomType
+  // roomStore.roomToView.floor = room.floor
+  // roomStore.roomToView.gender = room.gender
+  // roomStore.roomToView.description = room.description
+  // roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 }
-const goToRoomInfo = () => {
-
-};
-
-// 初始化时展示全部房间
 
 </script>
 

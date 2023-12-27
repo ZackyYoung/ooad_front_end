@@ -14,6 +14,9 @@ async function findAllStudent(gender, degree, isTeacher){
                     if((student.gender === gender && student.degree === degree)|| isTeacher)
                         studentData.push(student)
                 })
+                studentData.sort((a, b) =>{
+                    return a.studentId - b.studentId
+                })
                 resolve()
             } else {
                 reject()

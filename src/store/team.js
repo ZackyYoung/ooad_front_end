@@ -60,6 +60,9 @@ export const useTeamStore = defineStore('team', () => {
                             })
                         }
                     })
+                    teamData.sort((a, b) => {
+                        return a.creatorId - b.creatorId
+                    })
                     resolve()
                 } else {
                     reject()
