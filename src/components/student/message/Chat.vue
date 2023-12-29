@@ -15,9 +15,10 @@
               :class="{ 'selected': selectedChat === chat }"
           >
             <VaListItemSection avatar style="padding: 6px">
-              <VaAvatar>
-                <img src="../../../assets/avatar1.png" alt="User Avatar" >
-              </VaAvatar>
+              <VaAvatar
+                  :src="chat.slaveAvatar"
+                  fallback-src="src/assets/avatar1.png"
+              />
             </VaListItemSection>
 
             <VaListItemSection>
@@ -41,9 +42,10 @@
           <VaList class="chat-list">
             <VaListItem v-for="(chatMessage, index) in selectedChat.messages" :key="index">
               <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" avatar style="padding: 6px" class="sent-message">
-                <VaAvatar>
-                  <img src="../../../assets/avatar1.png" alt="Your Avatar">
-                </VaAvatar>
+                <VaAvatar
+                    :src="selectedChat.slaveAvatar"
+                    fallback-src="src/assets/avatar1.png"
+                />
               </VaListItemSection>
 
               <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" class="text-left">
@@ -59,9 +61,10 @@
               </VaListItemSection>
 
               <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" avatar style="padding: 6px" class="received-message">
-                <VaAvatar>
-                  <img src="../../../assets/avatar2.png" alt="User Avatar">
-                </VaAvatar>
+                <VaAvatar
+                    :src="selectedChat.masterAvatar"
+                    fallback-src="src/assets/avatar1.png"
+                />
               </VaListItemSection>
             </VaListItem>
           </VaList>
@@ -75,7 +78,7 @@
         </div>
       </div>
       <div v-else>
-        <p class="select-message">Select a chat to start messaging</p>
+        <p class="select-message">选择一个聊天查看</p>
       </div>
     </div>
   </div>

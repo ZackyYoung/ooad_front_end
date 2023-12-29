@@ -23,7 +23,8 @@ export const useTeamStore = defineStore('team', () => {
         degree: '',
         creatorId: '',
         teamMembers: [],
-        favoriteRooms: []
+        favoriteRooms: [],
+        teamInfo: ''
     })
     const joined = ref(false)
     const msg = ref(null)
@@ -56,7 +57,8 @@ export const useTeamStore = defineStore('team', () => {
                                 teamName: team.teamName,
                                 creatorId: team.creatorId,
                                 creatorName: creatorName,
-                                teamMembers: teamMemberNames
+                                teamMembers: teamMemberNames,
+                                teamInfo: team.teamInfo
                             })
                         }
                     })
@@ -96,6 +98,7 @@ export const useTeamStore = defineStore('team', () => {
                         current_team.creatorId = resp.data.data.creatorId
                         current_team.teamMembers = resp.data.data.teamMembers
                         current_team.favoriteRooms = tempRooms
+                        current_team.teamInfo = resp.data.data.teamInfo
                         await getSelectedRoom(current_team.teamId)
                     } else {
                         joined.value = false

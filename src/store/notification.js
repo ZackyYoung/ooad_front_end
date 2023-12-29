@@ -17,7 +17,6 @@ export const useNotificationStore = defineStore("notification", () =>{
         socket.value.onmessage = (notification) =>{
             //TODO: handle received data
             let ntf = JSON.parse(notification.data)
-            console.log(ntf)
             let name = '';
             switch (ntf.type)
             {

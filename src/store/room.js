@@ -1,9 +1,11 @@
 import dataService from "@/service/dataService.js";
 import {defineStore} from "pinia";
 import {reactive, ref} from "vue";
+import {usePictureStore} from "@/store/picture.js";
 
 
 export const useRoomStore = defineStore('room', () => {
+    const pictureStore = usePictureStore()
     const roomData = reactive([])
     const roomToView = reactive({
         roomId: '',
@@ -148,17 +150,46 @@ export const useRoomStore = defineStore('room', () => {
     async function getComments() {
         comments.length = 0
         return new Promise((resolve) => {
-            dataService.getCommentsByRoomId(roomToView.roomId, resp =>{
-                resp.data.data.forEach((comment) => {
+            dataService.getCommentsByRoomId(roomToView.roomId, async resp => {
+                for (const comment of resp.data.data) {
+                    let secondComments = []
+                    for (const secondComment of comment.secondComments) {
+                        let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === secondComment.author)
+                        if(!avatar)
+                        {
+                            await pictureStore.fetchTempAvatar(secondComment.author)
+                            avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === secondComment.author)
+                        }
+                        if(avatar)
+                            avatar = avatar.url
+                        secondComments.push({
+                            secondCommentId: secondComment.secondCommentId,
+                            parentComment: secondComment.parentComment,
+                            author: secondComment.author,
+                            authorName: secondComment.authorName,
+                            content: secondComment.content,
+                            time: secondComment.time,
+                            avatar: avatar
+                        })
+                    }
+                    let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === comment.author)
+                    if(!avatar)
+                    {
+                        await pictureStore.fetchTempAvatar(comment.author)
+                        avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === comment.author)
+                    }
+                    if(avatar)
+                        avatar = avatar.url
                     comments.push({
                         commentId: comment.commentId,
                         author: comment.authorName,
                         content: comment.content,
                         time: comment.time,
-                        replies: comment.secondComments,
-                        showReplies: false
+                        replies: secondComments,
+                        showReplies: false,
+                        avatar: avatar
                     })
-                })
+                }
                 resolve()
             })
 

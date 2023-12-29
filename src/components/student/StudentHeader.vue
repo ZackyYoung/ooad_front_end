@@ -15,6 +15,10 @@
       <p class="welcome">
         欢迎，{{ accountStore.accountCampusId }}
       </p>
+      <va-avatar
+          :src="pictureStore.userAvatar"
+          fallback-src="src/assets/avatar1.png"
+      />
       <va-button
           v-for="(item, index) in s_head_bar_items"
           :key="index"
@@ -40,15 +44,18 @@ import {useRouter} from "vue-router";
 import {s_head_bar_items} from "@/utils/SBarItems.js";
 import {useNotificationStore} from "@/store/notification.js";
 import {useMessageStore} from "@/store/message.js";
+import {usePictureStore} from "@/store/picture.js";
 
 const accountStore = useAccountStore()
 const notificationStore = useNotificationStore()
 const messageStore = useMessageStore()
+const pictureStore = usePictureStore()
 const router = useRouter()
 
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
+  await pictureStore.fetchAvatar(accountStore.accountCampusId)
 })
 
 function toMain() {

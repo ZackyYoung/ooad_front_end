@@ -144,7 +144,8 @@ const infoForm = reactive({
   teamName: '',
   creatorId: '',
   creatorName: '',
-  teamMembers: []
+  teamMembers: [],
+  teamInfo: ''
 })
 
 
@@ -153,6 +154,7 @@ function updateAndShowInfo(team) {
   infoForm.creatorId = team.creatorId
   infoForm.creatorName = team.creatorName
   infoForm.teamMembers = team.teamMembers
+  infoForm.teamInfo = team.teamInfo
   show_detail.value = true;
 }
 

@@ -25,6 +25,12 @@ const props = defineProps(['teamInfo'])
             <span v-if="index > 0">，</span>{{ member }}
           </span>
         </div>
+        <div class="team-info">
+          <va-chip class="mr-3">
+            队伍简介
+          </va-chip>
+          {{props.teamInfo.teamInfo}}
+        </div>
       </va-card-content>
     </va-card>
   </div>
@@ -37,6 +43,11 @@ const props = defineProps(['teamInfo'])
 }
 
 .member-name {
+  margin: 0.5rem;
+  padding: 0.2rem;
+}
+
+.team-info {
   margin: 0.5rem;
   padding: 0.2rem;
 }

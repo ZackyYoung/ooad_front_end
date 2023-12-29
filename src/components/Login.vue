@@ -5,9 +5,9 @@
       <va-input
           style="margin: 5px; text-align: left;"
           v-model="form.campusId"
-          label="CAMPUS ID"
+          label="校园号"
           placeholder="请输入校园号"
-          :rules="[(value) => (value && value.length > 0) || 'Campus id is required']"
+          :rules="[(value) => (value && value.length > 0) || '未填写校园号']"
           clearable
       />
     </div>
@@ -21,9 +21,9 @@
             style="margin: 5px; text-align: left"
             v-model="form.password"
             :type="isPasswordVisible.value ? 'text' : 'password'"
-            label="PASSWORD"
+            label="密码"
             placeholder="请输入密码"
-            :rules="[(value) => (value && value.length > 0) || 'Password is required']"
+            :rules="[(value) => (value && value.length > 0) || '未填写密码']"
             @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
         >
           <template #appendInner>
@@ -36,19 +36,21 @@
         </va-input>
       </va-value>
     </div>
-    <div><va-button style="width: 250px;margin: 15px" @click="loginCheck">Log in</va-button></div>
+    <div><va-button style="width: 250px;margin: 15px" @click="loginCheck">登录</va-button></div>
   </va-form>
   <va-modal
       v-model="successDialog"
-      message="Login successfully"
-      ok-text="Confirm"
+      message="登录成功"
+      ok-text="确认"
+      cancel-text="取消"
       @ok="loginRoute"
       size="small"
   />
   <va-modal
       v-model="failDialog"
       :message="accountStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
 </template>

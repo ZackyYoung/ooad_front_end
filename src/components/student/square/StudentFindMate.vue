@@ -104,6 +104,7 @@ import {useStudentStore} from "@/store/student.js";
 import {useTeamStore} from "@/store/team.js";
 import {useMessageStore} from "@/store/message.js";
 import {useRouter} from "vue-router";
+import {usePictureStore} from "@/store/picture.js";
 
 const {isValid, validate} = useForm('formRef')
 
@@ -112,6 +113,7 @@ const accountStore = useAccountStore()
 const studentStore = useStudentStore()
 const messageStore = useMessageStore()
 const teamStore = useTeamStore()
+const pictureStore = usePictureStore()
 const router = useRouter()
 const perPage = ref(5);
 const show_detail = ref(false);
@@ -134,16 +136,26 @@ const infoForm = reactive({
 })
 
 
-function startChat(student){
+async function startChat(student){
   if(!(messageStore.chatData.some(item => item.slaveId === student.studentId))) {
+    let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === student.studentId)
+    if(!avatar)
+    {
+      await pictureStore.fetchTempAvatar(student.studentId)
+      avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === student.studentId)
+    }
+    if(avatar)
+      avatar = avatar.url
     messageStore.chatData.push({
       slaveId: student.studentId,
       slaveName: student.name,
+      slaveAvatar: avatar,
       masterId: accountStore.accountCampusId,
+      masterAvatar: pictureStore.userAvatar,
       messages: []
     })
   }
-  router.push('/student/notification/chat')
+  await router.push('/student/notification/chat')
 }
 
 function updateAndShowInfo(student) {

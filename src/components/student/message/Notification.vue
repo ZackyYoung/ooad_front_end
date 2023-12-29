@@ -94,7 +94,7 @@
         </div>
       </div>
       <div v-else>
-        <p class="select-message">Select a notification to check</p>
+        <p class="select-message">选择一个通知查看</p>
       </div>
     </div>
   </div>

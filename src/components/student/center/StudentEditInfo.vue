@@ -4,14 +4,23 @@
       编辑个人信息
     </va-card-title>
     <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
+      <div>
+        <span class="va-title" style="color: #2727cb">用户头像</span>
+        <va-file-upload
+            v-model="user_picture"
+            upload-button-text="上传图片"
+            type="gallery"
+            file-types="image/png"
+        />
+      </div>
       <va-input
           v-model="form.name"
           :rules="[(v) => validateName(v)]"
-          label="Name"
+          label="姓名"
           placeholder="请输入你的姓名"
       />
       <div>
-        <span class="va-title">Gender</span>
+        <span class="va-title" style="color: #2727cb">性别</span>
         <va-option-list
             disabled
             v-model="form.gender"
@@ -24,14 +33,14 @@
           disabled
           v-model="form.degree"
           class="mb-6"
-          label="Major"
+          label="在读学历"
           placeholder="选择在读学历"
           :options="degree_options"
       />
       <va-select
           v-model="form.major"
           class="mb-6"
-          label="Major"
+          label="专业"
           placeholder="选择专业"
           :options="major_options"
       />
@@ -39,7 +48,6 @@
           v-model="form.info"
           label="简介"
           placeholder="请给出你的简介吧"
-          max-length="200"
           counter
           :autosize="true"
       />
@@ -50,23 +58,33 @@
     <va-modal
         v-model="dialogVisible"
         :message="accountStore.msg"
-        ok-text="Confirm"
+        ok-text="确认"
+        cancel-text="取消"
         size="small"
     />
   </va-card>
 </template>
 
 <script setup>
-import {ref} from "vue";
-import {useForm, useModal} from "vuestic-ui";
+import {onMounted, ref} from "vue";
+import {useForm, useModal, VaFileUploadSingleItem} from "vuestic-ui";
 import {computed, reactive, readonly} from "vue";
 import {gender_options, major_options, degree_options} from "@/utils/UserOptions.js";
 import {useAccountStore} from "@/store/account.js";
+import {usePictureStore} from "@/store/picture.js";
 
 
 const {isValid, validate} = useForm('formRef')
 
 const accountStore = useAccountStore()
+const pictureStore = usePictureStore()
+
+const user_picture = ref([])
+
+onMounted(async () =>{
+  await accountStore.refreshSession()
+  await accountStore.fetchInformation()
+})
 const form = reactive({
   studentId: accountStore.accountCampusId,
   name: accountStore.studentInformationForm.name,
@@ -92,6 +110,13 @@ const dialogVisible = ref(null)
 async function submitEdit() {
   form.studentId = accountStore.accountCampusId
   await accountStore.updateStudent(form)
+  if(user_picture.value[0])
+  {
+    const formData = new FormData()
+    formData.set("file", user_picture.value[0], `${accountStore.accountCampusId}.png`)
+    await pictureStore.updateAvatar(formData)
+    await pictureStore.fetchAvatar(accountStore.accountCampusId)
+  }
   showEdit.value = false
   dialogVisible.value = true
 }

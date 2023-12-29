@@ -3,6 +3,8 @@ import app from "../App.vue";
 
 const dataServerUrl = "http://10.26.80.100:8082";
 
+// const dataServerUrl = "http://10.32.60.95:8082"
+
 const axiosInstance = axios.create({
     baseURL: dataServerUrl,
     withCredentials: true
@@ -408,6 +410,26 @@ function findOneRoom(roomId, callback){
             console.log(errResp)
         })
 }
+
+function updateAvatar(param, callback){
+    const url = `${dataServerUrl}/picture/upload`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        },errResp => {
+            console.log(errResp)
+        })
+}
+
+function fetchAvatar(campusId, callback){
+    const url = `${dataServerUrl}/picture/download/${campusId}.png`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        },errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -448,5 +470,7 @@ export default{
     applySwap,
     swapRoom,
     deleteNotification,
-    findOneRoom
+    findOneRoom,
+    updateAvatar,
+    fetchAvatar
 }

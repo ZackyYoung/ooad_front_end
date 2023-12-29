@@ -60,11 +60,11 @@
         </div>
 
         <!-- 评论列表 -->
-        <div v-for="(comment, commentIndex) in displayedComments" :key="commentIndex" class="comment">
-          <div class="user-avatar">
-            <!-- 用户头像，你可以使用真实头像或者图标 -->
-            <img src="@/assets/avatar1.png" alt="User Avatar">
-          </div>
+        <div v-for="(comment, commentIndex) in displayedComments" class="comment">
+          <va-avatar
+              :src="comment.avatar"
+              fallback-src="src/assets/avatar1.png"
+          />
           <div class="comment-content">
             <p class="comment-author">{{ comment.author }}</p>
             <p class="comment-text">{{ comment.content }}</p>
@@ -78,10 +78,10 @@
             <!-- 回复列表 -->
             <div v-if="comment.showReplies" class="reply-list">
               <div v-for="(reply, replyIndex) in comment.replies" :key="replyIndex" class="reply">
-                <div class="user-avatar">
-                  <!-- 用户头像 -->
-                  <img src="@/assets/avatar2.png" alt="User Avatar">
-                </div>
+                <va-avatar
+                    :src="reply.avatar"
+                    fallback-src="src/assets/avatar1.png"
+                />
                 <div class="reply-content">
                   <p class="reply-author">{{ reply.authorName }}</p>
                   <p class="reply-text">{{ reply.content }}</p>
@@ -116,11 +116,13 @@ import {useRouter} from "vue-router";
 import {useTeamStore} from "@/store/team.js";
 import {useAccountStore} from "@/store/account.js";
 import {useToast} from "vuestic-ui";
+import {usePictureStore} from "@/store/picture.js";
 
 const router = useRouter()
 const roomStore = useRoomStore()
 const teamStore = useTeamStore()
 const accountStore = useAccountStore()
+const pictureStore = usePictureStore()
 const {init} = useToast()
 const roomToView = computed(() => {
   return roomStore.roomToView
@@ -131,6 +133,7 @@ onMounted(async ()=>{
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   await roomStore.findRoomToView(window.sessionStorage.getItem("roomId"))
   await roomStore.getComments()
+  await pictureStore.fetchAvatar(accountStore.accountCampusId)
 })
 
 const isCreator = computed(()=>{
@@ -213,10 +216,16 @@ const addReply = async (commentIndex) => {
     authorId: accountStore.accountCampusId,
     authorName: accountStore.studentInformationForm.name,
     parentId: roomStore.comments[commentIndex].commentId,
-    content: newReply.value[commentIndex]
+    content: newReply.value[commentIndex],
   }
   await roomStore.addReply(reply)
-  roomStore.comments[commentIndex].replies.push(reply)
+  roomStore.comments[commentIndex].replies.push({
+    authorId: accountStore.accountCampusId,
+    authorName: accountStore.studentInformationForm.name,
+    parentId: roomStore.comments[commentIndex].commentId,
+    content: newReply.value[commentIndex],
+    avatar: pictureStore.userAvatar
+  })
   roomStore.comments[commentIndex].showReplies = true
   newReply.value[commentIndex] = '';
 };

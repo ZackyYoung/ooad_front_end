@@ -11,10 +11,10 @@
             center
         >
           <va-tab name="Login">
-            Login
+            登录
           </va-tab>
           <va-tab name="Register">
-            Register
+            注册
           </va-tab>
         </va-tabs>
         <login :form="loginForm" v-if="activeTab === 'Login' "/>

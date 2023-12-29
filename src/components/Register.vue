@@ -7,7 +7,7 @@
             style="margin: 5px; text-align: left;"
             v-model="form.campusId"
             :rules="[(v) => campusIdValidator(v)]"
-            label="CAMPUS ID"
+            label="校园号"
             placeholder="请输入校园号"
         />
       </div>
@@ -16,9 +16,9 @@
         <va-select
             style="margin: 5px;text-align: left"
             v-model="form.role"
-            :rules="[(v) => (v && v.length > 0) || 'Role is required']"
+            :rules="[(v) => (v && v.length > 0) || '未选择身份']"
             class="mb-6"
-            label="Role"
+            label="身份"
             :options="role_options"
         />
       </div>
@@ -33,7 +33,7 @@
               v-model="form.password"
               :rules="[(v) => passwordValidator(v)]"
               :type="isPasswordVisible.value ? 'text' : 'password'"
-              label="PASSWORD"
+              label="密码"
               placeholder="请输入密码"
               @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
           >
@@ -53,7 +53,7 @@
               v-model="form.confirmPassword"
               :rules="[(v) => confirmPasswordValidator(v)]"
               :type="isPasswordVisible.value ? 'text' : 'password'"
-              label="CONFIRM PASSWORD"
+              label="确认密码"
               placeholder="请确认密码"
               @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
           >
@@ -68,7 +68,7 @@
         </div>
       </va-value>
       <div>
-        <va-button style="width: 250px;margin: 15px" @click="continueRegister">Continue</va-button>
+        <va-button style="width: 250px;margin: 15px" @click="continueRegister">继续</va-button>
       </div>
     </div>
     <div v-else @keyup.enter="registerCheck">
@@ -77,7 +77,7 @@
         <va-input
             style="margin: 5px; text-align: left;"
             v-model="informationForm.name"
-            :rules="[(v) => (v && v.length > 0) || 'Name is required']"
+            :rules="[(v) => (v && v.length > 0) || '未输入姓名']"
             label="姓名"
             placeholder="请输入姓名"
         />
@@ -88,7 +88,7 @@
         <va-select
             style="margin: 5px;text-align: left"
             v-model="informationForm.gender"
-            :rules="[(v) => (v && v.length > 0) || 'Gender is required']"
+            :rules="[(v) => (v && v.length > 0) || '未选择性别']"
             class="mb-6"
             label="性别"
             :options="gender_options"
@@ -99,7 +99,7 @@
         <va-select
             style="margin: 5px; text-align: left;"
             v-model="informationForm.degree"
-            :rules="[(v) => (v && v.length > 0) || 'degree is required']"
+            :rules="[(v) => (v && v.length > 0) || '未选择在读学历']"
             class="mb-6"
             label="在读学历"
             placeholder="选择在读学历"
@@ -111,7 +111,7 @@
         <va-select
             style="margin: 5px; text-align: left;"
             v-model="informationForm.major"
-            :rules="[(v) => (v && v.length > 0) || 'major is required']"
+            :rules="[(v) => (v && v.length > 0) || '未选择专业']"
             class="mb-6"
             label="专业"
             placeholder="选择专业"
@@ -119,8 +119,8 @@
         />
       </div>
       <div>
-        <va-button style="width: 250px;margin: 10px" @click="continue_reg.value = false">Back</va-button>
-        <va-button style="width: 250px;margin: 10px" @click="registerCheck">Register</va-button>
+        <va-button style="width: 250px;margin: 10px" @click="continue_reg.value = false">返回</va-button>
+        <va-button style="width: 250px;margin: 10px" @click="registerCheck">注册</va-button>
       </div>
     </div>
   </va-form>
@@ -164,28 +164,28 @@ const informationForm = reactive({
 const campusIdValidator = (value) => {
   const re = /^[0-9]{8}$/;
   if (!value) {
-    return 'Campus id is required';
+    return '未输入校园号';
   }
   if(!re.test(value)) {
-    return 'Campus id must consist of 8 digits'
+    return '校园号必须是8位数字'
   }
 }
 const passwordValidator = (value) => {
   const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
   if (!value) {
-    return 'Password is required';
+    return '未输入密码';
   }
   if (!re.test(value)) {
-    return 'Password must contain figure and letter'
+    return '密码必须包含数字和字母'
   }
 }
 
 const confirmPasswordValidator = (value) => {
   if (!value) {
-    return 'You should confirm your password'
+    return '你需要确认你的密码'
   }
   if (value !== accountStore.registerForm.password) {
-    return 'Different with the previous password'
+    return '密码不一致'
   }
 }
 

@@ -16,7 +16,7 @@
                   style="margin: 5px; text-align: left"
                   v-model="form.oldPasswd"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='Old Password'
+                  label='旧密码'
                   placeholder='请输入旧密码'
                   :rules="[v => validateOld(v)]"
                   @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
@@ -40,7 +40,7 @@
                   style="margin: 5px; text-align: left"
                   v-model="form.newPasswd"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='New Password'
+                  label='新密码'
                   placeholder='请输入新密码'
                   :rules="[v => validateNew(v)]"
                   @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
@@ -64,7 +64,7 @@
                   style="margin: 5px; text-align: left"
                   v-model=form.newPasswdConfirm
                   :type="isPasswordVisible.value ? 'text' : 'password'"
-                  label='Confirm New Password'
+                  label='确认新密码'
                   placeholder='请确认新密码'
                   :rules="[v => validateConfirm(v)]"
                   @click-append-inner="isPasswordVisible.value = !isPasswordVisible.value"
@@ -81,7 +81,7 @@
           </div>
 
           <div>
-            <va-button style="width: 250px;margin: 15px" @click="editPassword()">Confirm</va-button>
+            <va-button style="width: 250px;margin: 15px" @click="editPassword()">确认</va-button>
           </div>
         </va-form>
       </va-card-content>
