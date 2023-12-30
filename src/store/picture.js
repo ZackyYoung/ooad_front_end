@@ -39,11 +39,17 @@ export const usePictureStore = defineStore('picture', ()=>{
             })
         })
     }
+    function pictureStoreClose()
+    {
+        userAvatar.value = null
+        tempAvatar.splice(0, tempAvatar.length)
+    }
     return{
         userAvatar,
         tempAvatar,
         updateAvatar,
         fetchAvatar,
-        fetchTempAvatar
+        fetchTempAvatar,
+        pictureStoreClose
     }
 })

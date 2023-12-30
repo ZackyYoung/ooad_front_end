@@ -65,6 +65,7 @@ function toMain() {
 function logout() {
   notificationStore.notificationStoreClose()
   messageStore.messageStoreClose()
+  pictureStore.pictureStoreClose()
   window.sessionStorage.clear()
   router.push('/')
 }

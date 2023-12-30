@@ -9,7 +9,7 @@ export const useMessageStore = defineStore("message", () => {
     const chatData = reactive([])
     const serverUrl = 'ws://10.26.80.100:8082/api/websocket/message/'
     const socket = ref(null)
-
+    const queue = ref([])
     function messageWebsocketInit(campusId){
         socket.value = new WebSocket(`${serverUrl}${campusId}`)
         console.log('websocket连接状态:' + socket.value.readyState)
@@ -18,57 +18,13 @@ export const useMessageStore = defineStore("message", () => {
             console.log("connection established")
         }
         socket.value.onmessage = async (message) => {
-            //TODO: handle received data
             let msg = JSON.parse(message.data)
-            let flag = false
-            console.log(msg)
-            console.log(chatData.length)
-            chatData.forEach((chat) => {
-                if (chat.slaveId === msg.senderId || (chat.masterId === msg.senderId && chat.slaveId === msg.receiverId)) {
-                    chat.messages.push(msg)
-                    flag = true
-                }
-            })
-            if (!flag) {
-                let receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
-                if (!receiverAvatar) {
-                    await pictureStore.fetchTempAvatar(msg.receiverId)
-                    receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
-                }
-                if (receiverAvatar)
-                    receiverAvatar = receiverAvatar.url
-                let senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
-                if (!senderAvatar) {
-                    await pictureStore.fetchTempAvatar(msg.senderId)
-                    senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
-                }
-                if (senderAvatar)
-                    senderAvatar = senderAvatar.url
-                if (campusId === msg.receiverId) {
-                    chatData.push({
-                        messageId: msg.messageId,
-                        slaveId: msg.senderId,
-                        slaveName: msg.senderName,
-                        slaveAvatar: senderAvatar,
-                        masterId: msg.receiverId,
-                        masterAvatar: receiverAvatar,
-                        messages: [msg]
-                    })
-                } else {
-                    chatData.push({
-                        messageId: msg.messageId,
-                        slaveId: msg.receiverId,
-                        slaveName: msg.receiverName,
-                        slaveAvatar: receiverAvatar,
-                        masterId: msg.senderId,
-                        masterAvatar: senderAvatar,
-                        messages: [msg]
-                    })
-                }
-
+            queue.value.push(msg)
+            if(queue.value.length === 1)
+            {
+                await processQueue(campusId)
             }
-            // console.log(msg)
-            // console.log("message received")
+
         }
 
         socket.value.onclose = () =>{
@@ -80,9 +36,68 @@ export const useMessageStore = defineStore("message", () => {
         }
     }
 
+    async function processQueue(campusId) {
+        if (queue.value.length === 0) {
+            // 队列为空，不执行任何操作
+            return;
+        }
+        const msg = queue.value[0];
+        let flag = false
+        chatData.forEach((chat) => {
+            if (chat.slaveId === msg.senderId || (chat.masterId === msg.senderId && chat.slaveId === msg.receiverId)) {
+                chat.messages.push(msg)
+                flag = true
+            }
+        })
+        if (!flag) {
+            let receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
+            if (!receiverAvatar) {
+                await pictureStore.fetchTempAvatar(msg.receiverId)
+                receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
+            }
+            if (receiverAvatar)
+                receiverAvatar = receiverAvatar.url
+            let senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
+            if (!senderAvatar) {
+                await pictureStore.fetchTempAvatar(msg.senderId)
+                senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
+            }
+            if (senderAvatar)
+                senderAvatar = senderAvatar.url
+            if (campusId === msg.receiverId) {
+                chatData.push({
+                    messageId: msg.messageId,
+                    slaveId: msg.senderId,
+                    slaveName: msg.senderName,
+                    slaveAvatar: senderAvatar,
+                    masterId: msg.receiverId,
+                    masterAvatar: receiverAvatar,
+                    messages: [msg]
+                })
+            } else {
+                chatData.push({
+                    messageId: msg.messageId,
+                    slaveId: msg.receiverId,
+                    slaveName: msg.receiverName,
+                    slaveAvatar: receiverAvatar,
+                    masterId: msg.senderId,
+                    masterAvatar: senderAvatar,
+                    messages: [msg]
+                })
+            }
+
+        }
+        // 任务完成后，从队列中移除已处理的任务
+        queue.value.shift();
+
+        // 继续处理下一个任务
+        processQueue();
+    }
+
+
     function messageStoreClose(){
         socket.value.close()
-        chatData.length = 0
+        chatData.splice(0, chatData.length)
     }
 
     async function sendMessage(message){

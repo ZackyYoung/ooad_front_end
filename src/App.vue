@@ -3,9 +3,11 @@ import {onBeforeUnmount, onMounted} from "vue";
 import {useAccountStore} from "@/store/account.js";
 import {useNotificationStore} from "@/store/notification.js";
 import {useMessageStore} from "@/store/message.js";
+import {usePictureStore} from "@/store/picture.js";
 const accountStore = useAccountStore()
 const messageStore = useMessageStore()
 const notificationStore = useNotificationStore()
+const pictureStore = usePictureStore()
 
 onMounted(async () =>{
   await accountStore.refreshSession()
@@ -20,6 +22,7 @@ onBeforeUnmount(async () =>{
   {
     messageStore.messageStoreClose()
     notificationStore.notificationStoreClose()
+    pictureStore.pictureStoreClose()
   }
 })
 </script>
