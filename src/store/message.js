@@ -115,11 +115,26 @@ export const useMessageStore = defineStore("message", () => {
         })
     }
 
+    function hasUnreadMessage(campusId){
+        const chatArray = chatData.filter((_, index) => index > 0);
+        for (const chat of chatArray) {
+            // 在每个chat的messages数组中查找符合条件的message
+            const hasUnreadMessage = chat.messages.some(message => message.receiverId === campusId && !message.read);
+
+            if (hasUnreadMessage) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     return {
         chatData,
         messageWebsocketInit,
         messageStoreClose,
         sendMessage,
-        readMessage
+        readMessage,
+        hasUnreadMessage
     }
 })

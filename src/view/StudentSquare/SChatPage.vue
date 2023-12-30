@@ -1,10 +1,8 @@
 <script setup>
 
 import StudentHeader from "@/components/student/StudentHeader.vue";
-import SideBar from "@/components/SideBar.vue";
-
-import {s_notif_sidebar_items, s_square_sidebar_items} from "@/utils/SBarItems.js";
 import Chat from "@/components/student/message/Chat.vue";
+import NotifSidebar from "@/components/student/message/NotifSidebar.vue";
 
 </script>
 
@@ -12,7 +10,7 @@ import Chat from "@/components/student/message/Chat.vue";
   <div class="page-wrapper">
     <StudentHeader class="header"/>
     <div class="page-container">
-      <SideBar :sidebar-items="s_notif_sidebar_items" :active_id=1 class="sidebar"/>
+      <NotifSidebar :active-side-id="1"/>
       <div class="page-content">
         <Chat/>
       </div>

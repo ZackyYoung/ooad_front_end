@@ -29,6 +29,29 @@
         {{ item.text }}
         <va-icon class="ml-1" :name="item.icon"/>
       </va-button>
+
+      <va-button
+          class="mr-1"
+          preset="secondary"
+          to="/student/notification/message"
+      >
+        消息中心
+        <span v-if="hasNew">
+          <va-icon
+              class="ml-1"
+              name="notifications_active"
+              color="#CC5500"
+          />
+        </span>
+        <span v-else>
+          <va-icon
+              class="ml-1"
+              name="notifications"
+          />
+        </span>
+      </va-button>
+
+
       <va-button class="logout" @click="logout">
         <va-icon name="logout"/>
       </va-button>
@@ -57,6 +80,20 @@ onMounted(async () => {
   await accountStore.fetchInformation()
   await pictureStore.fetchAvatar(accountStore.accountCampusId)
 })
+
+const hasNewMessage = ref(computed(() => messageStore.hasUnreadMessage(accountStore.accountCampusId)))
+const hasNewNotif = ref(computed(() => hasNewCompute(notificationStore.notificationData)))
+
+function hasNewCompute(notificationData) {
+  for (const notification of notificationData) {
+    if (!notification.read) {
+      return true
+    }
+  }
+  return false;
+}
+
+const hasNew = computed(()=>(hasNewNotif.value||hasNewMessage.value))
 
 function toMain() {
   router.push('/student')

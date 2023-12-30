@@ -28,5 +28,5 @@ export const s_head_bar_items = [
     {text: '广场', icon: 'local_mall', router_path: s_square_sidebar_items[0].router_path,},
     {text: '个人中心', icon: 'account_circle', router_path: s_center_sidebar_items[0].router_path,},
     {text: '我的队伍', icon: 'group', router_path: s_team_sidebar_items[0].router_path,},
-    {text: '消息通知', icon: 'notifications', router_path: s_notif_sidebar_items[0].router_path,},
+    // {text: '消息通知', icon: 'notifications', router_path: s_notif_sidebar_items[0].router_path,},
 ];
