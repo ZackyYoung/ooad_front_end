@@ -39,6 +39,12 @@
         no-data-filtered-html="无结果"
         noDataHtml="无结果"
     >
+      <template #cell(avatar)="{ rowData }">
+        <va-avatar
+            :src="rowData.avatar"
+            fallback-src="src/assets/avatar1.png"
+        />
+      </template>
       <template #cell(option)="{ rowData }" >
         <div v-if="rowData.studentId !== accountStore.accountCampusId">
           <va-button
@@ -133,23 +139,16 @@ const infoForm = reactive({
   degree: 0,
   major: '',
   info: '',
+  avatar: null
 })
 
 
 async function startChat(student){
   if(!(messageStore.chatData.some(item => item.slaveId === student.studentId))) {
-    let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === student.studentId)
-    if(!avatar)
-    {
-      await pictureStore.fetchTempAvatar(student.studentId)
-      avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === student.studentId)
-    }
-    if(avatar)
-      avatar = avatar.url
     messageStore.chatData.push({
       slaveId: student.studentId,
       slaveName: student.name,
-      slaveAvatar: avatar,
+      slaveAvatar: student.avatar,
       masterId: accountStore.accountCampusId,
       masterAvatar: pictureStore.userAvatar,
       messages: []
@@ -165,6 +164,7 @@ function updateAndShowInfo(student) {
   infoForm.name = student.name;
   infoForm.major = student.major;
   infoForm.info = student.info;
+  infoForm.avatar = student.avatar;
   show_detail.value = true;
 }
 const {init} = useToast()
@@ -189,6 +189,7 @@ const filtered_total = ref(studentStore.studentData.length)
 const columns = [
   {key: "studentId", label: "学号", sortable: true},
   {key: "name", label: "姓名", sortable: true},
+  {key: "avatar", label: "头像"},
   {key: "gender", label: "性别"},
   {key: "degree", label: "在读学历"},
   {key: "major", label: "专业"},

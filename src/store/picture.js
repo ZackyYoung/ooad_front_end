@@ -30,10 +30,13 @@ export const usePictureStore = defineStore('picture', ()=>{
             dataService.fetchAvatar(campusId, resp =>{
                 if(resp.data.code === 0)
                 {
-                    tempAvatar.push({
-                        campusId: campusId,
-                        url: "data:image/png;base64," + resp.data.data
-                    })
+                    if(!(tempAvatar.length !== 0 && tempAvatar.some((avatar) => avatar.campusId === campusId)))
+                    {
+                        tempAvatar.push({
+                            campusId: campusId,
+                            url: "data:image/png;base64," + resp.data.data
+                        })
+                    }
                 }
                 resolve()
             })
@@ -42,7 +45,7 @@ export const usePictureStore = defineStore('picture', ()=>{
     function pictureStoreClose()
     {
         userAvatar.value = null
-        tempAvatar.splice(0, tempAvatar.length)
+        tempAvatar.length = 0
     }
     return{
         userAvatar,

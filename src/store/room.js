@@ -154,12 +154,8 @@ export const useRoomStore = defineStore('room', () => {
                 for (const comment of resp.data.data) {
                     let secondComments = []
                     for (const secondComment of comment.secondComments) {
+                        await pictureStore.fetchTempAvatar(secondComment.author)
                         let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === secondComment.author)
-                        if(!avatar)
-                        {
-                            await pictureStore.fetchTempAvatar(secondComment.author)
-                            avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === secondComment.author)
-                        }
                         if(avatar)
                             avatar = avatar.url
                         secondComments.push({
@@ -172,12 +168,8 @@ export const useRoomStore = defineStore('room', () => {
                             avatar: avatar
                         })
                     }
+                    await pictureStore.fetchTempAvatar(comment.author)
                     let avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === comment.author)
-                    if(!avatar)
-                    {
-                        await pictureStore.fetchTempAvatar(comment.author)
-                        avatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === comment.author)
-                    }
                     if(avatar)
                         avatar = avatar.url
                     comments.push({

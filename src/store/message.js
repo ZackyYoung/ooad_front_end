@@ -50,18 +50,12 @@ export const useMessageStore = defineStore("message", () => {
             }
         })
         if (!flag) {
+            await pictureStore.fetchTempAvatar(msg.receiverId)
             let receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
-            if (!receiverAvatar) {
-                await pictureStore.fetchTempAvatar(msg.receiverId)
-                receiverAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.receiverId)
-            }
             if (receiverAvatar)
                 receiverAvatar = receiverAvatar.url
+            await pictureStore.fetchTempAvatar(msg.senderId)
             let senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
-            if (!senderAvatar) {
-                await pictureStore.fetchTempAvatar(msg.senderId)
-                senderAvatar = pictureStore.tempAvatar.find(avatar => avatar.campusId === msg.senderId)
-            }
             if (senderAvatar)
                 senderAvatar = senderAvatar.url
             if (campusId === msg.receiverId) {
@@ -91,13 +85,13 @@ export const useMessageStore = defineStore("message", () => {
         queue.value.shift();
 
         // 继续处理下一个任务
-        processQueue();
+        await processQueue();
     }
 
 
     function messageStoreClose(){
         socket.value.close()
-        chatData.splice(0, chatData.length)
+        chatData.length = 0
     }
 
     async function sendMessage(message){
