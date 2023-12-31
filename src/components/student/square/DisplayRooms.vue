@@ -1,98 +1,101 @@
 <template>
-  <div class="filter-container">
-    <label>区划：</label>
-    <va-select
-        v-model="filters.district"
-        :options="sortedDistricts"
-        placeholder="选择区划"
-        class="select"
-        clearable
-        clearable-icon="cancel"
-    />
+  <va-card class="page-content-card">
+    <div class="filter-container">
+      <label>区划：</label>
+      <va-select
+          v-model="filters.district"
+          :options="sortedDistricts"
+          placeholder="选择区划"
+          class="select"
+          clearable
+          clearable-icon="cancel"
+      />
 
-    <label>楼栋：</label>
-    <va-select
-        v-model="filters.building"
-        :options="sortedBuildings"
-        placeholder="选择楼栋(请先选择区划)"
-        class="select"
-        clearable
-        clearable-icon="cancel"
-        :disabled="!filters.district"
-    />
+      <label>楼栋：</label>
+      <va-select
+          v-model="filters.building"
+          :options="sortedBuildings"
+          placeholder="选择楼栋(请先选择区划)"
+          class="select"
+          clearable
+          clearable-icon="cancel"
+          :disabled="!filters.district"
+      />
 
-    <label>楼层：</label>
-    <va-select
-        v-model="filters.floor"
-        :options="sortedFloors"
-        placeholder="选择楼层(请先选择楼栋)"
-        class="select"
-        clearable
-        clearable-icon="cancel"
-        :disabled="!filters.building"
-    />
+      <label>楼层：</label>
+      <va-select
+          v-model="filters.floor"
+          :options="sortedFloors"
+          placeholder="选择楼层(请先选择楼栋)"
+          class="select"
+          clearable
+          clearable-icon="cancel"
+          :disabled="!filters.building"
+      />
 
-    <label>房间号：</label>
-    <va-select
-        v-model="filters.roomNumber"
-        :options="sortedRoomNumbers"
-        placeholder="选择房间号(请先选择楼层)"
-        class="select"
-        clearable
-        clearable-icon="cancel"
-        :disabled="!filters.floor"
-    />
+      <label>房间号：</label>
+      <va-select
+          v-model="filters.roomNumber"
+          :options="sortedRoomNumbers"
+          placeholder="选择房间号(请先选择楼层)"
+          class="select"
+          clearable
+          clearable-icon="cancel"
+          :disabled="!filters.floor"
+      />
 
-  </div>
+    </div>
 
-  <div class="image-container" style="text-align: center;">
-    <div class="row">
-      <div v-for="room in displayedRooms" :key="room.id" class="room-card">
-        <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
-        <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
-          <va-chip outline shadow>{{room.building}}栋</va-chip>
-          <va-chip shadow>{{room.roomNumber}}</va-chip>
-          <va-chip shadow color="#7f1f90">
-            <div v-if="room.roomType === 1">
-              单人间
-            </div>
-            <div v-else-if="room.roomType === 2">
-              双人间
-            </div>
-            <div v-else-if="room.roomType === 3">
-              三人间
-            </div>
-            <div v-else>
-              四人间
-            </div>
-          </va-chip>
-        </div>
-        <div style="text-align: center;display: grid;grid-gap: 10px">
-          <va-button round gradient @click="viewDetail(room)">
-            <va-icon name="info"/>
-            查看详情
-          </va-button>
+    <div class="image-container" style="text-align: center;">
+      <div class="row">
+        <div v-for="room in displayedRooms" :key="room.id" class="room-card">
+          <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
+          <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
+            <va-chip outline shadow>{{ room.building }}栋</va-chip>
+            <va-chip shadow>{{ room.roomNumber }}</va-chip>
+            <va-chip shadow color="#7f1f90">
+              <div v-if="room.roomType === 1">
+                单人间
+              </div>
+              <div v-else-if="room.roomType === 2">
+                双人间
+              </div>
+              <div v-else-if="room.roomType === 3">
+                三人间
+              </div>
+              <div v-else>
+                四人间
+              </div>
+            </va-chip>
+          </div>
+          <div style="text-align: center;display: grid;grid-gap: 10px">
+            <va-button round gradient @click="viewDetail(room)">
+              <va-icon name="info"/>
+              查看详情
+            </va-button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="page_select">
-    <va-pagination
-        v-model="current_page"
-        :pages="Math.ceil(totalRooms / perPage)"
-        class="mb-3 justify-center sm:justify-start"
-        input
-    />
-  </div>
+    <div class="page_select">
+      <va-pagination
+          v-model="current_page"
+          :pages="Math.ceil(totalRooms / perPage)"
+          class="mb-3 justify-center sm:justify-start"
+          input
+      />
+    </div>
+  </va-card>
 </template>
 
 <script setup>
 import {ref, computed, onMounted, watch} from 'vue';
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";
 import {useAccountStore} from "@/store/account.js";
+
 const router = useRouter();
 const roomStore = useRoomStore();
 const accountStore = useAccountStore()
@@ -159,8 +162,8 @@ const displayedRooms = computed(() => {
         }
 
         return true;
-      }).sort((a, b) =>{
-        if(a.building === b.building)
+      }).sort((a, b) => {
+        if (a.building === b.building)
           return a.roomNumber - b.roomNumber
         else return a.building - b.building
       }).slice(startIdx, endIdx)
@@ -172,7 +175,7 @@ onMounted(async () => {
   await roomStore.findAllRoomByGender(accountStore.studentInformationForm.gender)
 });
 
-const viewDetail = (room) =>{
+const viewDetail = (room) => {
   // roomStore.roomToView.roomId = room.roomId
   // roomStore.roomToView.district = room.district
   // roomStore.roomToView.building = room.building
@@ -185,7 +188,6 @@ const viewDetail = (room) =>{
   roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 }
-
 
 watch(
     () => filters.value.district,
@@ -230,6 +232,7 @@ watch(
       ));
 
       filters.value.roomNumber = '';
+
       sortedRoomNumbers.value = options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
     }
 );
@@ -298,7 +301,6 @@ watch(
 }
 
 .page_select {
-  position: fixed;
   bottom: 0;
   right: 0;
   left: 150px;
