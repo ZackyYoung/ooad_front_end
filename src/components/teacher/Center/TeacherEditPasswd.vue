@@ -88,7 +88,8 @@
     <va-modal
         v-model="edited"
         :message="accountStore.msg"
-        ok-text="Confirm"
+        ok-text="确认"
+        cancel-text="取消"
         size="small"
     />
   </div>

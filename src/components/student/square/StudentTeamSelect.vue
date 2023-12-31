@@ -106,7 +106,8 @@
   <va-modal
       v-model="dialogVisible"
       :message="teamStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
 </template>

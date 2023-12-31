@@ -78,7 +78,20 @@ export const useRoomStore = defineStore('room', () => {
                 gender: form.gender,
                 description: form.description
             },resp => {
-                msg.value = resp.data.msg
+                if(resp.data.code === 0)
+                {
+                    msg.value = '新增房间成功！'
+
+                }
+                else
+                {
+                    switch (resp.data.code)
+                    {
+                        case 400:
+                            msg.value = '房间已存在'
+                            break
+                    }
+                }
                 resolve()
             })
         })
@@ -94,7 +107,19 @@ export const useRoomStore = defineStore('room', () => {
                 gender: form.gender,
                 description: form.description
             },resp => {
-                msg.value = resp.data.msg
+                if(resp.data.code === 0)
+                {
+                    msg.value = '编辑房间信息成功！'
+                }
+                else
+                {
+                    switch (resp.data.code)
+                    {
+                        case 404:
+                            msg.value = '房间不存在'
+                            break
+                    }
+                }
                 resolve()
             })
         })
@@ -117,7 +142,8 @@ export const useRoomStore = defineStore('room', () => {
     async function deleteRoom(){
         return new Promise((resolve) => {
             dataService.deleteRoom(roomToView.building, roomToView.roomNumber, resp => {
-                msg.value = resp.data.msg
+                if(resp.data.code === 0)
+                    msg.value = '删除房间成功！'
                 resolve()
             })
 

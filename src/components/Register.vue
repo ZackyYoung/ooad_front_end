@@ -167,15 +167,17 @@
   </va-form>
   <va-modal
       v-model="successDialog"
-      message="注册成功！"
-      ok-text="Confirm"
+      :message="accountStore.msg"
+      ok-text="确认"
+      cancel-text="取消"
       @ok="registerRoute"
       size="small"
   />
   <va-modal
       v-model="failDialog"
       :message="accountStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
 </template>
