@@ -83,7 +83,7 @@
       size="small"
       @click="router.push('/teacher/dormitory/edit')"
   />
-</template>>
+</template>
 
 <script setup>
 import {computed, ref, reactive, onMounted} from 'vue';
@@ -170,7 +170,7 @@ const roomNumberValidator = (value) =>{
 }
 </script>
 
-<style>
+<style scoped>
 .room-container {
   display: flex;
   flex-wrap: wrap;

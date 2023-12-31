@@ -1,9 +1,10 @@
 <template>
+  <!--  <va-card class="page-content-card">-->
   <div id="app" class="chat">
     <div class="sidebar">
       <VaListItem class="search-box">
         <VaListItemSection class="search-text">
-          <VaInput v-model="searchInput" placeholder="搜索" @input="searchUsers" />
+          <VaInput v-model="searchInput" placeholder="搜索" @input="searchUsers"/>
         </VaListItemSection>
       </VaListItem>
 
@@ -36,12 +37,19 @@
       <div v-if="selectedChat">
         <div class="chat-header">
           <h2 style="margin-left: 30px;">{{ selectedChat.slaveName }}</h2>
+<!--          <va-button-->
+<!--              class="ml-4"-->
+<!--              icon="delete"-->
+<!--              color="danger"-->
+<!--              round-->
+<!--          />-->
         </div>
 
         <VaScrollContainer class="max-h-52" vertical>
           <VaList class="chat-list">
             <VaListItem v-for="(chatMessage, index) in selectedChat.messages" :key="index">
-              <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" avatar style="padding: 6px" class="sent-message">
+              <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" avatar
+                                 style="padding: 6px" class="sent-message">
                 <VaAvatar
                     :src="selectedChat.slaveAvatar"
                     fallback-src="src/assets/avatar1.png"
@@ -49,18 +57,19 @@
               </VaListItemSection>
 
               <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" class="text-left">
-                <VaListItemLabel >
+                <VaListItemLabel>
                   {{ chatMessage.content }}
                 </VaListItemLabel>
               </VaListItemSection>
 
               <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" class="text-right">
-                <VaListItemLabel >
+                <VaListItemLabel>
                   {{ chatMessage.content }}
                 </VaListItemLabel>
               </VaListItemSection>
 
-              <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" avatar style="padding: 6px" class="received-message">
+              <VaListItemSection v-if="chatMessage.senderId === accountStore.accountCampusId" avatar
+                                 style="padding: 6px" class="received-message">
                 <VaAvatar
                     :src="selectedChat.masterAvatar"
                     fallback-src="src/assets/avatar1.png"
@@ -71,9 +80,8 @@
         </VaScrollContainer>
 
 
-
         <div class="message-input">
-          <textarea v-model="newMessage" class="input-text" ></textarea>
+          <textarea v-model="newMessage" class="input-text"></textarea>
           <va-button @click="sendMessage" color="info" gradient class="mr-6 mb-2">发送</va-button>
         </div>
       </div>
@@ -82,6 +90,7 @@
       </div>
     </div>
   </div>
+  <!--  </va-card>-->
 </template>
 
 <script setup>
@@ -92,12 +101,12 @@ import {useMessageStore} from "@/store/message.js";
 const accountStore = useAccountStore()
 const messageStore = useMessageStore()
 
-onMounted(async ()=>{
+onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
 })
 
-function unReadNum(chat){
+function unReadNum(chat) {
   return chat.messages.filter(message =>
       message.receiverId === accountStore.accountCampusId
       && message.read === false).length
@@ -118,8 +127,8 @@ const searchUsers = () => {
   }
 };
 
-async function selectChat(chat){
-  if(chat.messages.length !== 0)
+async function selectChat(chat) {
+  if (chat.messages.length !== 0)
     await messageStore.readMessage(chat)
   selectedChat.value = chat;
 }
@@ -170,7 +179,7 @@ const sendMessage = async () => {
   height: 60px;
 }
 
-.search-text{
+.search-text {
   background-color: #d3d2d2;
   margin-right: 10px;
 }
@@ -225,8 +234,8 @@ li {
 
 .chat-window {
   display: flex;
-  flex-direction: column;  /* 调整 flex 方向为列 */
-  justify-content: space-between;  /* 添加这一行以将头部、消息和输入框分隔开 */
+  flex-direction: column; /* 调整 flex 方向为列 */
+  justify-content: space-between; /* 添加这一行以将头部、消息和输入框分隔开 */
   height: 600px;
   width: 700px;
   background-color: #f3f3f3;
@@ -234,6 +243,7 @@ li {
 }
 
 .chat-header {
+  display: flex;
   background-color: #e7e7e7;
   color: #000000;
   height: 60px;
@@ -243,8 +253,8 @@ li {
 
 .chat-list {
   border: solid 1px #dadada;
-  overflow-y: auto;  /* 添加这一行以启用垂直滚动条 */
-  max-height: 425px;  /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
+  overflow-y: auto; /* 添加这一行以启用垂直滚动条 */
+  max-height: 425px; /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
 }
 
 .text-right {
@@ -256,6 +266,7 @@ li {
   font-style: italic;
   color: #888;
 }
+
 .message-input {
   display: flex;
   position: absolute;
