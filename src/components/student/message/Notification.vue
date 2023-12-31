@@ -193,8 +193,9 @@ const rejectExchange = async (notification) => {
   await notificationStore.deleteNotification(notification)
 }
 
-const deleteAllNotif = async ()=>{
+const deleteAllNotif = async () => {
   await notificationStore.deleteAllNotification(accountStore.accountCampusId)
+  selectedNotification.value = null
 }
 
 </script>
