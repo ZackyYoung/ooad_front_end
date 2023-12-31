@@ -136,7 +136,7 @@ const {init} = useToast()
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
-  await teamStore.fetchTeamInformation()
+  await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
 //生成的消息数据中，未读消息排在已读消息上面，未读消息和已读消息均按时间先后排序

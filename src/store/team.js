@@ -42,7 +42,11 @@ export const useTeamStore = defineStore('team', () => {
         return new Promise((resolve, reject) => {
             dataService.findAllTeam(resp => {
                 if (resp.status === 200) {
+                    console.log(resp.data.data)
                     resp.data.data.forEach((team)=>{
+                        if(team.teamMembers.length===0){
+                            return
+                        }
                         if((team.gender === gender && team.teamMembers[0].degree === degree) || teacher === true) {
                             let teamMemberNames = []
                             let creatorName

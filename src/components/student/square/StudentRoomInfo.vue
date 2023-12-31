@@ -1,109 +1,182 @@
 <template>
-  <div class="room-container">
-    <div class="images">
-      <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9" />
-    </div>
-    <div class="room-intro" >
-      <p>区划：{{roomToView.district}}</p>
-      <p>楼栋: {{ roomToView.building }}</p>
-      <p>楼层: {{ roomToView.floor }}</p>
-      <p>房间: {{ roomToView.roomNumber }}</p>
-      <p>户型: {{ roomToView.roomType }}</p>
-      <p>宿舍性别: {{ roomToView.gender }}</p>
-      <p>选中当前房间队伍的队长学号: {{roomToView.selectedTeamCreatorId}}</p>
-      <div class="button-container">
-        <div v-if="!isFavorite">
-          <va-button color="info" gradient class="favorite-button"  @click="favoriteRoom">
-            <va-icon name="star"></va-icon>
+  <va-card stripe stripe-color="primary" class="ma-3">
+    <div class="room-container">
+
+      <div class="images">
+        <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9"/>
+      </div>
+      <div class="room-intro">
+        <div v-for="displayItem in roomDisplayItems">
+          <va-chip
+              shadow
+              :readonly="true"
+              :icon="displayItem.icon"
+          >
+            {{ displayItem.label }}
+          </va-chip>
+          <va-chip
+              shadow
+              outline
+              class="ma-2"
+          >
+            <span v-if="displayItem.label==='楼栋'">
+            {{ roomToView[displayItem.valueBy] }}栋
+            </span>
+            <span v-else-if="displayItem.label==='楼层'">
+              {{ roomToView[displayItem.valueBy] }}层
+            </span>
+            <span v-else-if="displayItem.label==='户型'">
+                <span v-if="roomToView[displayItem.valueBy] === 1">
+                  单人间
+                </span>
+                <span v-else-if="roomToView[displayItem.valueBy] === 2">
+                  双人间
+                </span>
+                <span v-else-if="roomToView[displayItem.valueBy] === 3">
+                  三人间
+                </span>
+                <span v-else>
+                  四人间
+                </span>
+            </span>
+            <span v-else-if="displayItem.label==='性别'">
+                {{ roomToView[displayItem.valueBy] }}生寝室
+            </span>
+            <span v-else>
+            {{ roomToView[displayItem.valueBy] }}
+          </span>
+          </va-chip>
+        </div>
+        <div v-if="roomToView.selectedTeamCreatorId!==null">
+          <va-chip
+              shadow
+              icon="hot_tub"
+              :readonly="true"
+          >
+            选定的队长
+          </va-chip>
+          <va-chip
+              outline
+              class="ma-3"
+          >
+            {{ roomToView.selectedTeamCreatorId }}
+          </va-chip>
+          <va-button
+              class="mt-2"
+              round
+              icon="search"
+              :to="{name: 'SMateSelect',query: {search_id: roomToView.selectedTeamCreatorId }}"
+          />
+
+        </div>
+        <div class="button-container">
+          <span v-if="!isFavorite">
+            <va-button color="info" gradient class="favorite-button" @click="favoriteRoom">
+              <va-icon name="bookmark"/>
               收藏
+            </va-button>
+          </span>
+          <span v-else>
+            <va-button color="info" text-color="warning" gradient class="favorite-button" @click="cancelFavorite">
+              <va-icon name="bookmark_added"/>
+              取消收藏
+            </va-button>
+          </span>
+          <va-button color="info" gradient class="back-button" @click="router.push('/student/team/favor')">
+            <va-icon name="logout"/>
+            我的收藏
           </va-button>
-        </div>
-        <div v-else>
-          <va-button color="info" text-color="warning" gradient class="favorite-button" @click="cancelFavorite">
-            <va-icon name="star"></va-icon>
-            取消收藏
+          <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
+            <va-icon name="logout"/>
+            返回广场
           </va-button>
-        </div>
-        <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
-          <va-icon name="logout"></va-icon>
-            返回
-        </va-button>
-        <va-button
-            v-if="isCreator
+          <va-button
+              v-if="isCreator
             && roomToView.selectedTeamCreatorId !== null
             && roomToView.selectedTeamCreatorId !== accountStore.accountCampusId
             && teamStore.roomSelected"
-            color="success"
-            gradient
-            class="change-button"
-            @click="changeOwner"
-        >
-          <va-icon name="sync"></va-icon>
-          申请交换
-        </va-button>
-      </div>
-    </div>
-    <div class="room-info" >
-      <p class="description">简介</p>
-      <p class="information">{{roomToView.description}}</p>
-    </div>
-  </div>
-
-  <va-card class="comment-card">
-    <va-card-title style="font-size: 20px">评论区</va-card-title>
-    <va-card-content>
-      <div class="comment-section">
-        <!-- 评论输入框 -->
-        <div class="comment-input">
-          <va-textarea v-model="newComment" placeholder="说点什么吧..." class="comment-in"></va-textarea>
-          <va-button @click="addComment" color="info" gradient class="mr-6 mb-2">发表评论</va-button>
+              color="success"
+              gradient
+              class="change-button"
+              @click="changeOwner"
+          >
+            <va-icon name="sync"></va-icon>
+            申请交换
+          </va-button>
         </div>
+      </div>
+      <va-card
+          class="room-info"
+          outlined
+      >
+        <VaCardTitle class="description">简介</VaCardTitle>
+<!--          <p class="information">{{ roomToView.description }}</p>-->
+        <VaCardContent >
+          <p class="information">
+            {{roomToView.description===''?"没有额外介绍了~":roomToView.description}}
+          </p>
+        </VaCardContent>
+      </va-card>
 
-        <!-- 评论列表 -->
-        <div v-for="(comment, commentIndex) in displayedComments" class="comment">
-          <va-avatar
-              :src="comment.avatar"
-              fallback-src="src/assets/avatar1.png"
-          />
-          <div class="comment-content">
-            <p class="comment-author">{{ comment.author }}</p>
-            <p class="comment-text">{{ comment.content }}</p>
-            <!-- 回复按钮 -->
-            <va-button @click="toggleReplies(commentIndex)" color="info" gradient class="mr-6 mb-2">查看回复</va-button>
-            <!-- 回复输入框 -->
-            <div v-if="comment.showReplies" class="reply-input">
-              <va-textarea v-model="newReply[commentIndex]" placeholder="回复评论..." class="reply-in"></va-textarea>
-              <va-button @click="addReply(commentIndex)" color="info" gradient class="mr-6 mb-2">发表回复</va-button>
-            </div>
-            <!-- 回复列表 -->
-            <div v-if="comment.showReplies" class="reply-list">
-              <div v-for="(reply, replyIndex) in comment.replies" :key="replyIndex" class="reply">
-                <va-avatar
-                    :src="reply.avatar"
-                    fallback-src="src/assets/avatar1.png"
-                />
-                <div class="reply-content">
-                  <p class="reply-author">{{ reply.authorName }}</p>
-                  <p class="reply-text">{{ reply.content }}</p>
+    </div>
+
+    <va-card class="comment-card">
+      <va-card-title style="font-size: 20px">评论区</va-card-title>
+      <va-card-content>
+        <div class="comment-section">
+          <!-- 评论输入框 -->
+          <div class="comment-input">
+            <va-textarea v-model="newComment" placeholder="说点什么吧..." class="comment-in"></va-textarea>
+            <va-button @click="addComment" color="info" gradient class="mr-6 mb-2">发表评论</va-button>
+          </div>
+
+          <!-- 评论列表 -->
+          <div v-for="(comment, commentIndex) in displayedComments" class="comment">
+            <va-avatar
+                :src="comment.avatar"
+                fallback-src="src/assets/avatar1.png"
+            />
+            <div class="comment-content">
+              <p class="comment-author">{{ comment.author }}</p>
+              <p class="comment-text">{{ comment.content }}</p>
+              <!-- 回复按钮 -->
+              <va-button @click="toggleReplies(commentIndex)" color="info" gradient class="mr-6 mb-2">查看回复
+              </va-button>
+              <!-- 回复输入框 -->
+              <div v-if="comment.showReplies" class="reply-input">
+                <va-textarea v-model="newReply[commentIndex]" placeholder="回复评论..." class="reply-in"></va-textarea>
+                <va-button @click="addReply(commentIndex)" color="info" gradient class="mr-6 mb-2">发表回复</va-button>
+              </div>
+              <!-- 回复列表 -->
+              <div v-if="comment.showReplies" class="reply-list">
+                <div v-for="(reply, replyIndex) in comment.replies" :key="replyIndex" class="reply">
+                  <va-avatar
+                      :src="reply.avatar"
+                      fallback-src="src/assets/avatar1.png"
+                  />
+                  <div class="reply-content">
+                    <p class="reply-author">{{ reply.authorName }}</p>
+                    <p class="reply-text">{{ reply.content }}</p>
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
 
+          <!-- 加载更多评论按钮 -->
+          <va-button
+              v-if="!showAllComments && roomStore.comments.length > 10"
+              @click="loadMoreComments"
+              color="info"
+              gradient
+              class="mr-6 mb-2"
+          >
+            加载更多评论
+          </va-button>
         </div>
-
-        <!-- 加载更多评论按钮 -->
-        <va-button
-            v-if="!showAllComments && roomStore.comments.length > 10"
-            @click="loadMoreComments"
-            color="info"
-            gradient
-            class="mr-6 mb-2"
-        >
-          加载更多评论
-        </va-button>
-      </div>
-    </va-card-content>
+      </va-card-content>
+    </va-card>
   </va-card>
 </template>>
 
@@ -124,11 +197,21 @@ const teamStore = useTeamStore()
 const accountStore = useAccountStore()
 const pictureStore = usePictureStore()
 const {init} = useToast()
+
+const roomDisplayItems = [
+  {label: '区划', valueBy: 'district', icon: 'grid_on'},
+  {label: '楼栋', valueBy: 'building', icon: 'apartment'},
+  {label: '楼层', valueBy: 'floor', icon: 'stairs'},
+  {label: '房间', valueBy: 'roomNumber', icon: 'living'},
+  {label: '户型', valueBy: 'roomType', icon: 'diversity_3'},
+  {label: '性别', valueBy: 'gender', icon: 'wc'}
+]
+
 const roomToView = computed(() => {
   return roomStore.roomToView
 })
 
-onMounted(async ()=>{
+onMounted(async () => {
   await accountStore.refreshSession()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   await roomStore.findRoomToView(window.sessionStorage.getItem("roomId"))
@@ -136,20 +219,24 @@ onMounted(async ()=>{
   await pictureStore.fetchAvatar(accountStore.accountCampusId)
 })
 
-const isCreator = computed(()=>{
+const isCreator = computed(() => {
   return accountStore.accountCampusId === teamStore.current_team.creatorId
 })
 
 const isFavorite = computed(() => {
   let flag = false
   teamStore.current_team.favoriteRooms.forEach((room) => {
-    if(room.roomId === roomStore.roomToView.roomId)
+    if (room.roomId === roomStore.roomToView.roomId)
       flag = true
   })
   return flag
 })
 
 const favoriteRoom = async () => {
+  if (!teamStore.joined) {
+    init('请先加入队伍！')
+    return
+  }
   await roomStore.favoriteRoom(accountStore.accountCampusId, roomStore.roomToView.building, roomStore.roomToView.roomNumber)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 }
@@ -176,8 +263,6 @@ const items = [
   Room1Image,
   Room2Image,
 ];
-
-
 
 
 const showAllComments = ref(false);
@@ -230,9 +315,19 @@ const addReply = async (commentIndex) => {
   newReply.value[commentIndex] = '';
 };
 
+
+function contactLeader(studentId) {
+  router.push({
+    name: 'SMateSelect',
+    query: {
+      search_id: studentId
+    }
+  })
+}
+
 </script>
 
-<style>
+<style scoped>
 .room-container {
   display: flex;
   flex-wrap: wrap;
@@ -243,7 +338,8 @@ const addReply = async (commentIndex) => {
   flex: 1;
   margin-left: 100px;
   margin-top: 100px;
-  width: 300px;
+  width: 200px;
+  max-width: 500px;
 }
 
 .room-intro {
@@ -253,14 +349,14 @@ const addReply = async (commentIndex) => {
   font-size: 25px;
   align-self: flex-start;
   line-height: 2.0;
-  max-width: 250px;
+  max-width: 500px;
 }
 
 .room-info {
   flex: 1;
   margin-top: 100px;
-  margin-left: 0;
-  margin-right: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
   font-size: 25px;
   align-self: flex-start;
   line-height: 2.0;
@@ -270,11 +366,15 @@ const addReply = async (commentIndex) => {
 
 .description {
   text-align: center;
+  font-family: HGY3, serif;
+  font-size: 1rem;
 }
 
 .information {
   text-align: left;
   text-indent: 2em;
+  font-family: HGY3, serif;
+  font-size: 1rem;
 }
 
 .button-container {
@@ -290,8 +390,8 @@ const addReply = async (commentIndex) => {
   height: 50px;
   font-size: 50px;
 }
+
 .back-button {
-  flex: 1;
   margin-top: 20px;
   margin-left: 10px;
   margin-right: 10px;
@@ -299,6 +399,7 @@ const addReply = async (commentIndex) => {
   height: 50px;
   font-size: 50px;
 }
+
 .change-button {
   margin-top: 20px;
   margin-left: 10px;
@@ -423,5 +524,10 @@ const addReply = async (commentIndex) => {
   text-align: left;
 }
 
+.info-item {
+  //font-family: HGY3, serif;
+  //margin: 0.5rem;
+  font-size: 1rem;
+}
 
 </style>
