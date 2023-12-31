@@ -4,8 +4,7 @@
       <va-card-title style="font-size: 1rem" class="passwd-card__title">修改密码</va-card-title>
       <va-card-content class="passwd-card__content">
         <va-form class="flex flex-col items-baseline gap-6"
-                 ref="editPasswordForm"
-                 :model="form"
+                 ref="formRef"
         >
           <div>
             <va-value v-slot="isPasswordVisible"
@@ -14,7 +13,7 @@
               <va-icon name="key"></va-icon>
               <va-input
                   style="margin: 5px; text-align: left"
-                  v-model="form.oldPasswd"
+                  v-model="editPasswordForm.oldPasswd"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
                   label='旧密码'
                   placeholder='请输入旧密码'
@@ -38,7 +37,7 @@
               <va-icon name="lock"></va-icon>
               <va-input
                   style="margin: 5px; text-align: left"
-                  v-model="form.newPasswd"
+                  v-model="editPasswordForm.newPasswd"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
                   label='新密码'
                   placeholder='请输入新密码'
@@ -62,7 +61,7 @@
               <va-icon name="shield"></va-icon>
               <va-input
                   style="margin: 5px; text-align: left"
-                  v-model=form.newPasswdConfirm
+                  v-model="editPasswordForm.newPasswdConfirm"
                   :type="isPasswordVisible.value ? 'text' : 'password'"
                   label='确认新密码'
                   placeholder='请确认新密码'
@@ -100,10 +99,14 @@ import {useForm} from 'vuestic-ui'
 import {useAccountStore} from "@/store/account.js";
 import {storeToRefs} from "pinia";
 
+const {reset, validate} = useForm('formRef')
 const accountStore = useAccountStore()
 const edited = ref(false)
-const form = accountStore.editPasswordForm
-const editPasswordForm = ref(null)
+const editPasswordForm = reactive({
+  oldPasswd: "",
+  newPasswd: "",
+  newPasswdConfirm: ""
+})
 const validateOld = (value) => {
   const re = /^(?=.*[0-9])(?=.*[a-z]).*$/;
   if (!value) {
@@ -119,18 +122,28 @@ const validateNew = (value) => {
   if (!re.test(value)) {
     return '密码必须包含数字和字母'
   }
-  if (value === accountStore.editPasswordForm.oldPasswd) {
+  if (value === editPasswordForm.oldPasswd) {
     return '密码不一致'
   }
 }
 
+const validateConfirm = (value) => {
+  if (!value) {
+    return 'You should confirm your password'
+  }
+  if (value !== editPasswordForm.newPasswd) {
+    return 'Different with the previous password'
+  }
+}
 
 
 async function editPassword () {
-  if(editPasswordForm.value.validate())
+
+  if(validate())
   {
-    await accountStore.editPassword()
+    await accountStore.editPassword(editPasswordForm)
     edited.value = true
+    reset()
   }
 }
 

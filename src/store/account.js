@@ -7,10 +7,8 @@ export const useAccountStore = defineStore('account', () => {
     const accountRole = ref(null)
     const accountCampusId = ref(null)
     const msg = ref("")
-    const loginForm = reactive({
-        campusId: "",
-        password: ""
-    })
+    const checkCodeCorrect = ref(false)
+
     const studentInformationForm = reactive({
         studentId: "",
         name: null,
@@ -43,13 +41,14 @@ async function fetchInformation()
     })
 }
 
-async function loginCheck () {
+async function loginCheck (loginForm) {
         return new Promise((resolve, reject) => {
             dataService.loginCheck(loginForm, async resp => {
                 if (resp.data.code === 0) {
                     accountRole.value = resp.data.data.role
                     accountValid.value = true
                     accountCampusId.value = loginForm.campusId
+                    msg.value = resp.data.msg
                     window.sessionStorage.setItem("campusId", loginForm.campusId)
                     window.sessionStorage.setItem("role", resp.data.data.role)
                     resolve()
@@ -61,14 +60,8 @@ async function loginCheck () {
             });
         });
     }
-    const registerForm = reactive({
-        campusId: "",
-        role: "",
-        password: "",
-        confirmPassword: ""
-    })
 
-async function registerAccount () {
+async function registerAccount (registerForm) {
         return new Promise((resolve, reject) => {
             dataService.registerAccount(registerForm, resp => {
                 if (resp.data.code === 0) {
@@ -86,12 +79,8 @@ async function registerAccount () {
             })
         })
     }
-    const editPasswordForm = reactive({
-        oldPasswd: "",
-        newPasswd: "",
-        newPasswdConfirm: ""
-    })
-async function editPassword () {
+
+async function editPassword (editPasswordForm) {
         return new Promise((resolve, reject) => {
             dataService.editPassword({
                 campusId: accountCampusId.value,
@@ -110,6 +99,22 @@ async function editPassword () {
                 }
             })
         })
+}
+
+async function directEditPassword(form)
+{
+    return new Promise((resolve, reject) => {
+        dataService.directEditPassword({
+            campusId: accountCampusId.value,
+            password: form.newPasswd
+        },resp => {
+            if(resp.data.code === 0)
+            {
+                msg.value = resp.data.msg
+                resolve()
+            }
+        })
+    })
 }
 
 async function createStudent(form) {
@@ -156,22 +161,45 @@ async function deleteUser(delete_id){
     })
 }
 
+async function sendCheckCode(mail)
+{
+    return new Promise((resolve) =>{
+        dataService.sendCheckCode(mail, resp=>{
+            resolve()
+        })
+    })
+}
+
+async function verifyCheckCode(mail, checkCode)
+{
+    return new Promise((resolve) => {
+        dataService.verifyCheckCode({
+            email: mail,
+            verificationCode: checkCode
+        }, resp => {
+            checkCodeCorrect.value = (resp.data.code === 0)
+            resolve()
+        })
+    })
+}
+
     return {
         accountValid,
         accountRole,
         accountCampusId,
         msg,
-        loginForm,
+        checkCodeCorrect,
         loginCheck,
-        registerForm,
         registerAccount,
         fetchInformation,
-        editPasswordForm,
         editPassword,
         studentInformationForm,
         createStudent,
         updateStudent,
         deleteUser,
-        refreshSession
+        refreshSession,
+        sendCheckCode,
+        verifyCheckCode,
+        directEditPassword
     }
 })

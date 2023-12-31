@@ -430,6 +430,36 @@ function fetchAvatar(campusId, callback){
             console.log(errResp)
         })
 }
+
+function sendCheckCode(mail, callback){
+    const url = `${dataServerUrl}/verification/getCode/${mail}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
+function verifyCheckCode(param, callback){
+    const url = `${dataServerUrl}/verification/verifyCode`
+    axiosInstance.post(url, param)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function directEditPassword(param, callback){
+    const url = `${dataServerUrl}/user/resetPassword`
+    axiosInstance.post(url, param)
+        .then(resp =>{
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
 export default{
     loginCheck,
     registerAccount,
@@ -472,5 +502,8 @@ export default{
     deleteNotification,
     findOneRoom,
     updateAvatar,
-    fetchAvatar
+    fetchAvatar,
+    sendCheckCode,
+    verifyCheckCode,
+    directEditPassword
 }

@@ -17,8 +17,8 @@
             注册
           </va-tab>
         </va-tabs>
-        <login :form="loginForm" v-if="activeTab === 'Login' "/>
-        <register :form="registerForm" v-if="activeTab === 'Register' "/>
+        <login v-if="activeTab === 'Login' "/>
+        <register v-if="activeTab === 'Register' "/>
       </div>
       <div class="right-container">
         <va-image src="src/assets/dormitory.png"></va-image>

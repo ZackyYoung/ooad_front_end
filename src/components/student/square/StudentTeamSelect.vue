@@ -136,7 +136,7 @@ const current_page = ref(1)
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
-  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree)
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree, false)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 
