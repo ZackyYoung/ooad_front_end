@@ -1,5 +1,15 @@
 <template>
   <va-card stripe stripe-color="primary" class="ma-3">
+    <div class="button-back">
+      <va-button color="info" gradient class="back-button" @click="router.push('/student/team/favor')">
+        <va-icon name="logout"/>
+        我的收藏
+      </va-button>
+      <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
+        <va-icon name="logout"/>
+        返回广场
+      </va-button>
+    </div>
     <div class="room-container">
 
       <div class="images">
@@ -82,14 +92,7 @@
               取消收藏
             </va-button>
           </span>
-          <va-button color="info" gradient class="back-button" @click="router.push('/student/team/favor')">
-            <va-icon name="logout"/>
-            我的收藏
-          </va-button>
-          <va-button color="danger" gradient class="back-button" @click="router.push('/student/square/dormitory')">
-            <va-icon name="logout"/>
-            返回广场
-          </va-button>
+
           <va-button
               v-if="isCreator
             && roomToView.selectedTeamCreatorId !== null
@@ -328,6 +331,10 @@ function contactLeader(studentId) {
 </script>
 
 <style scoped>
+.button-back {
+  margin-left: 1000px;
+}
+
 .room-container {
   display: flex;
   flex-wrap: wrap;
@@ -336,15 +343,15 @@ function contactLeader(studentId) {
 
 .images {
   flex: 1;
-  margin-left: 100px;
-  margin-top: 100px;
+  margin-left: 50px;
+  margin-top: 50px;
   width: 200px;
   max-width: 500px;
 }
 
 .room-intro {
   flex: 1;
-  margin-top: 100px;
+  margin-top: 50px;
   margin-left: 50px;
   font-size: 25px;
   align-self: flex-start;
@@ -354,7 +361,7 @@ function contactLeader(studentId) {
 
 .room-info {
   flex: 1;
-  margin-top: 100px;
+  margin-top: 50px;
   margin-left: 20px;
   margin-right: 20px;
   font-size: 25px;
