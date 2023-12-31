@@ -71,13 +71,15 @@
   <va-modal
       v-model="dialogVisible"
       :message="roomStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
   <va-modal
       v-model="deleteMsgVisible"
       :message="roomStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
       @click="router.push('/teacher/dormitory/edit')"
   />

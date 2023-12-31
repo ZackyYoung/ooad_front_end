@@ -117,14 +117,14 @@ export const useTeamStore = defineStore('team', () => {
         return new Promise((resolve, reject) => {
             console.log(joined)
             if(joined.value === true){
-                msg.value = "You have already created or joined a team"
+                msg.value = "你已经创建或加入了一个队伍"
                 resolve()
             }
             else {
                 dataService.createTeam(createTeamForm, resp => {
                     if (resp.data.code === 0) {
                         joined.value = true
-                        msg.value = resp.data.msg
+                        msg.value = '创建队伍成功'
                         resolve()
                     } else {
                         msg.value = resp.data.msg
@@ -140,7 +140,7 @@ export const useTeamStore = defineStore('team', () => {
             dataService.deleteMember(studentId, resp =>{
                 if (resp.data.code === 0)
                 {
-                    msg.value = resp.data.msg
+                    msg.value = '移除成员成功！'
                     resolve()
                 }
                 else{
@@ -156,7 +156,7 @@ export const useTeamStore = defineStore('team', () => {
             dataService.deleteTeam(creatorId, resp =>{
                 if (resp.data.code === 0)
                 {
-                    msg.value = resp.data.msg
+                    msg.value = '解散队伍成功！'
                     resolve()
                 }
                 else{
@@ -174,7 +174,7 @@ export const useTeamStore = defineStore('team', () => {
             }, resp => {
                 if (resp.data.code === 0)
                 {
-                    msg.value = resp.data.msg
+                    msg.value = '转让队长成功！'
                     resolve()
                 }
                 else{
@@ -194,7 +194,7 @@ export const useTeamStore = defineStore('team', () => {
             }, resp => {
                 if (resp.data.code === 0)
                 {
-                    msg.value = resp.data.msg
+                    msg.value = '已成功发送入队申请！'
                     resolve()
                 }
                 else{
@@ -211,7 +211,7 @@ export const useTeamStore = defineStore('team', () => {
                 creatorId: creatorId,
                 studentId: studentId,
             }, resp => {
-                    msg.value = resp.data.msg
+                    msg.value = '加入队伍成功！'
                     resolve()
             })
         })
@@ -226,7 +226,7 @@ export const useTeamStore = defineStore('team', () => {
             }, resp => {
                 if (resp.data.code === 0)
                 {
-                    msg.value = resp.data.msg
+                    msg.value = '发送入队邀请成功！'
                     resolve()
                 }
                 else{
@@ -243,7 +243,19 @@ export const useTeamStore = defineStore('team', () => {
                 roomId: roomId,
                 teamId: teamId
             }, resp => {
-                msg.value = resp.data.msg
+                if(resp.data.code === 0)
+                {
+                    msg.value = '选择房间成功！'
+                }
+                else
+                {
+                    switch (resp.data.code)
+                    {
+                        case 5:
+                            msg.value = '该房间已被其他队伍选择'
+                            break
+                    }
+                }
                 resolve()
             })
 
@@ -291,7 +303,10 @@ async function unselectRoom(roomId, teamId)
             roomId: roomId,
             teamId: teamId
         }, resp => {
-            msg.value = resp.data.msg
+            if(resp.data.code === 0)
+            {
+                msg.value = '取消选择成功！'
+            }
             resolve()
         })
 

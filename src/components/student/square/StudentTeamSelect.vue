@@ -106,7 +106,8 @@
   <va-modal
       v-model="dialogVisible"
       :message="teamStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
 </template>
@@ -136,7 +137,7 @@ const current_page = ref(1)
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
-  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree)
+  await teamStore.findAllTeam(accountStore.studentInformationForm.gender, accountStore.studentInformationForm.degree, false)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
 })
 

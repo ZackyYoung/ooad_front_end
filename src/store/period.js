@@ -58,9 +58,16 @@ export const usePeriodStore = defineStore("period", () =>{
                 startTime: newTime.value[0],
                 endTime: newTime.value[1]
             }, resp=>{
-                msg.value = resp.data.msg
-                periodData.startTime = resp.data.data.startTime
-                periodData.endTime = resp.data.data.endTime
+                if(resp.data.code === 0)
+                {
+                    msg.value = '修改选房时段成功！'
+                    periodData.startTime = resp.data.data.startTime
+                    periodData.endTime = resp.data.data.endTime
+                }
+                else
+                {
+                    msg.value = resp.data.msg
+                }
                 resolve()
             })
 

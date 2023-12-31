@@ -76,14 +76,14 @@
 
             <va-button
                 v-if="!teamStore.roomSelected && isCreator"
-                :disabled="!isInSelectTime"
+                :disabled="!isInSelectTime || room.selectedTeamCreatorId !== '' "
                 round
                 gradient
                 color="#228B22"
                 @click="selectRoom(room)"
             >
               <va-icon name="check"/>
-              选择宿舍
+              {{room.selectedTeamCreatorId === '' ? '选择宿舍': '已被其他队伍选择'}}
             </va-button>
             <va-button
               v-if="(teamStore.selectedRoom.roomId === room.roomId) && isCreator"
@@ -139,7 +139,8 @@
   <va-modal
       v-model="dialogVisible"
       :message="teamStore.msg"
-      ok-text="Confirm"
+      ok-text="确认"
+      cancel-text="取消"
       size="small"
   />
 </template>
