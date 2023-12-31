@@ -162,6 +162,7 @@ async function acceptApplication(studentId) {
 
 async function rejectApplication(studentId) {
   await invitationStore.deleteInvitation(accountStore.accountCampusId, studentId, false)
+  await invitationStore.rejectInvitation(accountStore.accountCampusId, studentId, false)
   await invitationStore.getTeamRelatedInvitation(teamStore.current_team.teamId)
   init("拒绝加入申请")
 }
@@ -201,6 +202,7 @@ async function acceptInvitation(creatorId, teamMemberNames){
 
 async function rejectInvitation(creatorId){
   await invitationStore.deleteInvitation(creatorId, accountStore.accountCampusId, true)
+  await invitationStore.rejectInvitation(creatorId, accountStore.accountCampusId, true)
   await invitationStore.getStudentRelatedInvitation(accountStore.accountCampusId)
   init("已拒绝邀请")
 }
