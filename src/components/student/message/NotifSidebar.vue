@@ -11,7 +11,12 @@
           @click="activeId = 0; updateActive('/student/notification/message')">
         <va-sidebar-item-content>
             <span v-if="hasNewNotif">
-              <va-icon name="mark_email_unread"/>
+              <va-badge
+                  overlap
+                  dot
+              >
+                <va-icon name="email"/>
+              </va-badge>
             </span>
           <span v-else>
               <va-icon name="email"/>
@@ -27,7 +32,12 @@
           @click="activeId = 1; updateActive('/student/notification/chat')">
         <va-sidebar-item-content>
             <span v-if="hasNewMessage">
-              <va-icon name="mark_unread_chat_alt"/>
+              <va-badge
+                  overlap
+                  dot
+              >
+                <va-icon name="chat"/>
+              </va-badge>
             </span>
           <span v-else>
               <va-icon name="chat"/>

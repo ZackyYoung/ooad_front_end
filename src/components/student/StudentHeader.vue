@@ -29,7 +29,6 @@
         {{ item.text }}
         <va-icon class="ml-1" :name="item.icon"/>
       </va-button>
-
       <va-button
           class="mr-1"
           preset="secondary"
@@ -37,11 +36,15 @@
       >
         消息中心
         <span v-if="hasNew">
+          <va-badge
+              overlap
+              dot
+          >
           <va-icon
               class="ml-1"
               name="notifications_active"
-              color="#CC5500"
           />
+          </va-badge>
         </span>
         <span v-else>
           <va-icon
@@ -93,7 +96,7 @@ function hasNewCompute(notificationData) {
   return false;
 }
 
-const hasNew = computed(()=>(hasNewNotif.value||hasNewMessage.value))
+const hasNew = computed(() => (hasNewNotif.value || hasNewMessage.value))
 
 function toMain() {
   router.push('/student')
