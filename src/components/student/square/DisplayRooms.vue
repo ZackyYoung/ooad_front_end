@@ -14,30 +14,33 @@
     <va-select
         v-model="filters.building"
         :options="sortedBuildings"
-        placeholder="选择楼栋"
+        placeholder="选择楼栋(请先选择区划)"
         class="select"
         clearable
         clearable-icon="cancel"
+        :disabled="!filters.district"
     />
 
     <label>楼层：</label>
     <va-select
         v-model="filters.floor"
         :options="sortedFloors"
-        placeholder="选择楼层"
+        placeholder="选择楼层(请先选择楼栋)"
         class="select"
         clearable
         clearable-icon="cancel"
+        :disabled="!filters.building"
     />
 
     <label>房间号：</label>
     <va-select
         v-model="filters.roomNumber"
         :options="sortedRoomNumbers"
-        placeholder="选择房间号"
+        placeholder="选择房间号(请先选择楼层)"
         class="select"
         clearable
         clearable-icon="cancel"
+        :disabled="!filters.floor"
     />
 
   </div>
@@ -109,12 +112,31 @@ const options = {
   roomNumbers: Array.from(new Set(roomStore.roomData.map((room) => room.roomNumber))),
 };
 
-const sortedBuildings = computed(() => options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
-const sortedFloors = computed(() => options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
 const sortedDistricts = computed(() => options.districts.slice());
-const sortedRoomNumbers = computed(() =>
-    options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0))
-);
+
+const sortedBuildings = computed(() => {
+  const selectedDistrict = filters.value.district;
+  return options.buildings
+      .filter((building) => selectedDistrict === '' || roomStore.roomData.some((room) => room.building === building && room.district === selectedDistrict))
+      .slice()
+      .sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+});
+
+const sortedFloors = computed(() => {
+  const selectedBuilding = filters.value.building;
+  return options.floors
+      .filter((floor) => selectedBuilding === '' || roomStore.roomData.some((room) => room.floor === floor && room.building === selectedBuilding))
+      .slice()
+      .sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+});
+
+const sortedRoomNumbers = computed(() => {
+  const selectedFloor = filters.value.floor;
+  return options.roomNumbers
+      .filter((roomNumber) => selectedFloor === '' || roomStore.roomData.some((room) => room.roomNumber === roomNumber && room.floor === selectedFloor))
+      .slice()
+      .sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+});
 
 const totalRooms = computed(() => roomStore.roomData.length)
 
@@ -163,6 +185,54 @@ const viewDetail = (room) =>{
   roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 }
+
+
+watch(
+    () => filters.value.district,
+    (newDistrict) => {
+      options.buildings = Array.from(new Set(roomStore.roomData
+          .filter((room) => newDistrict === '' || room.district === newDistrict)
+          .map((room) => room.building)
+      ));
+
+      filters.value.building = '';
+      filters.value.floor = '';
+      filters.value.roomNumber = '';
+
+      sortedBuildings.value = options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+      sortedFloors.value = options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+      sortedRoomNumbers.value = options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+    }
+);
+
+watch(
+    () => filters.value.building,
+    (newBuilding) => {
+      options.floors = Array.from(new Set(roomStore.roomData
+          .filter((room) => newBuilding === '' || room.building === newBuilding)
+          .map((room) => room.floor)
+      ));
+
+      filters.value.floor = '';
+      filters.value.roomNumber = '';
+
+      sortedFloors.value = options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+      sortedRoomNumbers.value = options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+    }
+);
+
+watch(
+    () => filters.value.floor,
+    (newFloor) => {
+      options.roomNumbers = Array.from(new Set(roomStore.roomData
+          .filter((room) => newFloor === '' || room.floor === newFloor)
+          .map((room) => room.roomNumber)
+      ));
+
+      filters.value.roomNumber = '';
+      sortedRoomNumbers.value = options.roomNumbers.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0));
+    }
+);
 
 </script>
 
