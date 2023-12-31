@@ -85,7 +85,7 @@ export const useMessageStore = defineStore("message", () => {
         queue.value.shift();
 
         // 继续处理下一个任务
-        await processQueue();
+        await processQueue(campusId);
     }
 
 
