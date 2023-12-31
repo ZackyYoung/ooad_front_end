@@ -1,11 +1,9 @@
 <script setup>
 import StudentHeader from "@/components/student/StudentHeader.vue";
-import SideBar from "@/components/SideBar.vue";
 import Notification from "@/components/student/message/Notification.vue";
 
-import {s_notif_sidebar_items} from "@/utils/SBarItems.js";
-
 import {useAccountStore} from "@/store/account.js";
+import NotifSidebar from "@/components/student/message/NotifSidebar.vue";
 
 
 const accountStore = useAccountStore()
@@ -16,7 +14,7 @@ const accountStore = useAccountStore()
   <div class="page-wrapper">
     <StudentHeader class="header"/>
     <div class="page-container">
-      <SideBar :sidebar-items="s_notif_sidebar_items" :active_id=0 class="sidebar"/>
+      <NotifSidebar :active-side-id="0"/>
       <div class="page-content">
         <Notification/>
       </div>

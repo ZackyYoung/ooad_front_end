@@ -16,6 +16,13 @@ const props = defineProps(['teamInfo'])
             队长
           </va-chip>
           {{ props.teamInfo.creatorName }}
+          <va-button
+              class="mr-3"
+              icon="search"
+              preset="secondary"
+              round
+              :to="{name: 'SMateSelect',query: {search_id: props.teamInfo.creatorId }}"
+          />
         </div>
         <div class="member-name" v-if="props.teamInfo.teamMembers">
           <va-chip outline class="mr-3">
@@ -29,7 +36,7 @@ const props = defineProps(['teamInfo'])
           <va-chip class="mr-3">
             队伍简介
           </va-chip>
-          {{props.teamInfo.teamInfo}}
+          {{ props.teamInfo.teamInfo }}
         </div>
       </va-card-content>
     </va-card>

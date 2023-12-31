@@ -64,6 +64,18 @@ export const useInvitationStore = defineStore('invitation', () =>{
         })
     }
 
+    async function rejectInvitation(creatorId, studentId, invitation){
+        return new Promise((resolve, reject) => {
+            dataService.rejectInvitation({
+                creatorId: creatorId,
+                studentId: studentId,
+                invitation: invitation
+            }, resp =>{
+                resolve()
+            })
+        })
+    }
+
     async function deleteStudentRelatedInvitation(studentId){
         return new Promise((resolve, reject) => {
             dataService.getStudentRelatedInvitation(studentId, resp =>{
@@ -88,6 +100,7 @@ export const useInvitationStore = defineStore('invitation', () =>{
         getTeamRelatedInvitation,
         getStudentRelatedInvitation,
         deleteInvitation,
+        rejectInvitation,
         deleteStudentRelatedInvitation
     }
 })

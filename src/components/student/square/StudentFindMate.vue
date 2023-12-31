@@ -110,17 +110,19 @@ import {useAccountStore} from "@/store/account";
 import {useStudentStore} from "@/store/student.js";
 import {useTeamStore} from "@/store/team.js";
 import {useMessageStore} from "@/store/message.js";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {usePictureStore} from "@/store/picture.js";
 
 const {isValid, validate} = useForm('formRef')
 
+const props=defineProps(['search_id'])
 
 const accountStore = useAccountStore()
 const studentStore = useStudentStore()
 const messageStore = useMessageStore()
 const teamStore = useTeamStore()
 const pictureStore = usePictureStore()
+const route=useRoute()
 const router = useRouter()
 const perPage = ref(5);
 const show_detail = ref(false);
@@ -182,7 +184,8 @@ async function submitInvite() {
 }
 
 
-const filter = ref("")
+const filter = ref('')
+filter.value=route.query.search_id
 
 const filtered_total = ref(studentStore.studentData.length)
 

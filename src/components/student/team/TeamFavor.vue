@@ -1,148 +1,150 @@
 <template>
-  <div v-if="teamStore.joined && teamStore.hasFavoriteRoom">
-    <h2 style="font-size: 2rem;font-family: Microsoft YaHei, serif; text-align: center">
-      选择房间时段:{{periodStore.periodData.startTime + '~' + periodStore.periodData.endTime}}
-    </h2>
-    <div class="filter-container">
-      <label>区划：</label>
-      <va-select
-          v-model="filters.district"
-          :options="sortedDistricts"
-          placeholder="选择区划"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-      />
+  <va-card class="page-content-card">
+    <div v-if="teamStore.joined && teamStore.hasFavoriteRoom">
+      <h2 style="font-size: 2rem;font-family: Microsoft YaHei, serif; text-align: center;padding-top: 1rem">
+        选择房间时段:{{ periodStore.periodData.startTime + '~' + periodStore.periodData.endTime }}
+      </h2>
+      <div class="filter-container">
+        <label>区划：</label>
+        <va-select
+            v-model="filters.district"
+            :options="sortedDistricts"
+            placeholder="选择区划"
+            class="select"
+            clearable
+            clearable-icon="cancel"
+        />
 
-      <label>楼栋：</label>
-      <va-select
-          v-model="filters.building"
-          :options="sortedBuildings"
-          placeholder="选择楼栋"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-      />
+        <label>楼栋：</label>
+        <va-select
+            v-model="filters.building"
+            :options="sortedBuildings"
+            placeholder="选择楼栋"
+            class="select"
+            clearable
+            clearable-icon="cancel"
+        />
 
-      <label>楼层：</label>
-      <va-select
-          v-model="filters.floor"
-          :options="sortedFloors"
-          placeholder="选择楼层"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-      />
+        <label>楼层：</label>
+        <va-select
+            v-model="filters.floor"
+            :options="sortedFloors"
+            placeholder="选择楼层"
+            class="select"
+            clearable
+            clearable-icon="cancel"
+        />
 
-      <label>房间号：</label>
-      <va-select
-          v-model="filters.roomNumber"
-          :options="sortedRoomNumbers"
-          placeholder="选择房间号"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-      />
+        <label>房间号：</label>
+        <va-select
+            v-model="filters.roomNumber"
+            :options="sortedRoomNumbers"
+            placeholder="选择房间号"
+            class="select"
+            clearable
+            clearable-icon="cancel"
+        />
 
-    </div>
-
-    <div class="image-container" style="text-align: center;">
-      <div class="row">
-        <div v-for="(room, index) in displayedRooms" :key="index" class="room-card">
-          <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
-          <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
-            <va-chip outline shadow>{{room.building}}栋</va-chip>
-            <va-chip shadow>{{room.roomNumber}}</va-chip>
-            <va-chip shadow color="#7f1f90">
-              <div v-if="room.roomType === 1">
-                单人间
-              </div>
-              <div v-else-if="room.roomType === 2">
-                双人间
-              </div>
-              <div v-else-if="room.roomType === 3">
-                三人间
-              </div>
-              <div v-else>
-                四人间
-              </div>
-            </va-chip>
-          </div>
-          <div style="text-align: center;display: grid;grid-gap: 10px">
-            <va-button round gradient @click="viewDetail(room)">
-              <va-icon name="info"/>
-              查看详情
-            </va-button>
-
-            <va-button
-                v-if="!teamStore.roomSelected && isCreator"
-                :disabled="!isInSelectTime || room.selectedTeamCreatorId !== '' "
-                round
-                gradient
-                color="#228B22"
-                @click="selectRoom(room)"
-            >
-              <va-icon name="check"/>
-              {{room.selectedTeamCreatorId === '' ? '选择宿舍': '已被其他队伍选择'}}
-            </va-button>
-            <va-button
-              v-if="(teamStore.selectedRoom.roomId === room.roomId) && isCreator"
-              :disabled="!isInSelectTime"
-              round
-              gradient
-              color="#danger"
-              @click="cancelSelectRoom(room)"
-            >
-              <va-icon name="cancel"/>
-              取消选择
-            </va-button>
-          </div>
-        </div>
       </div>
 
+      <div class="image-container" style="text-align: center;">
+        <div class="row">
+          <div v-for="(room, index) in displayedRooms" :key="index" class="room-card">
+            <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
+            <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
+              <va-chip outline shadow>{{ room.building }}栋</va-chip>
+              <va-chip shadow>{{ room.roomNumber }}</va-chip>
+              <va-chip shadow color="#7f1f90">
+                <div v-if="room.roomType === 1">
+                  单人间
+                </div>
+                <div v-else-if="room.roomType === 2">
+                  双人间
+                </div>
+                <div v-else-if="room.roomType === 3">
+                  三人间
+                </div>
+                <div v-else>
+                  四人间
+                </div>
+              </va-chip>
+            </div>
+            <div style="text-align: center;display: grid;grid-gap: 10px">
+              <va-button round gradient @click="viewDetail(room)">
+                <va-icon name="info"/>
+                查看详情
+              </va-button>
+
+              <va-button
+                  v-if="!teamStore.roomSelected && isCreator"
+                  :disabled="!isInSelectTime || room.selectedTeamCreatorId !== null "
+                  round
+                  gradient
+                  color="#228B22"
+                  @click="selectRoom(room)"
+              >
+                <va-icon name="check"/>
+                {{ room.selectedTeamCreatorId == null ? '选择宿舍' : '已被其他队伍选择' }}
+              </va-button>
+              <va-button
+                  v-if="(teamStore.selectedRoom.roomId === room.roomId) && isCreator"
+                  :disabled="!isInSelectTime"
+                  round
+                  gradient
+                  color="#danger"
+                  @click="cancelSelectRoom(room)"
+              >
+                <va-icon name="cancel"/>
+                取消选择
+              </va-button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
-  <div v-else-if="teamStore.joined">
-    <va-card class="no-team">
-      <p class="no-team__p">
-        你的队伍还没有收藏房间，快去广场看看吧~~
-      </p>
-      <va-button
-          class="no-team__button"
-          size="large"
-          to="/student/square/dormitory"
-      >
-        点击前往&nbsp;&nbsp;
-        <va-icon
-            name="arrow_outward"
-        />
-      </va-button>
-    </va-card>
-  </div>
-  <div v-else>
-    <va-card class="no-team">
-      <p class="no-team__p">
-        你还没有加入队伍，快去广场加入或创建队伍吧~~
-      </p>
-      <va-button
-          class="no-team__button"
-          size="large"
-          to="/student/square/teamSelect"
-      >
-        点击前往&nbsp;&nbsp;
-        <va-icon
-            name="arrow_outward"
-        />
-      </va-button>
-    </va-card>
-  </div>
-  <va-modal
-      v-model="dialogVisible"
-      :message="teamStore.msg"
-      ok-text="确认"
-      cancel-text="取消"
-      size="small"
-  />
+    <div v-else-if="teamStore.joined">
+      <va-card class="no-team">
+        <p class="no-team__p">
+          你的队伍还没有收藏房间，快去广场看看吧~~
+        </p>
+        <va-button
+            class="no-team__button"
+            size="large"
+            to="/student/square/dormitory"
+        >
+          点击前往&nbsp;&nbsp;
+          <va-icon
+              name="arrow_outward"
+          />
+        </va-button>
+      </va-card>
+    </div>
+    <div v-else>
+      <va-card class="no-team">
+        <p class="no-team__p">
+          你还没有加入队伍，快去广场加入或创建队伍吧~~
+        </p>
+        <va-button
+            class="no-team__button"
+            size="large"
+            to="/student/square/teamSelect"
+        >
+          点击前往&nbsp;&nbsp;
+          <va-icon
+              name="arrow_outward"
+          />
+        </va-button>
+      </va-card>
+    </div>
+    <va-modal
+        v-model="dialogVisible"
+        :message="teamStore.msg"
+        ok-text="确认"
+        cancel-text="取消"
+        size="small"
+    />
+  </va-card>
 </template>
 
 
@@ -177,7 +179,7 @@ onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
- // await teamStore.getSelectedRoom(teamStore.current_team.teamId)
+  // await teamStore.getSelectedRoom(teamStore.current_team.teamId)
   await periodStore.getPeriod(accountStore.studentInformationForm.degree, accountStore.studentInformationForm.gender)
   const initTime = new Date();
   const startTime = new Date(periodStore.periodData.startTime);
@@ -188,18 +190,14 @@ onMounted(async () => {
   setInterval(() => {
     const currentTime = new Date();
     if (currentTime >= startTime && currentTime <= endTime) {
-        isInSelectTime.value = true
+      isInSelectTime.value = true
     }
   }, 1000);
 })
 
-const isCreator = computed(() =>{
+const isCreator = computed(() => {
   return accountStore.accountCampusId === teamStore.current_team.creatorId
 })
-
-
-
-
 
 
 const filters = ref({
@@ -217,7 +215,6 @@ const options = {
 };
 
 
-
 const sortedBuildings = computed(() => options.buildings.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
 const sortedFloors = computed(() => options.floors.slice().sort((a, b) => (a !== '' && b !== '' ? a - b : 0)));
 const sortedDistricts = computed(() => options.districts.slice());
@@ -226,7 +223,6 @@ const sortedRoomNumbers = computed(() =>
 );
 
 const totalRooms = computed(() => teamStore.current_team.favoriteRooms.length)
-
 
 
 const displayedRooms = computed(() => {
@@ -248,16 +244,15 @@ const displayedRooms = computed(() => {
         }
 
         return true;
-      }).sort((a, b) =>{
-        if(a.building === b.building)
+      }).sort((a, b) => {
+        if (a.building === b.building)
           return a.roomNumber - b.roomNumber
         else return a.building - b.building
       }).slice(startIdx, endIdx)
 })
 
 
-function viewDetail (room)
-{
+function viewDetail(room) {
   roomStore.roomToView.roomId = room.roomId
   roomStore.roomToView.district = room.district
   roomStore.roomToView.building = room.building
@@ -270,22 +265,17 @@ function viewDetail (room)
   router.push('/student/square/dormitory/roomInfo')
 }
 
-async function selectRoom (room)
-{
-  if(teamStore.current_team.teamMembers.length !== room.roomType)
-  {
+async function selectRoom(room) {
+  if (teamStore.current_team.teamMembers.length !== room.roomType) {
     init('你的队伍人数不能选择这个房间')
-  }
-  else
-  {
+  } else {
     await teamStore.selectRoom(room.roomId, teamStore.current_team.teamId)
     await teamStore.fetchTeamInformation(accountStore.accountCampusId)
     dialogVisible.value = true
   }
 }
 
-async function cancelSelectRoom (room)
-{
+async function cancelSelectRoom(room) {
   await teamStore.unselectRoom(room.roomId, teamStore.current_team.teamId)
   await teamStore.fetchTeamInformation(accountStore.accountCampusId)
   dialogVisible.value = true
@@ -362,6 +352,7 @@ async function cancelSelectRoom (room)
   background-color: transparent;
   padding: 10px;
 }
+
 .team-manager-container {
   padding-left: 1rem;
   padding-right: 1rem;
