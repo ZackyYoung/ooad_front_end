@@ -260,7 +260,10 @@ function regStageBack()
 }
 async function continueReg() {
   if (validate()) {
-    regStage.value = regStage.value + 1
+    if(registerForm.role === 'teacher')
+      regStage.value = regStage.value + 2
+    else
+      regStage.value = regStage.value + 1
   }
 }
 
