@@ -401,6 +401,17 @@ function deleteNotification(notificationId, callback){
         })
 }
 
+function deleteAllNotification(receiverId, callback){
+    const url = `${dataServerUrl}/notification/deleteByReceiverId/${receiverId}`
+    console.log(url)
+    axiosInstance.delete(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp =>{
+            console.log(errResp)
+        })
+}
+
 function findOneRoom(roomId, callback){
     const url = `${dataServerUrl}/room/findOne/${roomId}`
     axiosInstance.get(url)
@@ -500,6 +511,7 @@ export default{
     applySwap,
     swapRoom,
     deleteNotification,
+    deleteAllNotification,
     findOneRoom,
     updateAvatar,
     fetchAvatar,

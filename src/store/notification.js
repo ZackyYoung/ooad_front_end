@@ -90,11 +90,22 @@ export const useNotificationStore = defineStore("notification", () =>{
         })
     }
 
+    async function deleteAllNotification(receiverId)
+    {
+        notificationData.splice(0)
+        return new Promise((resolve) =>{
+            dataService.deleteAllNotification(receiverId, resp=>{
+                resolve()
+            })
+        })
+    }
+
     return {
         notificationData,
         notificationWebsocketInit,
         notificationStoreClose,
         readNotification,
-        deleteNotification
+        deleteNotification,
+        deleteAllNotification
     }
 })
