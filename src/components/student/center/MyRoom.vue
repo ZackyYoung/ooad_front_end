@@ -20,21 +20,70 @@
 
       <div v-else-if="step === 2" class="step-info">
         <p v-if="!teamStore.roomSelected">现在可以开始抢房间了，快去您收藏的房间中抢房间吧！</p>
-        <p v-else>你已经选择了一个宿舍，你可以重新选择宿舍或交换宿舍</p>
+        <p v-else>你的队伍已经选择了一个宿舍，队长可以重新选择宿舍或交换宿舍</p>
       </div>
     </div>
     <div v-if="teamStore.roomSelected" class="show-room">
       <div class="images">
         <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9"/>
       </div>
-      <div class="room-info">
-        <h2>已选中的房间信息</h2>
-        <p>区划：{{ selectedRoom.district }}</p>
-        <p>楼栋：{{ selectedRoom.building }}</p>
-        <p>楼层：{{ selectedRoom.floor }}</p>
-        <p>房间号：{{ selectedRoom.roomNumber }}</p>
-        <p>户型：{{ selectedRoom.roomType }}</p>
-        <p>简介：{{ selectedRoom.description }}</p>
+      <div class="room-info-container">
+        <div class="room-info-list">
+          <div class="room-info" v-for="displayItem in roomDisplayItems">
+            <va-chip
+                shadow
+                :readonly="true"
+                :icon="displayItem.icon"
+            >
+              {{ displayItem.label }}
+            </va-chip>
+            <va-chip
+                shadow
+                outline
+                class="ma-2"
+            >
+            <span v-if="displayItem.label==='楼栋'">
+            {{ selectedRoom[displayItem.valueBy] }}栋
+            </span>
+              <span v-else-if="displayItem.label==='楼层'">
+              {{ selectedRoom[displayItem.valueBy] }}层
+            </span>
+              <span v-else-if="displayItem.label==='户型'">
+                <span v-if="selectedRoom[displayItem.valueBy] === 1">
+                  单人间
+                </span>
+                <span v-else-if="selectedRoom[displayItem.valueBy] === 2">
+                  双人间
+                </span>
+                <span v-else-if="selectedRoom[displayItem.valueBy] === 3">
+                  三人间
+                </span>
+                <span v-else>
+                  四人间
+                </span>
+            </span>
+              <span v-else-if="displayItem.label==='性别'">
+                {{ selectedRoom[displayItem.valueBy] }}生寝室
+            </span>
+              <span v-else>
+            {{ selectedRoom[displayItem.valueBy] }}
+          </span>
+            </va-chip>
+          </div>
+        </div>
+        <div class="room-info-description-container">
+          <va-card
+              class="room-info"
+              outlined
+          >
+            <VaCardTitle class="room-info-description">简介</VaCardTitle>
+            <VaCardContent>
+              <p class="room-info-description">
+                {{ selectedRoom.description ? selectedRoom.description : "没有额外介绍了~" }}
+              </p>
+            </VaCardContent>
+          </va-card>
+        </div>
       </div>
       <div class="center-button">
         <va-button
@@ -44,27 +93,29 @@
         >
           查看房间信息
         </va-button>
-        <va-button
-            style="margin: 10px"
-            color="danger"
-            @click="cancelSelectRoom(teamStore.selectedRoom)"
+        <va-button v-if="accountStore.accountCampusId===teamStore.current_team.creatorId"
+                   style="margin: 10px"
+                   color="danger"
+                   @click="onCancelClick(teamStore.selectedRoom)"
         >
           取消选择房间
         </va-button>
       </div>
+      <va-modal
+          v-model="dialogVisible"
+          :message="teamStore.msg"
+          ok-text="确认"
+          cancel-text="取消"
+          size="small"
+      />
     </div>
-    <va-modal
-        v-model="dialogVisible"
-        :message="teamStore.msg"
-        ok-text="确认"
-        cancel-text="取消"
-        size="small"
-    />
   </va-card>
 </template>
 
 <script setup>
 import {onMounted, ref, toRef} from 'vue'
+import {useModal, useToast} from 'vuestic-ui'
+
 import Room1Image from "@/assets/Room1.jpg";
 import Room2Image from "@/assets/Room2.png";
 import {useAccountStore} from "@/store/account.js";
@@ -88,7 +139,19 @@ const items = [
   Room2Image,
 ];
 
+const {confirm} = useModal()
+const {init} = useToast()
+
 const selectedRoom = toRef(teamStore.selectedRoom)
+
+const roomDisplayItems = [
+  {label: '区划', valueBy: 'district', icon: 'grid_on'},
+  {label: '楼栋', valueBy: 'building', icon: 'apartment'},
+  {label: '楼层', valueBy: 'floor', icon: 'stairs'},
+  {label: '房间', valueBy: 'roomNumber', icon: 'living'},
+  {label: '户型', valueBy: 'roomType', icon: 'diversity_3'},
+  {label: '性别', valueBy: 'gender', icon: 'wc'}
+]
 
 const steps = [
   {label: '在广场中选择一个队伍加入'},
@@ -127,6 +190,22 @@ const viewRoomInfo = (room) => {
   roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 };
+
+async function onCancelClick(room) {
+  const result = await confirm({
+    message: '您确定要取消选房吗',
+    title: '取消选择?',
+    okText: "确定",
+    cancelText: "取消",
+  })
+
+  if (result) {
+    await cancelSelectRoom(room)
+    init('取消选择成功')
+  } else {
+    init('取消操作')
+  }
+}
 
 async function cancelSelectRoom(room) {
   await teamStore.unselectRoom(room.roomId, teamStore.current_team.teamId)
@@ -167,10 +246,26 @@ async function cancelSelectRoom(room) {
   width: 500px;
 }
 
-.room-info {
-  margin-left: 100px;
-  margin-top: 30px;
-  height: auto;
+.room-info-container {
+  display: flex;
+  margin-top: 4rem;
+}
+
+.room-info-list {
+  //flex: 1;
+  margin-left: auto;
+
+}
+
+.room-info-description-container {
+  margin-left: auto;
+  min-width: 30rem;
+  text-align: center;
+}
+
+.room-info-description {
+  font-family: HGY3, serif;
+  font-size: 1rem;
 }
 
 .center-button {

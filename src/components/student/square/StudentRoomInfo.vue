@@ -110,10 +110,9 @@
           outlined
       >
         <VaCardTitle class="description">简介</VaCardTitle>
-<!--          <p class="information">{{ roomToView.description }}</p>-->
-        <VaCardContent >
+        <VaCardContent>
           <p class="information">
-            {{roomToView.description===''?"没有额外介绍了~":roomToView.description}}
+            {{ roomToView.description ? roomToView.description : "没有额外介绍了~" }}
           </p>
         </VaCardContent>
       </va-card>
