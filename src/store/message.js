@@ -8,6 +8,7 @@ export const useMessageStore = defineStore("message", () => {
     const pictureStore = usePictureStore()
     const chatData = reactive([])
     const serverUrl = 'ws://10.26.80.100:8082/api/websocket/message/'
+    // const serverUrl = 'ws://10.32.60.95:8082/api/websocket/message/'
     const socket = ref(null)
     const queue = ref([])
     function messageWebsocketInit(campusId){
@@ -85,7 +86,7 @@ export const useMessageStore = defineStore("message", () => {
         queue.value.shift();
 
         // 继续处理下一个任务
-        await processQueue();
+        await processQueue(campusId);
     }
 
 
@@ -116,10 +117,10 @@ export const useMessageStore = defineStore("message", () => {
     }
 
     function hasUnreadMessage(campusId){
-        const chatArray = chatData.filter((_, index) => index > 0);
-        for (const chat of chatArray) {
+        // const chatArray = chatData.filter((_, index) => index > 0);
+        for (const chat of chatData) {
             // 在每个chat的messages数组中查找符合条件的message
-            const hasUnreadMessage = chat.messages.some(message => message.receiverId === campusId && !message.read);
+            const hasUnreadMessage = chat.messages.some(message => (message.receiverId === campusId && message.read===false));
 
             if (hasUnreadMessage) {
                 return true;

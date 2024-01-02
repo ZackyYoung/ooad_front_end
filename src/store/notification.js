@@ -2,10 +2,10 @@ import dataService from "@/service/dataService.js";
 import {defineStore} from "pinia";
 import {reactive, ref} from "vue";
 
-
 export const useNotificationStore = defineStore("notification", () =>{
     const notificationData = reactive([])
     const serverUrl = 'ws://10.26.80.100:8082/api/websocket/notification/'
+    // const serverUrl = 'ws://10.32.60.95:8082/api/websocket/notification/'
     const socket = ref(null)
     function notificationWebsocketInit(campusId){
         socket.value = new WebSocket(`${serverUrl}${campusId}`)

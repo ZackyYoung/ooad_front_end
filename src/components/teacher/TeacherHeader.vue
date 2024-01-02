@@ -25,7 +25,7 @@
         {{ item.text }}
         <va-icon class="ml-1" :name="item.icon"/>
       </va-button>
-      <va-button class="logout" @click="logout">
+      <va-button class="logout" @click="onLogoutClick()">
         <va-icon name="logout"/>
       </va-button>
     </div>
@@ -34,6 +34,8 @@
 
 <script setup>
 import {computed, onMounted, reactive, ref} from 'vue'
+import {useModal, useToast} from 'vuestic-ui'
+
 import logoName from '@/assets/images/logo_name.png'
 import {useAccountStore} from "@/store/account.js"
 import {useRouter} from "vue-router"
@@ -46,8 +48,27 @@ const notificationStore = useNotificationStore()
 const messageStore = useMessageStore()
 const router = useRouter()
 
+const {confirm} = useModal()
+const {init} = useToast()
+
 function toMain(){
   router.push('/teacher')
+}
+
+async function onLogoutClick() {
+  const result = await confirm({
+    message: '您确定要退出登录吗',
+    title: '退出登录?',
+    okText: "确定",
+    cancelText: "取消",
+  })
+
+  if (result) {
+    logout()
+    init('退出登录')
+  } else {
+    init('取消退出操作')
+  }
 }
 
 function logout () {

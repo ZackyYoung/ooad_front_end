@@ -113,10 +113,9 @@
           outlined
       >
         <VaCardTitle class="description">简介</VaCardTitle>
-<!--          <p class="information">{{ roomToView.description }}</p>-->
-        <VaCardContent >
+        <VaCardContent>
           <p class="information">
-            {{roomToView.description===''?"没有额外介绍了~":roomToView.description}}
+            {{ roomToView.description ? roomToView.description : "没有额外介绍了~" }}
           </p>
         </VaCardContent>
       </va-card>
@@ -143,7 +142,11 @@
               <p class="comment-author">{{ comment.author }}</p>
               <p class="comment-text">{{ comment.content }}</p>
               <!-- 回复按钮 -->
-              <va-button @click="toggleReplies(commentIndex)" color="info" gradient class="mr-6 mb-2">查看回复
+              <va-button style="margin: 5px" @click="toggleReplies(commentIndex)" color="info" gradient class="mr-6 mb-2">
+                {{comment.showReplies?'收起回复':'查看回复'}}
+              </va-button>
+              <va-button style="margin: 5px" @click="deleteComment(comment)" color="danger" gradient v-if="comment.authorId === accountStore.accountCampusId">
+                删除评论
               </va-button>
               <!-- 回复输入框 -->
               <div v-if="comment.showReplies" class="reply-input">
@@ -160,6 +163,7 @@
                   <div class="reply-content">
                     <p class="reply-author">{{ reply.authorName }}</p>
                     <p class="reply-text">{{ reply.content }}</p>
+                    <va-button @click="deleteReply(reply)" gradient color="danger" v-if="reply.author === accountStore.accountCampusId">删除回复</va-button>
                   </div>
                 </div>
               </div>
@@ -181,7 +185,14 @@
       </va-card-content>
     </va-card>
   </va-card>
-</template>>
+  <va-modal
+      v-model="dialogVisible"
+      :message="roomStore.msg"
+      ok-text="确认"
+      cancel-text="取消"
+      size="small"
+  />
+</template>
 
 <script setup>
 import {computed, ref, reactive, onMounted, onBeforeUnmount} from 'vue';
@@ -199,6 +210,7 @@ const roomStore = useRoomStore()
 const teamStore = useTeamStore()
 const accountStore = useAccountStore()
 const pictureStore = usePictureStore()
+const dialogVisible = ref(false)
 const {init} = useToast()
 
 const roomDisplayItems = [
@@ -318,6 +330,19 @@ const addReply = async (commentIndex) => {
   newReply.value[commentIndex] = '';
 };
 
+async function deleteComment(comment)
+{
+  await roomStore.deleteComment(comment.commentId)
+  await roomStore.getComments()
+  dialogVisible.value = true
+}
+
+async function deleteReply(reply)
+{
+  await roomStore.deleteReply(reply.secondCommentId)
+  await roomStore.getComments()
+  dialogVisible.value = true
+}
 
 function contactLeader(studentId) {
   router.push({
