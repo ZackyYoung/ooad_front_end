@@ -2,7 +2,7 @@
   <va-form class="login-form" ref="formRef">
     <div v-if="regStage === 0" @keyup.enter="continueReg">
       <div>
-        <va-icon name="account_circle"></va-icon>
+        <va-icon name="account_circle"/>
         <va-input
             style="margin: 5px; text-align: left;"
             v-model="registerForm.campusId"
@@ -12,7 +12,7 @@
         />
       </div>
       <div>
-        <va-icon name="badge"></va-icon>
+        <va-icon name="badge"/>
         <va-select
             style="margin: 5px;text-align: left"
             v-model="registerForm.role"
@@ -27,7 +27,7 @@
           :default-value="false"
       >
         <div>
-          <va-icon name="key"></va-icon>
+          <va-icon name="key"/>
           <va-input
               style="margin: 5px; text-align: left"
               v-model="registerForm.password"
@@ -47,7 +47,7 @@
           </va-input>
         </div>
         <div>
-          <va-icon name="shield"></va-icon>
+          <va-icon name="shield"/>
           <va-input
               style="margin: 5px; text-align: left"
               v-model="registerForm.confirmPassword"
@@ -73,10 +73,9 @@
     </div>
 
 
-
     <div v-if="regStage === 1" @keyup.enter="continueReg">
       <div>
-        <va-icon name="account_circle"></va-icon>
+        <va-icon name="account_circle"/>
         <va-input
             style="margin: 5px; text-align: left;"
             v-model="informationForm.name"
@@ -98,7 +97,7 @@
         />
       </div>
       <div>
-        <va-icon name="book"></va-icon>
+        <va-icon name="book"/>
         <va-select
             style="margin: 5px; text-align: left;"
             v-model="informationForm.degree"
@@ -110,7 +109,7 @@
         />
       </div>
       <div>
-        <va-icon name="settings"></va-icon>
+        <va-icon name="settings"/>
         <va-select
             style="margin: 5px; text-align: left;"
             v-model="informationForm.major"
@@ -130,11 +129,13 @@
 
     <div v-if="regStage === 2" @keyup.enter="registerCheck">
       <div>
-        <va-icon name="mail"></va-icon>
+        <va-icon name="mail"/>
         <va-input
             style="margin: 5px; text-align: left;"
-            disabled
+            :disabled="registerForm.role === 'teacher' && false"
             v-model="accountMail"
+            placeholder="请输入邮箱"
+            :rules="[(v) => mailValidator(v)]"
             label="邮箱"
         />
       </div>
@@ -152,9 +153,9 @@
             style="width: 250px;margin: 10px"
             color="warning"
             @click="sendCheckCode"
-            :disabled="countDown > 0"
+            :disabled="(countDown > 0 ) || mailNotValid"
         >
-          {{countDown > 0 ? countDown + '秒后重新发送': '发送验证码'}}
+          {{ countDown > 0 ? countDown + '秒后重新发送' : '发送验证码' }}
         </va-button>
       </div>
 
@@ -218,21 +219,25 @@ const informationForm = reactive({
   major: ""
 })
 
-const accountMail = computed(() =>{
+const accountMail = ref('')
+const mailNotValid = computed(() => Boolean(mailValidator(accountMail.value)))
+
+function updateDefaultMail() {
   let suffix
-  if(registerForm.role === 'student')
+  if (registerForm.role === 'student')
     suffix = '@mail.sustech.edu.cn'
   else
     suffix = '@sustech.edu.cn'
   suffix = registerForm.campusId + suffix
-  return suffix
-})
+  accountMail.value = suffix
+}
+
 const campusIdValidator = (value) => {
   const re = /^[0-9]{8}$/;
   if (!value) {
     return '未输入校园号';
   }
-  if(!re.test(value)) {
+  if (!re.test(value)) {
     return '校园号必须是8位数字'
   }
 }
@@ -254,20 +259,35 @@ const confirmPasswordValidator = (value) => {
     return '密码不一致'
   }
 }
-function regStageBack()
-{
-  if(registerForm.role === 'teacher'){
+
+const mailValidator = (value) => {
+  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/
+  if (!value) {
+    return '未输入邮箱'
+  }
+  if (!re.test(value)) {
+    return '请输入正确格式的邮箱地址'
+  }
+}
+
+function regStageBack() {
+  if (registerForm.role === 'teacher') {
     regStage.value = regStage.value - 2
   } else {
     regStage.value = regStage.value - 1
   }
 }
+
 async function continueReg() {
   if (validate()) {
-    if(registerForm.role === 'teacher')
+    if (registerForm.role === 'teacher') {
       regStage.value = regStage.value + 2
-    else
+    } else {
       regStage.value = regStage.value + 1
+    }
+    if (regStage.value === 2) {
+      updateDefaultMail()
+    }
   }
 }
 
@@ -285,7 +305,7 @@ async function sendCheckCode() {
 
 async function registerCheck() {
   await accountStore.verifyCheckCode(accountMail.value, checkCode.value)
-  if(accountStore.checkCodeCorrect) {
+  if (accountStore.checkCodeCorrect) {
     accountStore.checkCodeCorrect = false
     await accountStore.registerAccount(registerForm)
     if (accountStore.accountValid) {
@@ -295,7 +315,7 @@ async function registerCheck() {
     } else {
       failDialog.value = true
     }
-  }else{
+  } else {
     accountStore.msg = '验证码错误'
     failDialog.value = true
   }
@@ -303,14 +323,11 @@ async function registerCheck() {
 
 function registerRoute() {
   reset()
-  if (accountStore.accountRole === 'teacher')
-  {
+  if (accountStore.accountRole === 'teacher') {
     router.push('/teacher')
     notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
     messageStore.messageWebsocketInit(accountStore.accountCampusId)
-  }
-  else if (accountStore.accountRole === 'student')
-  {
+  } else if (accountStore.accountRole === 'student') {
     router.push('/student')
     notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
     messageStore.messageWebsocketInit(accountStore.accountCampusId)
