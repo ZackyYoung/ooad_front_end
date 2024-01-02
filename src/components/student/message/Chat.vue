@@ -254,7 +254,7 @@ li {
 .chat-list {
   border: solid 1px #dadada;
   overflow-y: auto; /* 添加这一行以启用垂直滚动条 */
-  max-height: 425px; /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
+  max-height: 400px; /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
 }
 
 .text-right {

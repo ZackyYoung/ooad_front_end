@@ -204,8 +204,14 @@ const updateDistrictValue = (x, y) => {
   if (x > 550 && y > 200 &&x < 700 && y < 290) {
     filters.value.district = '湖畔';
     showMap.value = false;
-  } else if ((x > 585 && y > 120 &&x < 705 && y < 190) || (x > 705 && y > 120 &&x < 835 && y < 240)) {
+  } else if ((x > 585 && y > 120 &&x < 705 && y < 190) || (x > 705 && y > 165 &&x < 805 && y < 240) || (x > 805 && y > 185 &&x < 835 && y < 240)) {
     filters.value.district = '二期';
+    showMap.value = false;
+  } else if ((x > 760 && y > 90 &&x < 860 && y < 140) || (x > 800 && y > 120 &&x < 900 && y < 170)) {
+    filters.value.district = '荔园';
+    showMap.value = false;
+  } else if ((x > 1000 && y > 10 &&x < 1100 && y < 100)) {
+    filters.value.district = '欣园';
     showMap.value = false;
   }
 };
