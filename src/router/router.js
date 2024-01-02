@@ -22,6 +22,9 @@ import SDomInfoPage from "@/view/StudentSquare/SDomInfoPage.vue";
 import TDomInfo from "@/view/TeacherDoms/TDomInfo.vue";
 import SChatPage from "@/view/StudentSquare/SChatPage.vue";
 import SDomPage from "@/view/StudentCenter/SDomPage.vue";
+import {ref} from "vue";
+
+export const showMap = ref(true);
 
 const routes = [
     {
@@ -96,7 +99,11 @@ const routes = [
     {
         path: '/student/square/dormitory',
         name: 'SDomSelect',
-        component: SDomSelectPage
+        component: SDomSelectPage,
+        beforeRouteLeave(to, from, next) {
+            showMap.value = true;
+            next();
+        },
     },
     {
         path: '/student/square/dormitory/roomInfo',
@@ -189,7 +196,7 @@ router.beforeEach((to, from, next)=>{
             previousRoute.path === '/student/team/favor' ||
             previousRoute.path === '/student/notification/message'
         ))
-            return next(previousRoute.path)
+        return next(previousRoute.path)
     previousRoute = from
     next()
 })
