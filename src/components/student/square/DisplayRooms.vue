@@ -212,11 +212,6 @@ const updateDistrictValue = (x, y) => {
 
 const returnToMap = () => {
   showMap.value = true;
-
-  filters.value.floor = '';
-  filters.value.building = '';
-  filters.value.district = '';
-  filters.value.roomNumber = '';
 };
 
 onMounted(async () => {
@@ -238,6 +233,19 @@ const viewDetail = (room) => {
   roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 }
+
+watch(
+    () => showMap.value,
+    (newShowMap) => {
+      if (newShowMap) {
+        // 当地图显示时清空筛选条件的值
+        filters.value.floor = '';
+        filters.value.building = '';
+        filters.value.district = '';
+        filters.value.roomNumber = '';
+      }
+    }
+);
 
 watch(
     () => filters.value.district,
