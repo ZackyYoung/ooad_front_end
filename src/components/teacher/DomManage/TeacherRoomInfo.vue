@@ -1,88 +1,132 @@
 <template>
-  <div class="room-container">
-    <div class="images">
-      <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9" />
+  <va-card class="page-content-card card-fix">
+    <div class="room-container">
+      <div class="images">
+        <va-carousel v-model="imagePage" :items="items" :ratio="16 / 9"/>
+      </div>
+      <div class="room-intro">
+        <div v-for="displayItem in roomDisplayItems">
+          <va-chip
+              shadow
+              :readonly="true"
+              :icon="displayItem.icon"
+          >
+            {{ displayItem.label }}
+          </va-chip>
+          <va-chip
+              shadow
+              outline
+              class="ma-2"
+          >
+            <span v-if="displayItem.label==='楼栋'">
+            {{ roomToView[displayItem.valueBy] }}栋
+            </span>
+            <span v-else-if="displayItem.label==='楼层'">
+              {{ roomToView[displayItem.valueBy] }}层
+            </span>
+            <span v-else-if="displayItem.label==='户型'">
+                <span v-if="roomToView[displayItem.valueBy] === 1">
+                  单人间
+                </span>
+                <span v-else-if="roomToView[displayItem.valueBy] === 2">
+                  双人间
+                </span>
+                <span v-else-if="roomToView[displayItem.valueBy] === 3">
+                  三人间
+                </span>
+                <span v-else>
+                  四人间
+                </span>
+            </span>
+            <span v-else-if="displayItem.label==='性别'">
+                {{ roomToView[displayItem.valueBy] }}生寝室
+            </span>
+            <span v-else>
+            {{ roomToView[displayItem.valueBy] }}
+          </span>
+          </va-chip>
+        </div>
+        <va-button color="info" gradient class="favorite-button" @click="showEdit = true">
+          <va-icon name="edit"></va-icon>
+          编辑
+        </va-button>
+        <va-button color="danger" gradient class="favorite-button" @click="deleteRoom">
+          <va-icon name="delete"></va-icon>
+          删除
+        </va-button>
+        <va-button color="warning" gradient class="back-button" @click="router.push('/teacher/dormitory/edit')">
+          <va-icon name="logout"></va-icon>
+          返回
+        </va-button>
+      </div>
+      <va-card
+          class="room-info"
+          outlined
+      >
+        <VaCardTitle class="description">简介</VaCardTitle>
+        <VaCardContent>
+          <p class="information">
+            {{ roomToView.description ? roomToView.description : "没有额外介绍了~" }}
+          </p>
+        </VaCardContent>
+      </va-card>
     </div>
-    <div class="room-intro" >
-      <p>区划：{{roomToView.district}}</p>
-      <p>楼栋: {{ roomToView.building }}</p>
-      <p>楼层: {{ roomToView.floor }}</p>
-      <p>房间: {{ roomToView.roomNumber }}</p>
-      <p>户型: {{ roomToView.roomType }}</p>
-      <p>宿舍性别: {{ roomToView.gender}}</p>
-      <va-button  color="info" gradient class="favorite-button" @click="showEdit = true">
-        <va-icon name="edit"></va-icon>
-        编辑
-      </va-button>
-      <va-button  color="danger" gradient class="favorite-button" @click="deleteRoom">
-        <va-icon name="delete"></va-icon>
-        删除
-      </va-button>
-      <va-button color="warning" gradient class="back-button" @click="router.push('/teacher/dormitory/edit')">
-        <va-icon name="logout"></va-icon>
-        返回
-      </va-button>
-    </div>
-    <div class="room-info" >
-      <p class="description">简介</p>
-      <p class="information">{{roomToView.description}}</p>
-    </div>
-  </div>
-  <va-modal
-      v-model="showEdit"
-      hide-default-actions
-      cancel-text="取消"
-  >
-    <h3 class="va-h3">
-      编辑房间: {{roomStore.roomToView.building}}栋 {{roomStore.roomToView.roomNumber}}
-    </h3>
-    <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
-      <va-select
-          v-model="form.roomType"
-          class="mb-6"
-          label="户型"
-          :rules="[(v) => Boolean(v)|| '户型不能为空！']"
-          placeholder="选择户型"
-          :options="type_options"
-          value-by="value"
-      />
-      <va-select
-          v-model="form.gender"
-          class="mb-6"
-          label="宿舍性别"
-          :rules="[(v) => Boolean(v)|| '性别不能为空！']"
-          placeholder="选择宿舍性别"
-          :options="gender_options"
-          value-by="value"
-      />
-      <va-textarea
-          v-model="form.description"
-          label="简介"
-          placeholder="请给出宿舍简介"
-          autosize
-      />
-    </va-form>
-    <template #footer>
-      <va-button class="save-button" :disabled="!isValid" @click="validate() && submit()">
-        提交信息
-      </va-button>
-    </template>
-  </va-modal>
-  <va-modal
-      v-model="dialogVisible"
-      :message="roomStore.msg"
-      ok-text="确认"
-      cancel-text="取消"
-      size="small"
-  />
-  <va-modal
-      v-model="deleteMsgVisible"
-      :message="roomStore.msg"
-      ok-text="确认"
-      cancel-text="取消"
-      size="small"
-      @click="router.push('/teacher/dormitory/edit')"
-  />
+    <va-modal
+        v-model="showEdit"
+        hide-default-actions
+        cancel-text="取消"
+    >
+      <h3 class="va-h3">
+        编辑房间: {{ roomStore.roomToView.building }}栋 {{ roomStore.roomToView.roomNumber }}
+      </h3>
+      <va-form class="my-form flex flex-col items-baseline gap-6" ref="formRef">
+        <va-select
+            v-model="form.roomType"
+            class="mb-6"
+            label="户型"
+            :rules="[(v) => Boolean(v)|| '户型不能为空！']"
+            placeholder="选择户型"
+            :options="type_options"
+            value-by="value"
+        />
+        <va-select
+            v-model="form.gender"
+            class="mb-6"
+            label="宿舍性别"
+            :rules="[(v) => Boolean(v)|| '性别不能为空！']"
+            placeholder="选择宿舍性别"
+            :options="gender_options"
+            value-by="value"
+        />
+        <va-textarea
+            v-model="form.description"
+            label="简介"
+            placeholder="请给出宿舍简介"
+            autosize
+        />
+      </va-form>
+      <template #footer>
+        <va-button class="save-button" :disabled="!isValid" @click="validate() && submit()">
+          提交信息
+        </va-button>
+      </template>
+    </va-modal>
+    <va-modal
+        v-model="dialogVisible"
+        :message="roomStore.msg"
+        ok-text="确认"
+        cancel-text="取消"
+        size="small"
+    />
+    <va-modal
+        v-model="deleteMsgVisible"
+        :message="roomStore.msg"
+        ok-text="确认"
+        cancel-text="取消"
+        size="small"
+        @click="router.push('/teacher/dormitory/edit')"
+    />
+  </va-card>
 </template>
 
 <script setup>
@@ -94,6 +138,7 @@ import {useRouter} from "vue-router";
 import {degree_options, major_options} from "@/utils/UserOptions.js";
 import {district_options, gender_options, type_options} from "@/utils/DomOptions.js";
 import {useForm} from "vuestic-ui";
+
 const {isValid, validate} = useForm('formRef')
 const router = useRouter()
 const roomStore = useRoomStore()
@@ -111,6 +156,15 @@ const items = [
   Room2Image,
 ];
 
+const roomDisplayItems = [
+  {label: '区划', valueBy: 'district', icon: 'grid_on'},
+  {label: '楼栋', valueBy: 'building', icon: 'apartment'},
+  {label: '楼层', valueBy: 'floor', icon: 'stairs'},
+  {label: '房间', valueBy: 'roomNumber', icon: 'living'},
+  {label: '户型', valueBy: 'roomType', icon: 'diversity_3'},
+  {label: '性别', valueBy: 'gender', icon: 'wc'}
+]
+
 const form = reactive({
   district: roomStore.roomToView.district,
   building: roomStore.roomToView.building,
@@ -121,7 +175,7 @@ const form = reactive({
   description: roomStore.roomToView.description
 })
 
-const submit = async () =>{
+const submit = async () => {
   showEdit.value = false
   await roomStore.editRoom(form)
   await roomStore.updateRoomToView()
@@ -159,7 +213,7 @@ const floorValidator = (value) => {
   }
 }
 
-const roomNumberValidator = (value) =>{
+const roomNumberValidator = (value) => {
   const re = /^\d+$/;
   if (!value) {
     return '房间不能为空！';
@@ -174,12 +228,15 @@ const roomNumberValidator = (value) =>{
 .room-container {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .images {
   flex: 1;
   margin-left: 100px;
   margin-top: 100px;
+  width: 200px;
+  max-width: 500px;
 }
 
 .room-intro {
@@ -189,26 +246,33 @@ const roomNumberValidator = (value) =>{
   font-size: 25px;
   align-self: flex-start;
   line-height: 2.0;
-  max-width: 250px;
+  min-width: 450px;
 }
 
 .room-info {
   flex: 1;
   margin-top: 100px;
-  margin-left: 0;
-  margin-right: 100px;
+  margin-left: 20px;
+  margin-right: 20px;
   font-size: 25px;
   align-self: flex-start;
   line-height: 2.0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .description {
-  text-align: center;
+  text-align: left;
+  text-indent: 2em;
+  font-family: HGY3, serif;
+  font-size: 1rem;
 }
 
 .information {
   text-align: left;
   text-indent: 2em;
+  font-family: HGY3, serif;
+  font-size: 1rem;
 }
 
 .favorite-button {
@@ -219,6 +283,7 @@ const roomNumberValidator = (value) =>{
   height: 50px;
   font-size: 50px;
 }
+
 .back-button {
   margin-top: 20px;
   margin-left: 10px;
@@ -344,5 +409,8 @@ const roomNumberValidator = (value) =>{
   text-align: left;
 }
 
+.card-fix{
+  padding-bottom: 10rem;
+}
 
 </style>
