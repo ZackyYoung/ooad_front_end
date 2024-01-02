@@ -1,92 +1,111 @@
 <template>
-  <va-card class="page-content-card">
-    <div class="filter-container">
-      <label>区划：</label>
-      <va-select
-          v-model="filters.district"
-          :options="sortedDistricts"
-          placeholder="选择区划"
-          class="select"
-          clearable
-          clearable-icon="cancel"
+  <div v-if="showMap">
+    <div class="display-map">
+      <va-image
+          fit="contain"
+          :src="Map"
+          class="map-image"
+          :ratio="4/3"
+          @click="handleMapClick"
       />
-
-      <label>楼栋：</label>
-      <va-select
-          v-model="filters.building"
-          :options="sortedBuildings"
-          placeholder="选择楼栋(请先选择区划)"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-          :disabled="!filters.district"
-      />
-
-      <label>楼层：</label>
-      <va-select
-          v-model="filters.floor"
-          :options="sortedFloors"
-          placeholder="选择楼层(请先选择楼栋)"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-          :disabled="!filters.building"
-      />
-
-      <label>房间号：</label>
-      <va-select
-          v-model="filters.roomNumber"
-          :options="sortedRoomNumbers"
-          placeholder="选择房间号(请先选择楼层)"
-          class="select"
-          clearable
-          clearable-icon="cancel"
-          :disabled="!filters.floor"
-      />
-
     </div>
+  </div>
+  <div v-else>
+    <div class="display-rooms">
+      <va-card class="page-content-card">
+        <div class="filter-container">
+          <label>区划：</label>
+          <va-select
+              v-model="filters.district"
+              :options="sortedDistricts"
+              placeholder="选择区划"
+              class="select"
+              clearable
+              clearable-icon="cancel"
+          />
 
-    <div class="image-container" style="text-align: center;">
-      <div class="row">
-        <div v-for="room in displayedRooms" :key="room.id" class="room-card">
-          <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
-          <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
-            <va-chip outline shadow>{{ room.building }}栋</va-chip>
-            <va-chip shadow>{{ room.roomNumber }}</va-chip>
-            <va-chip shadow color="#7f1f90">
-              <div v-if="room.roomType === 1">
-                单人间
+          <label>楼栋：</label>
+          <va-select
+              v-model="filters.building"
+              :options="sortedBuildings"
+              placeholder="选择楼栋(请先选择区划)"
+              class="select"
+              clearable
+              clearable-icon="cancel"
+              :disabled="!filters.district"
+          />
+
+          <label>楼层：</label>
+          <va-select
+              v-model="filters.floor"
+              :options="sortedFloors"
+              placeholder="选择楼层(请先选择楼栋)"
+              class="select"
+              clearable
+              clearable-icon="cancel"
+              :disabled="!filters.building"
+          />
+
+          <label>房间号：</label>
+          <va-select
+              v-model="filters.roomNumber"
+              :options="sortedRoomNumbers"
+              placeholder="选择房间号(请先选择楼层)"
+              class="select"
+              clearable
+              clearable-icon="cancel"
+              :disabled="!filters.floor"
+          />
+        </div>
+
+        <va-button color="info" gradient class="back-button" @click="returnToMap">
+          <va-icon name="logout"></va-icon>
+          返回地图
+        </va-button>
+
+        <div class="image-container" style="text-align: center;">
+          <div class="row">
+            <div v-for="room in displayedRooms" :key="room.id" class="room-card">
+              <va-image :src="Room1Image" alt="Room Image" class="room-image"></va-image>
+              <div style="text-align: center;display: flex;justify-content: space-between;margin: 10px">
+                <va-chip outline shadow>{{ room.building }}栋</va-chip>
+                <va-chip shadow>{{ room.roomNumber }}</va-chip>
+                <va-chip shadow color="#7f1f90">
+                  <div v-if="room.roomType === 1">
+                    单人间
+                  </div>
+                  <div v-else-if="room.roomType === 2">
+                    双人间
+                  </div>
+                  <div v-else-if="room.roomType === 3">
+                    三人间
+                  </div>
+                  <div v-else>
+                    四人间
+                  </div>
+                </va-chip>
               </div>
-              <div v-else-if="room.roomType === 2">
-                双人间
+              <div style="text-align: center;display: grid;grid-gap: 10px">
+                <va-button round gradient @click="viewDetail(room)">
+                  <va-icon name="info"/>
+                  查看详情
+                </va-button>
               </div>
-              <div v-else-if="room.roomType === 3">
-                三人间
-              </div>
-              <div v-else>
-                四人间
-              </div>
-            </va-chip>
-          </div>
-          <div style="text-align: center;display: grid;grid-gap: 10px">
-            <va-button round gradient @click="viewDetail(room)">
-              <va-icon name="info"/>
-              查看详情
-            </va-button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="page_select">
-      <va-pagination
-          v-model="current_page"
-          :pages="Math.ceil(totalRooms / perPage)"
-          class="mb-3 justify-center sm:justify-start"
-          input
-      />
+        <div class="page_select">
+          <va-pagination
+              v-model="current_page"
+              :pages="Math.ceil(totalRooms / perPage)"
+              class="mb-3 justify-center sm:justify-start"
+              input
+          />
+        </div>
+      </va-card>
     </div>
-  </va-card>
+  </div>
 </template>
 
 <script setup>
@@ -94,8 +113,10 @@ import {ref, computed, onMounted, watch} from 'vue';
 import {useRouter} from 'vue-router';
 import {useRoomStore} from "@/store/room.js";
 import Room1Image from "@/assets/Room1.jpg";
+import Map from "@/assets/SUST-map.png";
 import {useAccountStore} from "@/store/account.js";
 
+const showMap = ref(true);
 const router = useRouter();
 const roomStore = useRoomStore();
 const accountStore = useAccountStore()
@@ -169,6 +190,35 @@ const displayedRooms = computed(() => {
       }).slice(startIdx, endIdx)
 })
 
+
+const handleMapClick = (event) => {
+  const rect = event.target.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  updateDistrictValue(x, y);
+};
+
+const updateDistrictValue = (x, y) => {
+
+  if (x > 550 && y > 200 &&x < 700 && y < 290) {
+    filters.value.district = '湖畔';
+    showMap.value = false;
+  } else if ((x > 585 && y > 120 &&x < 705 && y < 190) || (x > 705 && y > 120 &&x < 835 && y < 240)) {
+    filters.value.district = '二期';
+    showMap.value = false;
+  }
+};
+
+const returnToMap = () => {
+  showMap.value = true;
+
+  filters.value.floor = '';
+  filters.value.building = '';
+  filters.value.district = '';
+  filters.value.roomNumber = '';
+};
+
 onMounted(async () => {
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
@@ -240,11 +290,22 @@ watch(
 </script>
 
 <style scoped>
+.map-image {
+  margin-top: 30px;
+  max-width: 100%;
+  height: 700px;
+  display: block;
+}
+
 .filter-container {
   margin-top: 50px;
   margin-left: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   align-items: center;
+}
+
+.back-button {
+  margin-left: 1100px;
 }
 
 .filter-container label {
