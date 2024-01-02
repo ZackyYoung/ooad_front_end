@@ -125,19 +125,6 @@ export const useRoomStore = defineStore('room', () => {
         })
     }
 
-    async function updateRoomToView() {
-        return new Promise((resolve) => {
-            dataService.fetchRoomInfo(roomToView.building, roomToView.roomNumber, resp =>{
-                roomToView.district = resp.data.data.building.zone
-                roomToView.floor = resp.data.data.floor
-                roomToView.roomType = resp.data.data.roomType
-                roomToView.gender = resp.data.data.gender
-                roomToView.description = resp.data.data.description
-                resolve()
-            })
-
-        })
-    }
 
     async function deleteRoom(){
         return new Promise((resolve) => {
@@ -293,7 +280,6 @@ export const useRoomStore = defineStore('room', () => {
         findAllRoomByGender,
         addRoom,
         editRoom,
-        updateRoomToView,
         deleteRoom,
         favoriteRoom,
         cancelFavorite,

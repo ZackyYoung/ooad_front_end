@@ -84,7 +84,6 @@
             v-model="form.roomType"
             class="mb-6"
             label="户型"
-            :rules="[(v) => Boolean(v)|| '户型不能为空！']"
             placeholder="选择户型"
             :options="type_options"
             value-by="value"
@@ -93,7 +92,6 @@
             v-model="form.gender"
             class="mb-6"
             label="宿舍性别"
-            :rules="[(v) => Boolean(v)|| '性别不能为空！']"
             placeholder="选择宿舍性别"
             :options="gender_options"
             value-by="value"
@@ -106,7 +104,7 @@
         />
       </va-form>
       <template #footer>
-        <va-button class="save-button" :disabled="!isValid" @click="validate() && submit()">
+        <va-button class="save-button"  @click="submit()">
           提交信息
         </va-button>
       </template>
@@ -175,13 +173,16 @@ const form = reactive({
   description: roomStore.roomToView.description
 })
 
-const submit = async () => {
+async function submit(){
   showEdit.value = false
   await roomStore.editRoom(form)
-  await roomStore.updateRoomToView()
+  await roomStore.findRoomToView(roomStore.roomToView.roomId)
   dialogVisible.value = true
 }
 
+onMounted(async () => {
+  await roomStore.findRoomToView(window.sessionStorage.getItem("roomId"))
+})
 const deleteRoom = async () => {
   await roomStore.deleteRoom()
   deleteMsgVisible.value = true

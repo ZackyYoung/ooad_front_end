@@ -72,8 +72,6 @@ async function onLogoutClick() {
 }
 
 function logout () {
-  notificationStore.notificationStoreClose()
-  messageStore.messageStoreClose()
   window.sessionStorage.clear()
   router.push('/')
 }

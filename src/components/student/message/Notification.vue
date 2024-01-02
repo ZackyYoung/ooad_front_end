@@ -169,7 +169,7 @@ const viewInvitation = (notification) => {
 };
 
 const acceptExchange = async (notification) => {
-  await teamStore.swapRoom(notification.text.applyRoomId, teamStore.selectedRoom.roomId)
+  await teamStore.swapRoom(notification.text.applyRoom.roomId, teamStore.selectedRoom.roomId)
   await teamStore.getSelectedRoom(teamStore.current_team.teamId)
   await notificationStore.deleteNotification(notification)
   init('交换成功')

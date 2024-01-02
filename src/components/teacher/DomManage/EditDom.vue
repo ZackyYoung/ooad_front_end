@@ -64,6 +64,7 @@
                 四人间
               </div>
             </va-chip>
+            <va-chip shadow color="warning">{{room.gender}}</va-chip>
           </div>
           <div style="text-align: center;display: grid;grid-gap: 10px">
             <va-button round gradient @click="viewDetail(room)">
@@ -150,14 +151,15 @@ onMounted(async () => {
 });
 
 const viewDetail = (room) => {
-  roomStore.roomToView.roomId = room.roomId
-  roomStore.roomToView.district = room.district
-  roomStore.roomToView.building = room.building
-  roomStore.roomToView.roomNumber = room.roomNumber
-  roomStore.roomToView.roomType = room.roomType
-  roomStore.roomToView.floor = room.floor
-  roomStore.roomToView.gender = room.gender
-  roomStore.roomToView.description = room.description
+  // roomStore.roomToView.roomId = room.roomId
+  // roomStore.roomToView.district = room.district
+  // roomStore.roomToView.building = room.building
+  // roomStore.roomToView.roomNumber = room.roomNumber
+  // roomStore.roomToView.roomType = room.roomType
+  // roomStore.roomToView.floor = room.floor
+  // roomStore.roomToView.gender = room.gender
+  // roomStore.roomToView.description = room.description
+  roomStore.findRoomToView(room.roomId)
   router.push('/teacher/dormitory/roomInfo')
 }
 // 初始化时展示全部房间

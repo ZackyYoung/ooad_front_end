@@ -11,14 +11,14 @@ const pictureStore = usePictureStore()
 
 onMounted(async () =>{
   await accountStore.refreshSession()
-  if(accountStore.accountCampusId !== null)
+  if(accountStore.accountCampusId !== null && accountStore.accountRole === 'student')
   {
     messageStore.messageWebsocketInit(accountStore.accountCampusId)
     notificationStore.notificationWebsocketInit(accountStore.accountCampusId)
   }
 })
 onBeforeUnmount(async () =>{
-  if(accountStore.accountCampusId !== null)
+  if(accountStore.accountCampusId !== null && accountStore.accountRole === 'student')
   {
     messageStore.messageStoreClose()
     notificationStore.notificationStoreClose()
