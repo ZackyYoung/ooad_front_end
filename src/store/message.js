@@ -8,6 +8,7 @@ export const useMessageStore = defineStore("message", () => {
     const pictureStore = usePictureStore()
     const chatData = reactive([])
     const serverUrl = 'ws://10.26.80.100:8082/api/websocket/message/'
+    // const serverUrl = 'ws://10.32.60.95:8082/api/websocket/message/'
     const socket = ref(null)
     const queue = ref([])
     function messageWebsocketInit(campusId){

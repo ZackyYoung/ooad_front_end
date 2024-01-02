@@ -253,15 +253,16 @@ const displayedRooms = computed(() => {
 
 
 function viewDetail(room) {
-  roomStore.roomToView.roomId = room.roomId
-  roomStore.roomToView.district = room.district
-  roomStore.roomToView.building = room.building
-  roomStore.roomToView.roomNumber = room.roomNumber
-  roomStore.roomToView.roomType = room.roomType
-  roomStore.roomToView.floor = room.floor
-  roomStore.roomToView.gender = room.gender
-  roomStore.roomToView.description = room.description
-  roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  // roomStore.roomToView.roomId = room.roomId
+  // roomStore.roomToView.district = room.district
+  // roomStore.roomToView.building = room.building
+  // roomStore.roomToView.roomNumber = room.roomNumber
+  // roomStore.roomToView.roomType = room.roomType
+  // roomStore.roomToView.floor = room.floor
+  // roomStore.roomToView.gender = room.gender
+  // roomStore.roomToView.description = room.description
+  // roomStore.roomToView.selectedTeamCreatorId = room.selectedTeamCreatorId
+  roomStore.findRoomToView(room.roomId)
   router.push('/student/square/dormitory/roomInfo')
 }
 

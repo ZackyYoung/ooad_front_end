@@ -200,6 +200,7 @@ export const useRoomStore = defineStore('room', () => {
                         avatar = avatar.url
                     comments.push({
                         commentId: comment.commentId,
+                        authorId: comment.author,
                         author: comment.authorName,
                         content: comment.content,
                         time: comment.time,
@@ -249,6 +250,40 @@ export const useRoomStore = defineStore('room', () => {
             })
         })
     }
+
+    async function deleteComment(commentId)
+    {
+        return new Promise((resolve) => {
+            dataService.deleteComment(commentId, resp=>{
+                if(resp.data.code === 0)
+                {
+                    msg.value = '删除评论成功！'
+                }
+                else
+                {
+                    msg.value = resp.data.msg
+                }
+                resolve()
+            })
+        })
+    }
+
+    async function deleteReply(replyId)
+    {
+        return new Promise((resolve) => {
+            dataService.deleteReply(replyId, resp => {
+                if(resp.data.code === 0)
+                {
+                    msg.value = '删除回复成功'
+                }
+                else
+                {
+                    msg.value = resp.data.msg
+                }
+                resolve()
+            })
+        })
+    }
     return{
         msg,
         roomData,
@@ -265,6 +300,8 @@ export const useRoomStore = defineStore('room', () => {
         getComments,
         addComment,
         addReply,
-        findRoomToView
+        findRoomToView,
+        deleteComment,
+        deleteReply
     }
 })

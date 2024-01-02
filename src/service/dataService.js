@@ -1,9 +1,9 @@
 import axios from 'axios'
 import app from "../App.vue";
 
-const dataServerUrl = "http://10.26.80.100:8082";
+export const dataServerUrl = "http://10.26.80.100:8082";
 
-// const dataServerUrl = "http://10.32.60.95:8082"
+// export const dataServerUrl = "http://10.32.60.95:8082"
 
 const axiosInstance = axios.create({
     baseURL: dataServerUrl,
@@ -481,6 +481,25 @@ function directEditPassword(param, callback) {
         })
 }
 
+function deleteComment(commentId, callback){
+    const url = `${dataServerUrl}/comment/delete/${commentId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
+
+function deleteReply(replyId, callback){
+    const url = `${dataServerUrl}/comment/deleteSecondComment/${replyId}`
+    axiosInstance.get(url)
+        .then(resp => {
+            callback(resp)
+        }, errResp => {
+            console.log(errResp)
+        })
+}
 export default {
     loginCheck,
     registerAccount,
@@ -528,5 +547,7 @@ export default {
     fetchAvatar,
     sendCheckCode,
     verifyCheckCode,
-    directEditPassword
+    directEditPassword,
+    deleteComment,
+    deleteReply
 }
