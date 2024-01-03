@@ -275,7 +275,11 @@ watch(
     () => filters.value.building,
     (newBuilding) => {
       options.floors = Array.from(new Set(roomStore.roomData
-          .filter((room) => newBuilding === '' || room.building === newBuilding)
+          .filter((room) => {
+            return (
+                (filters.value.district === '' || room.district === filters.value.district) &&
+                (newBuilding === '' || room.building === newBuilding));
+          })
           .map((room) => room.floor)
       ));
 
@@ -291,7 +295,12 @@ watch(
     () => filters.value.floor,
     (newFloor) => {
       options.roomNumbers = Array.from(new Set(roomStore.roomData
-          .filter((room) => newFloor === '' || room.floor === newFloor)
+          .filter((room) => {
+            return (
+                (filters.value.district === '' || room.district === filters.value.district) &&
+                (filters.value.building === '' || room.building === filters.value.building) &&
+                (newFloor === '' || room.floor === newFloor));
+          })
           .map((room) => room.roomNumber)
       ));
 
