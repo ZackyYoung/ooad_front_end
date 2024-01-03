@@ -45,7 +45,7 @@
 <!--          />-->
         </div>
 
-        <VaScrollContainer class="max-h-52" vertical>
+        <VaScrollContainer class="chat-container" vertical>
           <VaList class="chat-list">
             <VaListItem v-for="(chatMessage, index) in selectedChat.messages" :key="index">
               <VaListItemSection v-if="chatMessage.senderId !== accountStore.accountCampusId" avatar
@@ -250,11 +250,13 @@ li {
   font-size: 20px;
   padding: 12px;
 }
-
+.chat-container{
+  max-height: 425px;
+}
 .chat-list {
   border: solid 1px #dadada;
   overflow-y: auto; /* 添加这一行以启用垂直滚动条 */
-  max-height: 400px; /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
+  max-height: 425px; /* 调整这里，确保消息列表在聊天框内显示，并留出底部用于输入框 */
 }
 
 .text-right {
@@ -270,7 +272,7 @@ li {
 .message-input {
   display: flex;
   position: absolute;
-  bottom: 111px;
+  bottom: 0;
   height: 125px;
   width: 700px;
   border: solid 1px #dadada;
