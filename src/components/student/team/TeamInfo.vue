@@ -188,9 +188,16 @@ async function removeAndSubmit(memberId, memberName) {
   })
 
   if (result) {
-    await teamStore.removeMember(memberId)
-    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
-    init("移除队员成功")
+    if(teamStore.roomSelected)
+    {
+      init("请先取消选择房间，再进行队伍操作")
+    }
+    else
+    {
+      await teamStore.removeMember(memberId)
+      await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+      init("移除队员成功")
+    }
   } else {
     init("取消移除成员")
   }
@@ -206,9 +213,16 @@ async function deleteTeamAndSubmit() {
   })
 
   if (result) {
-    await teamStore.deleteTeam(accountStore.accountCampusId)
-    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
-    init("解散队伍成功")
+    if(teamStore.roomSelected)
+    {
+      init("请先取消选择房间，再进行队伍操作")
+    }
+    else
+    {
+      await teamStore.deleteTeam(accountStore.accountCampusId)
+      await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+      init("解散队伍成功")
+    }
   } else {
     init("取消解散队伍")
   }
@@ -224,9 +238,16 @@ async function exitTeamAndSubmit() {
   })
 
   if (result) {
-    await teamStore.removeMember(accountStore.accountCampusId)
-    await teamStore.fetchTeamInformation(accountStore.accountCampusId)
-    init("退出队伍成功")
+    if(teamStore.roomSelected)
+    {
+      init("队伍已选择房间，你不能退出，请先联系队长取消选择房间")
+    }
+    else
+    {
+      await teamStore.removeMember(accountStore.accountCampusId)
+      await teamStore.fetchTeamInformation(accountStore.accountCampusId)
+      init("退出队伍成功")
+    }
   } else {
     init("取消退出队伍")
   }

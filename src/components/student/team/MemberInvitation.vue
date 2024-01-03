@@ -150,6 +150,10 @@ async function acceptApplication(studentId) {
   {
     init("队伍已满，无法通过加入申请")
   }
+  else if(teamStore.roomSelected)
+  {
+    init("请先取消选择房间，再进行队伍操作")
+  }
   else
   {
     await teamStore.addMember(accountStore.accountCampusId, studentId)

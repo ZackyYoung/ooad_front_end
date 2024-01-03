@@ -230,15 +230,7 @@ function editRoom(param, callback) {
         })
 }
 
-function fetchRoomInfo(building, roomNumber, callback) {
-    const url = `${dataServerUrl}/room/findOne/${building}/${roomNumber}`
-    axiosInstance.get(url)
-        .then(resp => {
-            callback(resp)
-        }, errResp => {
-            console.log(errResp)
-        })
-}
+
 
 function deleteRoom(building, roomNumber, callback) {
     const url = `${dataServerUrl}/room/delete/${building}/${roomNumber}`
@@ -523,7 +515,6 @@ export default {
     findAllRoom,
     addRoom,
     editRoom,
-    fetchRoomInfo,
     deleteRoom,
     favoriteRoom,
     cancelFavorite,

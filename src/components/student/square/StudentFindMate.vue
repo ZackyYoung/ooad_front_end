@@ -176,7 +176,11 @@ async function submitInvite() {
   show_detail.value = false;
   if (teamStore.current_team.teamMembers.length === 4) {
     init("你的队伍人数已满")
-  } else
+  } else if(teamStore.roomSelected)
+  {
+    init("请先取消选择房间，再进行队伍操作")
+  }
+  else
   {
     await teamStore.inviteToJoinTeam(teamStore.current_team.creatorId, infoForm.studentId)
     dialogVisible.value = true
