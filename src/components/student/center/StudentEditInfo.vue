@@ -84,6 +84,12 @@ const user_picture = ref([])
 onMounted(async () =>{
   await accountStore.refreshSession()
   await accountStore.fetchInformation()
+  form.studentId = accountStore.accountCampusId
+  form.name = accountStore.studentInformationForm.name
+  form.gender = accountStore.studentInformationForm.gender
+  form.degree = accountStore.studentInformationForm.degree
+  form.major = accountStore.studentInformationForm.major
+  form.info = accountStore.studentInformationForm.info
 })
 const form = reactive({
   studentId: accountStore.accountCampusId,
