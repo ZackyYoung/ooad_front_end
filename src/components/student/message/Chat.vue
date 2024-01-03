@@ -236,7 +236,7 @@ li {
   display: flex;
   flex-direction: column; /* 调整 flex 方向为列 */
   justify-content: space-between; /* 添加这一行以将头部、消息和输入框分隔开 */
-  height: 600px;
+  height: 608px;
   width: 700px;
   background-color: #f3f3f3;
   border: solid 1px #dadada;
@@ -272,7 +272,7 @@ li {
 .message-input {
   display: flex;
   position: absolute;
-  bottom: 0;
+  bottom: 35px;
   height: 125px;
   width: 700px;
   border: solid 1px #dadada;
