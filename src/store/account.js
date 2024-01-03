@@ -154,6 +154,8 @@ async function createStudent(form) {
             if (resp.data.code === 0) {
                 await updateStudent(form)
                 msg.value = "创建学生成功！"
+            } else if (resp.data.code === 6) {
+                msg.value = "已存在的学号！"
             }
             resolve()
         })
