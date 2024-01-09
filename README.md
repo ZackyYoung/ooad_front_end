@@ -1,12 +1,12 @@
-# SUSTech_CS309-OOAD_2023Fall_Dorm-Selection-Frontend
+# SUSTech CS309 OOAD Project Frontend
 
-CS309 OOAD group project, dormitory selection system frontend.
+CS309 OOAD 2023Fall group project, dormitory selection system frontend.
 
 Backend repo: [Dormitory Selection System Backend](https://github.com/Cooper-Zhong/CS309-OOAD-Dorm-Selection)
 
 ## Tooling 
 
- **Vue 3 + Vite + Vuestic UI  + Vue-Router + Pinia + Axios**
+ **[Vue 3](https://vuejs.org/) (Composition API) + [Vite](https://vitejs.dev/) + [Vuestic UI](https://ui.vuestic.dev/)  + [Vue-Router](https://router.vuejs.org/) + [Pinia](https://pinia.vuejs.org/) + [Axios](https://axios-http.com/)**
 
 ## Extra Improvements
 
@@ -33,3 +33,14 @@ yarn serve
 ```
 yarn build
 ```
+
+## Teammates
+
+| GitHub ID                                    | Content                                                      |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| [@ZackyYoung](https://github.com/ZackyYoung) | Front-end and back-end connection, component details modification. |
+| [@OctCarp](https://github.com/OctCarp)       | Page layout design, basic front-end design, component details modification. |
+| [@YuJian-63](https://github.com/YuJian-63)   | Dormitory selection page, message notification page.         |
+
+And [Cooper](https://github.com/Cooper-Zhong), [Skylar](https://github.com/tianxunLu) for [backend repo](https://github.com/Cooper-Zhong/CS309-OOAD-Dorm-Selection).
+
